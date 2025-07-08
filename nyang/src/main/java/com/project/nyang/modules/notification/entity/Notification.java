@@ -1,6 +1,5 @@
 package com.project.nyang.modules.notification.entity;
 
-import com.project.nyang.modules.chat.entity.ChatRoom;
 import com.project.nyang.modules.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

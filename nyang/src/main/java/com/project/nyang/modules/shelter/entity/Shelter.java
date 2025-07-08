@@ -50,7 +50,7 @@ public class Shelter extends BaseTime {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_region_code", nullable = false)
     private SubRegion subRegion;
-    
+
     @Builder
     public Shelter(String careRegNumber, String careName, String careAddress,
                    String jibunAddress, Float latitude, Float longitude,

@@ -1,13 +1,12 @@
 package com.project.nyang.modules.image.entity;
 
-import com.project.nyang.modules.board.entity.Board;
+import com.project.nyang.modules.board.Board;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 /**
  *
  * Image 엔티티 클래스입니다.

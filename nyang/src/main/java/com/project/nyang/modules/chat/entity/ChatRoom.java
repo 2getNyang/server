@@ -17,8 +17,8 @@ import lombok.*;
 //@NoArgsConstructor
 //@AllArgsConstructor
 //@Table(name = "CHAT_ROOM")
-public class ChatRoom {
-
+//public class ChatRoom extends BaseTime {
+//
 //    @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
 //    @Column(name = "chat_room_id")
@@ -37,4 +37,4 @@ public class ChatRoom {
 //        this.user1 = user1;
 //        this.user2 = user2;
 //    }
-}
+//}

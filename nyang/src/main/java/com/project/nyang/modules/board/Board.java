@@ -1,4 +1,4 @@
-package com.project.nyang.modules.board.entity;
+package com.project.nyang.modules.board;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.nyang.global.common.entity.BaseTime;
