@@ -56,7 +56,7 @@ public class SwaggerConfig {
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("CineBite API")
+                        .title("함께하개냥 API")
                         .version("v1.0")
                         .description("함께하개냥 API 문서입니다."));
     }
