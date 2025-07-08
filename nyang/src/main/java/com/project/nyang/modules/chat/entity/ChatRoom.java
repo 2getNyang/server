@@ -12,29 +12,29 @@ import lombok.*;
  * @fileName : ChatRoom
  * @since : 25. 7. 7.
  */
-@Entity
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Table(name = "CHAT_ROOM")
-public class ChatRoom extends BaseTime {
+//@Entity
+//@Getter
+//@NoArgsConstructor
+//@AllArgsConstructor
+//@Table(name = "CHAT_ROOM")
+public class ChatRoom {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "chat_room_id")
-    private Long chatRoomId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user1;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user2;
-
-    @Builder
-    public ChatRoom(User user1, User user2) {
-        this.user1 = user1;
-        this.user2 = user2;
-    }
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @Column(name = "chat_room_id")
+//    private Long chatRoomId;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id")
+//    private User user1;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id")
+//    private User user2;
+//
+//    @Builder
+//    public ChatRoom(User user1, User user2) {
+//        this.user1 = user1;
+//        this.user2 = user2;
+//    }
 }

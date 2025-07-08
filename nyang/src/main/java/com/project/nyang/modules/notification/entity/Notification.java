@@ -56,9 +56,9 @@ public class Notification{
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chat_room_id", nullable = false)
-    private ChatRoom chatRoom;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "chat_room_id", nullable = false)
+//    private ChatRoom chatRoom;
 
     public enum NotificationType {
         CHAT_REPLY, FORM_SENT//, ETC 알림메세지 기타로 처리할게 있을까..?

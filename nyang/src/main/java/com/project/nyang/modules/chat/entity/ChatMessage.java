@@ -12,34 +12,34 @@ import lombok.*;
  * @fileName : ChatMessage
  * @since : 25. 7. 7.
  */
-@Entity
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Table(name = "CHAT_MSG")
-public class ChatMessage extends BaseTime {
+//@Entity
+//@Getter
+//@NoArgsConstructor
+//@AllArgsConstructor
+//@Table(name = "CHAT_MSG")
+public class ChatMessage {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "chat_msg_id")
-    private Long chatMsgId;
-
-    @Lob
-    @Column(name = "chat_content", nullable = false)
-    private String chatContent;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chat_room_id", nullable = false)
-    private ChatRoom chatRoom;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @Builder
-    public ChatMessage(String chatContent, ChatRoom chatRoom, User user) {
-        this.chatContent = chatContent;
-        this.chatRoom = chatRoom;
-        this.user = user;
-    }
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @Column(name = "chat_msg_id")
+//    private Long chatMsgId;
+//
+//    @Lob
+//    @Column(name = "chat_content", nullable = false)
+//    private String chatContent;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "chat_room_id", nullable = false)
+//    private ChatRoom chatRoom;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id")
+//    private User user;
+//
+//    @Builder
+//    public ChatMessage(String chatContent, ChatRoom chatRoom, User user) {
+//        this.chatContent = chatContent;
+//        this.chatRoom = chatRoom;
+//        this.user = user;
+//    }
 }

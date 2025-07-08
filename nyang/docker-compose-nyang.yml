@@ -14,7 +14,7 @@ services:
       - nyang_server
 
   nginx1:
-    build: ./nginx/.
+    build: ./nginx
     container_name: nginx1
     ports:
       - "80:80"
