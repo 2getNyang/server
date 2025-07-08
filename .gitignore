@@ -37,6 +37,6 @@ out/
 .vscode/
 
 ### env ###
-.env
+nyang/.env
 .env.*
 **/volumes/**/
