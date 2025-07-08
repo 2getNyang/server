@@ -1,6 +1,5 @@
-package com.project.nyang.modules.board;
+package com.project.nyang.modules.board.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.nyang.global.common.entity.BaseTime;
 import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.reference.entity.Category;
@@ -9,11 +8,8 @@ import com.project.nyang.reference.entity.SubRegion;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+
 /**
  *
  * board 엔티티 클래스 입니다.

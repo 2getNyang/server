@@ -1,5 +1,6 @@
 package com.project.nyang.modules.board.SNS.DTO;
 
+import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.reference.entity.Category;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,15 +32,16 @@ public class SNSBoardDTO {
     private LocalDateTime modifiedAt;
     private LocalDateTime deletedAt;
 
-    public SNSBoardDTO(Long id, Category category, String boardTitle, String boardContent, Long viewCount, String instagramLink, LocalDateTime createdAt, LocalDateTime modifiedAt, LocalDateTime deletedAt) {
-        this.id = id;
-        this.category = category;
-        this.boardTitle = boardTitle;
-        this.boardContent = boardContent;
-        this.viewCount = viewCount;
-        this.instagramLink = instagramLink;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
-        this.deletedAt = deletedAt;
+    public SNSBoardDTO(Board entity) {
+        this.id = entity.getId();
+        this.category = entity.getCategory();
+        this.boardTitle = entity.getBoardTitle();
+        this.boardContent = entity.getBoardContent();
+        this.viewCount = entity.getViewCount();
+        this.instagramLink = entity.getInstagramLink();
+        this.createdAt = entity.getCreatedAt();
+        this.modifiedAt = entity.getModifiedAt();
+        this.deletedAt = entity.getDeletedAt();
     }
+
 }

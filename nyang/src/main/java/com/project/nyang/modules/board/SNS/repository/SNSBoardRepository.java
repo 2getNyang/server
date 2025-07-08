@@ -1,5 +1,7 @@
 package com.project.nyang.modules.board.SNS.repository;
 
+import com.project.nyang.modules.board.entity.Board;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -10,6 +12,6 @@ import org.springframework.stereotype.Repository;
  * @since : 25. 7. 8.
  */
 @Repository
-public class SNSBoardRepository {
+public interface SNSBoardRepository extends JpaRepository<Board,Long> {
 
 }
