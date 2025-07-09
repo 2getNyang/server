@@ -38,6 +38,4 @@ public class User extends BaseTime {
     private String email;
 
 
-    //mapped 관련하여서는 다른 엔티티들 보고 작성
-
 }

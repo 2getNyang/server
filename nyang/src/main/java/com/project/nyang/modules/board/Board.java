@@ -7,9 +7,7 @@ import com.project.nyang.modules.comment.entity.Comment;
 import com.project.nyang.modules.image.entity.Image;
 import com.project.nyang.modules.like.entity.LikeIt;
 import com.project.nyang.modules.user.entity.User;
-import com.project.nyang.reference.entity.Category;
-import com.project.nyang.reference.entity.Region;
-import com.project.nyang.reference.entity.SubRegion;
+import com.project.nyang.reference.entity.*;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -98,6 +96,14 @@ public class Board extends BaseTime {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "kind_cd", nullable = false)
+    private Kind kind;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "up_kind_cd", nullable = false)
+    private UpKind upKind;
 
     //board<->image 연관관계 편의 메서드
     public void addImage(Image image) {
