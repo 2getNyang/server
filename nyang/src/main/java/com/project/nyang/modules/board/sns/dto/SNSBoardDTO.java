@@ -9,21 +9,12 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-/**
-<<<<<<< Updated upstream
+/*
  * sns board 가 사용하는 dto 입니다.
  *
  * @author : 이은서
  * @fileName : SNSBoardDTO
  * @since : 25. 7. 8.
- */
-
-
-
- /* SNS Board DTO
- * @fileName : SNSBoardDTO
- * @author : 이은서
- * @since : 25. 7. 9.
  */
 @Getter
 @Builder
@@ -51,6 +42,18 @@ public class SNSBoardDTO {
         this.createdAt = entity.getCreatedAt();
         this.modifiedAt = entity.getModifiedAt();
         this.deletedAt = entity.getDeletedAt();
+    }
+
+    public void updateDto(SNSBoardDTO dto) {
+        if (dto.getBoardTitle() != null) {
+            this.boardTitle = dto.getBoardTitle();
+        }
+        if (dto.getBoardContent() != null) {
+            this.boardContent = dto.getBoardContent();
+        }
+        if (dto.getInstagramLink() != null) {
+            this.instagramLink = dto.getInstagramLink();
+        }
     }
 
 }
