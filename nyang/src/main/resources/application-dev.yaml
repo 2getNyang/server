@@ -16,3 +16,8 @@ spring:
     url: jdbc:mysql://${db.server}:${db.port}/nyangDB?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&rewriteBatchedStatements=true
     username: ${db.username}
     password: ${db.password}
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update

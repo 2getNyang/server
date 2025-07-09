@@ -2,7 +2,9 @@ package com.project.nyang.modules.animal.entity;
 
 import com.project.nyang.global.common.entity.BaseTime;
 import com.project.nyang.modules.shelter.entity.Shelter;
+import com.project.nyang.reference.entity.Kind;
 import com.project.nyang.reference.entity.SubRegion;
+import com.project.nyang.reference.entity.UpKind;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -118,11 +120,12 @@ public class Animal extends BaseTime {
     @JoinColumn(name = "care_reg_number", nullable = false)
     private Shelter shelter;
 
-    // 다 대 일
-    // 동물 한 마리는 지역 하나에 소속
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sub_region_code", nullable = false)
-    private SubRegion subRegion;
+    @JoinColumn(name = "up_kind_cd", insertable = false, updatable = false)
+    private UpKind upKind;
 
-    //mapped 관련하여서는 다른 엔티티들 보고 작성
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "kind_cd", insertable = false, updatable = false)
+    private Kind kind;
+
 }
