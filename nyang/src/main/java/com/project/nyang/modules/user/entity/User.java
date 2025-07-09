@@ -28,10 +28,10 @@ public class User extends BaseTime {
     @Column(name = "login_type", length = 20, nullable = false)
     private String loginType;
 
-    @Column(name = "login_id", length = 128, nullable = false)
+    @Column(name = "login_id", length = 128, nullable = false, unique = true)
     private String loginId;
 
-    @Column(name = "nickname", length = 30, nullable = false, unique = true)
+    @Column(name = "nickname", length = 30, nullable = false)
     private String nickname;
 
     @Column(name = "email", length = 100)

@@ -29,7 +29,7 @@ public class UpKind {
     @Column(name = "up_kind_nm", nullable = false)
     private String upKindNm;
 
-    @OneToMany(mappedBy = "upKind", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "upKindCd", cascade = CascadeType.ALL)
     private List<Kind> kinds = new ArrayList<>();
 
     @Builder
