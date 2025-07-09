@@ -42,4 +42,4 @@ out/
 **/volumes/**/
 
 ### application.yaml ###
-application.yaml
+application*.yaml
