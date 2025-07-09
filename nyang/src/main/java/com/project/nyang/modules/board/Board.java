@@ -54,7 +54,7 @@ public class Board extends BaseTime {
     private SubRegion subRegion;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "form_id", nullable = false)
+    @JoinColumn(name = "form_id")
     private PetApplicationForm petApplicationForm;
 
     @Column(name = "board_title", nullable = false)

@@ -118,11 +118,4 @@ public class Animal extends BaseTime {
     @JoinColumn(name = "care_reg_number", nullable = false)
     private Shelter shelter;
 
-    // 다 대 일
-    // 동물 한 마리는 지역 하나에 소속
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sub_region_code", nullable = false)
-    private SubRegion subRegion;
-
-    //mapped 관련하여서는 다른 엔티티들 보고 작성
 }
