@@ -2,7 +2,9 @@ package com.project.nyang.modules.animal.entity;
 
 import com.project.nyang.global.common.entity.BaseTime;
 import com.project.nyang.modules.shelter.entity.Shelter;
+import com.project.nyang.reference.entity.Kind;
 import com.project.nyang.reference.entity.SubRegion;
+import com.project.nyang.reference.entity.UpKind;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -117,5 +119,13 @@ public class Animal extends BaseTime {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "care_reg_number", nullable = false)
     private Shelter shelter;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "up_kind_cd", insertable = false, updatable = false)
+    private UpKind upKind;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "kind_cd", insertable = false, updatable = false)
+    private Kind kind;
 
 }

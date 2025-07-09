@@ -7,9 +7,7 @@ import com.project.nyang.modules.comment.entity.Comment;
 import com.project.nyang.modules.image.entity.Image;
 import com.project.nyang.modules.like.entity.LikeIt;
 import com.project.nyang.modules.user.entity.User;
-import com.project.nyang.reference.entity.Category;
-import com.project.nyang.reference.entity.Region;
-import com.project.nyang.reference.entity.SubRegion;
+import com.project.nyang.reference.entity.*;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -99,6 +97,14 @@ public class Board extends BaseTime {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "kind_cd", nullable = false)
+    private Kind kind;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "up_kind_cd", nullable = false)
+    private UpKind upKind;
+
     //board<->image 연관관계 편의 메서드
     public void addImage(Image image) {
         images.add(image);
@@ -117,22 +123,47 @@ public class Board extends BaseTime {
         this.viewCount += 1;
     }
 
-    @Builder
-    public Board(LocalDate missingDate, User user, Category category, Region region, SubRegion subRegion, String boardTitle, String boardContent, Long viewCount, String instagramLink, String gender, Integer age, String furColor, String distinctFeatures, String missingLocation, String phone) {
-        this.missingDate = missingDate;
+    public boolean existsLikeBy(Long boardId, Long userId) {
+        return likeList.stream().
+                anyMatch(like ->
+                        like.getUser().getId().equals(userId) && like.getBoard().getId().equals(boardId)
+                );
+    }
+
+    @Builder(toBuilder = true)
+    public Board(Long id, User user, Category category, Region region, SubRegion subRegion,
+                 PetApplicationForm petApplicationForm,
+                 String boardTitle, String boardContent, Long viewCount, String instagramLink,
+                 String gender, Integer age, String furColor, String distinctFeatures,
+                 LocalDate missingDate, String missingLocation, String phone,
+                 Kind kind, UpKind upKind,
+                 List<Image> images, List<LikeIt> likeList, List<Comment> comments) {
+
+        this.id = id;
         this.user = user;
         this.category = category;
         this.region = region;
         this.subRegion = subRegion;
+        this.petApplicationForm = petApplicationForm;
+
         this.boardTitle = boardTitle;
         this.boardContent = boardContent;
-        this.viewCount = viewCount;
+        this.viewCount = viewCount != null ? viewCount : 0L;
         this.instagramLink = instagramLink;
+
         this.gender = gender;
         this.age = age;
         this.furColor = furColor;
         this.distinctFeatures = distinctFeatures;
+        this.missingDate = missingDate;
         this.missingLocation = missingLocation;
         this.phone = phone;
+
+        this.kind = kind;
+        this.upKind = upKind;
+
+        this.images = images != null ? images : new ArrayList<>();
+        this.likeList = likeList != null ? likeList : new ArrayList<>();
+        this.comments = comments != null ? comments : new ArrayList<>();
     }
 }
