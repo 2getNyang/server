@@ -158,7 +158,7 @@ public class ReveiwBoardService {
 
         board.markDeleted();
 
-        // comments, likeList, images는 cascade 속성으로 함께 사라짐 
+        // comments, likeList, images는 cascade 속성으로 함께 사라짐
     }
 
     /**
