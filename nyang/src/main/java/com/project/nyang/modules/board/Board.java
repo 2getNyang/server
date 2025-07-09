@@ -52,6 +52,14 @@ public class Board extends BaseTime {
     @JoinColumn(name = "form_id")
     private PetApplicationForm petApplicationForm;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "kind_cd", nullable = false)
+    private Kind kind;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "up_kind_cd", nullable = false)
+    private UpKind upKind;
+
     @Column(name = "board_title", nullable = false)
     private String boardTitle;
 
@@ -66,6 +74,9 @@ public class Board extends BaseTime {
 
     @Column
     private String gender;
+
+    @Column(name="lost_type")
+    private String lostType;    //실종/목격제보게시판에서 쓸 실종, 목격 구분 필드 실종:MS, 목격:WT
 
     @Column
     private Integer age;
@@ -93,14 +104,6 @@ public class Board extends BaseTime {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "kind_cd", nullable = false)
-    private Kind kind;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "up_kind_cd", nullable = false)
-    private UpKind upKind;
 
     //board<->image 연관관계 편의 메서드
     public void addImage(Image image) {
