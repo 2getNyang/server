@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @Entity
-public class Animal extends BaseTime {
+public class Animal {
     //유기 동물 번호
     @Id
     @Column(name = "desertion_no", length = 15)
@@ -43,22 +43,6 @@ public class Animal extends BaseTime {
     //동물 종류 전체 이름 ex.[개] 시바
     @Column(name = "kind_full_nm", length = 50)
     private String kindFullNm;
-
-    //축종코드
-    @Column(name = "up_kind_cd", length = 6, nullable = false)
-    private String upKindCd;
-
-    //축종 이름 ex.개
-    @Column(name = "up_kind_nm", length = 10)
-    private String upKindNm;
-
-    //품종 코드
-    @Column(name = "kind_cd", length = 6, nullable = false)
-    private String kindCd;
-
-    //품종명 ex.시바
-    @Column(name = "kind_nm", length = 40)
-    private String kindNm;
 
     //털색, 무늬
     @Column(name = "color_cd", length = 40)
