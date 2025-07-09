@@ -28,10 +28,12 @@ public class User extends BaseTime {
     @Column(name = "login_type", length = 20, nullable = false)
     private String loginType;
 
-    @Column(name = "login_id", length = 128, nullable = false)
+    //CustomUserDetails에서 getUsername()할 때 중복안되는 값 해야하므로
+    // 카카오, 구글, 네이버 이메일 같은 유일한 값 저장 하면 될듯
+    @Column(name = "login_id", length = 128, nullable = false, unique = true)
     private String loginId;
 
-    @Column(name = "nickname", length = 30, nullable = false, unique = true)
+    @Column(name = "nickname", length = 30, nullable = false)
     private String nickname;
 
     @Column(name = "email", length = 100)
