@@ -1,23 +1,32 @@
-package com.project.nyang.modules.board.SNS.DTO;
+package com.project.nyang.modules.board.sns.dto;
 
-import com.project.nyang.modules.board.entity.Board;
+import com.project.nyang.modules.board.Board;
 import com.project.nyang.reference.entity.Category;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 /**
+<<<<<<< Updated upstream
  * sns board 가 사용하는 dto 입니다.
  *
  * @author : 이은서
  * @fileName : SNSBoardDTO
  * @since : 25. 7. 8.
  */
+
+
+
+ /* SNS Board DTO
+ * @fileName : SNSBoardDTO
+ * @author : 이은서
+ * @since : 25. 7. 9.
+ */
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class SNSBoardDTO {

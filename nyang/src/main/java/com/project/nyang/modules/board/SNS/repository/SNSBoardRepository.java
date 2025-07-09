@@ -1,17 +1,20 @@
-package com.project.nyang.modules.board.SNS.repository;
+package com.project.nyang.modules.board.sns.repository;
 
-import com.project.nyang.modules.board.entity.Board;
+import com.project.nyang.modules.board.Board;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 /**
- * Snsboard repository 입니다
+ * sns board repository
  *
  * @author : 이은서
- * @fileName : SNSBoardRepository
- * @since : 25. 7. 8.
+ * @fileName : BoardRepository
+ * @since : 25. 7. 9.
  */
-@Repository
 public interface SNSBoardRepository extends JpaRepository<Board,Long> {
+    Page<Board> findByCategory_CategoryId(Long categoryId, Pageable pageable);
+    Page<Board> findByCategory_CategoryIdAndBoardTitleContaining(Long categoryId, String keyword, Pageable pageable);
+
 
 }

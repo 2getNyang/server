@@ -1,14 +1,17 @@
-package com.project.nyang.modules.board.SNS.service;
+package com.project.nyang.modules.board.sns.service;
 
-import com.project.nyang.modules.board.SNS.DTO.SNSBoardDTO;
-import com.project.nyang.modules.board.SNS.repository.SNSBoardRepository;
-import com.project.nyang.modules.board.entity.Board;
+
+import com.project.nyang.modules.board.Board;
+import com.project.nyang.modules.board.sns.dto.SNSBoardDTO;
+import com.project.nyang.modules.board.sns.repository.SNSBoardRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * snsboard service 입니다
@@ -22,33 +25,86 @@ import java.util.stream.Collectors;
 public class SNSBoardService {
     private final SNSBoardRepository snsBoardRepository;
 
-    public SNSBoardDTO createBoard(SNSBoardDTO dto) {
-        Board board = Board.builder()
-                .category(dto.getCategory())
-                .boardTitle(dto.getBoardTitle())
-                .boardContent(dto.getBoardContent())
-                .instagramLink(dto.getInstagramLink())
-                .viewCount(0L)
+    /* */
+    private static final Long SNS_CATEGORY_ID = 4L;
+
+    /* SNS 게시판 글 등록 */
+
+
+    /* SNS 게시판 글 상세조회 */
+    @Transactional
+    public SNSBoardDTO getBoardDetail(Long boardId) {
+        Board board = snsBoardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글 없음: " + boardId));
+
+        if (!isSNSBoard(board)) {
+            throw new IllegalArgumentException("SNS 게시글만 조회 가능합니다. ID: " + boardId);
+        }
+
+        board.increaseViewCount();
+
+        return entityToDto(board);
+    }
+
+    /* SNS 게시판 페이징 */
+    @Transactional
+    public Page<SNSBoardDTO> getBoardsPaged(Pageable pageable) {
+        Page<Board> boardsPage = snsBoardRepository.findByCategory_CategoryId(4L, pageable);
+
+        List<SNSBoardDTO> dtoList = boardsPage
+                .map(this::entityToDto)
+                .getContent();
+
+        return new PageImpl<>(dtoList, pageable, boardsPage.getTotalElements());
+    }
+
+    /* SNS 게시판 글 수정 */
+    @Transactional
+    public void updateBoard(Long boardId, SNSBoardDTO dto, Long userId) {
+        Board board = snsBoardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글 없음: " + boardId));
+
+        if (!isSNSBoard(board)) {
+            throw new IllegalArgumentException("SNS 게시글만 수정 가능합니다. ID: " + boardId);
+        }
+
+        if (!board.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("수정 권한이 없습니다.");
+        }
+
+        // Dirty Checking 으로 자동 반영되므로 save 불필요
+    }
+
+    /* SNS 게시판 글 삭제 */
+    @Transactional
+    public void deleteBoard(Long boardId, Long userId) {
+        Board board = snsBoardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글 없음: " + boardId));
+
+        if (!isSNSBoard(board)) {
+            throw new IllegalArgumentException("SNS 게시글만 삭제 가능합니다. ID: " + boardId);
+        }
+
+        if (!board.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("삭제 권한이 없습니다.");
+        }
+
+        snsBoardRepository.delete(board);
+    }
+
+    /* SNS 게시판 카테고리 확인 */
+    private boolean isSNSBoard(Board board) {
+        return board.getCategory() != null && board.getCategory().getCategoryId().equals(4L);
+    }
+
+    /* Entity -> DTO 변환 */
+    private SNSBoardDTO entityToDto(Board board) {
+        return SNSBoardDTO.builder()
+                .id(board.getId())
+                .boardTitle(board.getBoardTitle())
+                .boardContent(board.getBoardContent())
+                .instagramLink(board.getInstagramLink())
+                .viewCount(board.getViewCount())
                 .build();
-        Board saved = snsBoardRepository.save(board);
-        return new SNSBoardDTO(saved);
     }
-    /* 카테고리 : sns 홍보인 게시글 전체조회 */
-    public List<SNSBoardDTO> getAllSNSBoards() {
-        return snsBoardRepository.findAll().stream()
-                .filter(board -> board.getCategory().getCategoryType().equals("SNS홍보")) /* 여기 카테고리유형을 어떻게 저장하냐에 따라 ID로 할지 CategoryType을 받을지 정할듯...? */
-                .map(SNSBoardDTO::new)
-                .collect(Collectors.toList());
-    }
-
-    /* 상세조회일까*/
-//    public SNSBoardDTO getSNSBoardById(Long id) {
-//        Board board = snsBoardRepository.findById(id).orElseThrow(()->new IllegalArgumentException("게시글이 존재하지않습니다."));
-//        return new SNSBoardDTO(board);
-//        /* 조회수 증가 */
-//        //board.setViewCount(board.getViewCount()+1); /* setter를 사용해야 set ViewCount가 됩니다.. 강사님꺼도 Board Entity에 @Setter있었어요 */
-//
-//        return new SNSBoardDTO(board);
-//    }
-
 }

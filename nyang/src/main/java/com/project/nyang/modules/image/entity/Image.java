@@ -1,6 +1,6 @@
 package com.project.nyang.modules.image.entity;
 
-import com.project.nyang.modules.board.entity.Board;
+import com.project.nyang.modules.board.Board;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

@@ -1,6 +1,5 @@
 package com.project.nyang.modules.board;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.nyang.global.common.entity.BaseTime;
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
 import com.project.nyang.modules.comment.entity.Comment;
@@ -12,9 +11,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**

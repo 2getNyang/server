@@ -1,17 +1,15 @@
-package com.project.nyang.modules.board.SNS.controller;
+package com.project.nyang.modules.board.sns.controller;
 
-
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * sns board controller 입니다
  *
- * @author : 이은서
- * @fileName : SNSBoardController
- * @since : 25. 7. 8.
+ * sns board controller 
+ * @fileName        : SNSBoardController
+ * @author          : 이은서
+ * @since           : 25. 7. 9.
+ * 
  */
 @RestController
-@RequiredArgsConstructor
 public class SNSBoardController {
 }

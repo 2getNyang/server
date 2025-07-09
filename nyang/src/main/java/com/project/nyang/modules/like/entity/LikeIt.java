@@ -1,7 +1,7 @@
 package com.project.nyang.modules.like.entity;
 
 import com.project.nyang.modules.animal.entity.Animal;
-import com.project.nyang.modules.board.entity.Board;
+import com.project.nyang.modules.board.Board;
 import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.reference.entity.Category;
 import jakarta.persistence.*;
