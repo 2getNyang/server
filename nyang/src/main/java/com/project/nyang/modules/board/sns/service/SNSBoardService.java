@@ -38,26 +38,13 @@ public class SNSBoardService {
         Board board = snsBoardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글 없음: " + boardId));
 
-        if (!isSNSBoard(board)) {
+        if (!board.getCategory().getCategoryId().equals(SNS_CATEGORY_ID)) {
             throw new IllegalArgumentException("SNS 게시글만 조회 가능합니다. 현재 불러오는 카테고리 id " + boardId);
         }
 
         board.increaseViewCount();
 
-        return entityToDto(board);
-    }
-
-    /* SNS 게시판 페이징 */
-    @Transactional(readOnly = true)
-    public Page<SNSBoardDTO> getBoardsPaged(Pageable pageable) {
-        // category ID 가 4인 엔티티만 페이징 조회
-        Page<Board> boardsPage = snsBoardRepository.findByCategory_CategoryId(4L, pageable);
-
-        List<SNSBoardDTO> dtoList = boardsPage
-                .map(this::entityToDto)
-                .getContent();
-
-        return new PageImpl<>(dtoList, pageable, boardsPage.getTotalElements());
+        return toDto(board);
     }
 
     /* SNS 게시판 글 수정 */
@@ -98,14 +85,41 @@ public class SNSBoardService {
 
     }
 
+    /* SNS 게시판 페이징 */
+    @Transactional(readOnly = true)
+    public Page<SNSBoardDTO> getBoardsPaged(Pageable pageable) {
+        // category ID 가 4인 엔티티만 페이징 조회
+        Page<Board> boardsPage = snsBoardRepository.findByCategory_CategoryId(SNS_CATEGORY_ID, pageable);
 
-    /* SNS 게시판 카테고리 확인 */
-    private boolean isSNSBoard(Board board) {
-        return board.getCategory() != null && board.getCategory().getCategoryId().equals(4L);
+        List<SNSBoardDTO> dtoList = boardsPage
+                .map(this::toDto)
+                .getContent();
+
+        return new PageImpl<>(dtoList, pageable, boardsPage.getTotalElements());
+    }
+    /* SNS 게시판 검색 페이징
+     * @param keyword 검색 키워드 (제목 또는 내용)
+     * @param pageable 페이징 정보
+     * @return SNSBoardDTO 페이징 결과
+     */
+    @Transactional(readOnly = true)
+    public Page<SNSBoardDTO> searchSNSBoards(String keyword, Pageable pageable) {
+        Page<Board> boardsPage = snsBoardRepository
+                .findByCategory_CategoryIdAndBoardTitleContainingOrCategory_CategoryIdAndBoardContentContaining(
+                        SNS_CATEGORY_ID, keyword,
+                        SNS_CATEGORY_ID, keyword,
+                        pageable
+                );
+
+        List<SNSBoardDTO> dtoList = boardsPage
+                .map(this::toDto)
+                .getContent();
+
+        return new PageImpl<>(dtoList, pageable, boardsPage.getTotalElements());
     }
 
     /* Entity -> DTO 변환 */
-    private SNSBoardDTO entityToDto(Board board) {
+    private SNSBoardDTO toDto(Board board) {
         return SNSBoardDTO.builder()
                 .id(board.getId())
                 .boardTitle(board.getBoardTitle())

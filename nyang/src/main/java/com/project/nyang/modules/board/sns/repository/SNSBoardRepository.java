@@ -14,6 +14,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface SNSBoardRepository extends JpaRepository<Board,Long> {
     Page<Board> findByCategory_CategoryId(Long categoryId, Pageable pageable);
-
+    Page<Board> findByCategory_CategoryIdAndBoardTitleContainingOrCategory_CategoryIdAndBoardContentContaining(
+            Long categoryId1, String titleKeyword, Long categoryId2, String contentKeyword, Pageable pageable
+    );
 
 }
