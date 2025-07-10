@@ -5,6 +5,7 @@ import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.modules.board.Board;
 import com.project.nyang.modules.board.sns.dto.SNSBoardDTO;
 import com.project.nyang.modules.board.sns.repository.SNSBoardRepository;
+import com.project.nyang.modules.board.sns.repository.UserRepository; //개발을 위한 user repository 나중엔 user.UserRepository 로 변경해주세요
 import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.reference.entity.Category;
 import com.project.nyang.reference.repository.CategoryRepository;
@@ -15,9 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.project.nyang.global.exception.ErrorCode.UNAUTHORIZED;
 
 
 /**
@@ -32,6 +33,7 @@ import java.util.List;
 public class SNSBoardService {
     private final SNSBoardRepository snsBoardRepository;
     private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
 
     /* 카테고리 타입: sns게시판
     * 카테고리id 1:동물공고 / 2:입양후기 3:sns홍보 4:실종/목격제보 */
@@ -41,7 +43,7 @@ public class SNSBoardService {
     @Transactional
     public SNSBoardDTO createSNSBoard(SNSBoardDTO boardDTO){
 
-        if(boardDTO.getUser_id() == null){
+        if(boardDTO.getUserId() == null){
             throw new IllegalArgumentException("유저못찾아잉");
         }
         Category category = categoryRepository.findById(SNS_CATEGORY_ID)
@@ -49,8 +51,9 @@ public class SNSBoardService {
 
 
         // User 조회
-       /* User user = userRepository.findById(boardDTO.getUser_id())
-                .orElseThrow(() -> new CustomException(UNAUTHORIZED));*/
+        User user = userRepository.findById(boardDTO.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다. id=" + boardDTO.getUserId()));
+
 
         Board board = Board.builder()
                 .category(category)
@@ -58,7 +61,7 @@ public class SNSBoardService {
                 .boardContent(boardDTO.getBoardContent())
                 .viewCount(0L)
                 .instagramLink(boardDTO.getInstagramLink())
-//                .user(user)
+                .user(user)
                 .build();
         snsBoardRepository.save(board);
         return toDto(board);
@@ -80,28 +83,35 @@ public class SNSBoardService {
 
         return toDto(board);
     }
-
-    /* SNS 게시판 글 수정 */
+    /* SNS 게시글 수정*/
     @Transactional
-    public void updateBoard(SNSBoardDTO dto, Long userId) {
+    public void updateSNSBoard(Long boardId, SNSBoardDTO dto) {
 
-        /* 유저인지 확인하는 코드 추가해야합니다 */
+        // 게시글 작성자가 맞는지
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다. ID: " + dto.getUserId()));
 
-        Board board = snsBoardRepository.findById(dto.getId())
-                .orElseThrow(() -> new IllegalArgumentException("게시글 없음: " + dto.getId()));
+        // 경로 게시글 ID 와 본문 게시글 ID 가 다를때
+        if (dto.getId() != null && !dto.getId().equals(boardId)) {
+            throw new IllegalArgumentException("요청 경로의 게시글 ID와 요청 본문의 게시글 ID가 일치하지 않습니다.");
+        }
+
+
+        Board board = snsBoardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글 없음: " + boardId));
 
         if (board.getCategory() == null ||
-                !board.getCategory().getCategoryId().equals(SNS_CATEGORY_ID) ) {
-            /* custom errorcode 로 써야하는데 에헷 >< 나중에 수정할게요 */
-            throw new IllegalArgumentException("SNS 게시글만 수정 가능합니다. 게시글의 카테고리를 확인해주세요. 호출된 게시글의 ID: " + dto.getId());
-        }else if(board.getDeletedAt() != null){
-            throw new IllegalArgumentException("해당 글은 삭제되었습니다. ID : " + dto.getId());
+                !board.getCategory().getCategoryId().equals(SNS_CATEGORY_ID)) {
+            throw new IllegalArgumentException("SNS 게시글만 수정 가능합니다. 호출된 게시글 ID: " + boardId);
+        } else if (board.getDeletedAt() != null) {
+            throw new IllegalArgumentException("해당 글은 삭제되었습니다. ID: " + boardId);
         }
 
-        if (!board.getUser().getId().equals(userId)) {
+        if (!board.getUser().getId().equals(dto.getUserId())) {
             throw new IllegalArgumentException("수정 권한이 없습니다.");
         }
-        if(board.getInstagramLink() == null){
+
+        if (board.getInstagramLink() == null) {
             throw new IllegalArgumentException("SNS 게시글 링크가 사라졌습니다.");
         }
 
@@ -110,17 +120,20 @@ public class SNSBoardService {
                 .boardContent(dto.getBoardContent() != null ? dto.getBoardContent() : board.getBoardContent())
                 .instagramLink(dto.getInstagramLink() != null ? dto.getInstagramLink() : board.getInstagramLink())
                 .user(board.getUser())
-                .viewCount(dto.getViewCount())
+                .viewCount(dto.getViewCount() != null ? dto.getViewCount() : board.getViewCount())
                 .build();
 
-        snsBoardRepository.save(updatedBoard); // save로 반영
+        snsBoardRepository.save(updatedBoard);
     }
 
-    /* SNS 게시판 글 삭제 */
+
+    /* SNS 게시판 글 삭제
+    * 삭제는 나중에 user 를 Request Param 으로 넣지말고
+    * JwtToken 으로 Invalid User 인지 확인하는 과정을 넣읍시다.*/
     @Transactional
-    public void deleteBoard(SNSBoardDTO dto, Long userId) {
-        Board board = snsBoardRepository.findById(dto.getId())
-                .orElseThrow(() -> new IllegalArgumentException("게시글 없음: " + dto.getId()));
+    public void deleteSNSBoard(Long boardId,Long userId) {
+        Board board = snsBoardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글 없음: " + boardId));
 
         if (board.getCategory() == null ||
                 !board.getCategory().getCategoryId().equals(SNS_CATEGORY_ID)) {
@@ -128,7 +141,7 @@ public class SNSBoardService {
         }
 
         if (board.getDeletedAt() != null) {
-            throw new IllegalArgumentException("이미 삭제된 게시글입니다. ID: " + dto.getId());
+            throw new IllegalArgumentException("이미 삭제된 게시글입니다. ID: " + boardId);
         }
 
         if (!board.getUser().getId().equals(userId)) {

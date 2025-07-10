@@ -32,7 +32,7 @@ public class SNSBoardDTO {
     private LocalDateTime modifiedAt;
     private LocalDateTime deletedAt;
 
-    private Long user_id;
+    private Long userId;
 
     public SNSBoardDTO(Board entity) {
         this.id = entity.getId();
