@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @Entity
-public class Animal {
+public class Animal{
     //유기 동물 번호
     @Id
     @Column(name = "desertion_no", length = 15)
