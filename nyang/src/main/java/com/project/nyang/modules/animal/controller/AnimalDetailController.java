@@ -22,7 +22,7 @@ public class AnimalDetailController {
 
     private final AnimalDetailService animalDetailService;
 
-    @GetMapping("/detail/${id}")
+    @GetMapping("/detail/{desertionNo}")
     public ResponseEntity<AnimalDTO> getAnimalDetail(@PathVariable String desertionNo){
     return ResponseEntity.ok(animalDetailService.getAnimalDetail(desertionNo));
     }
