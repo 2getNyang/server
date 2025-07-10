@@ -2,6 +2,7 @@ package com.project.nyang.modules.board.reveiw.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
  * @fileName : ReveiwBoardListDTO
  * @since : 2025-07-09
  */
+@Getter
 public class ReveiwBoardListDTO {
     @Schema(description = "사용자 닉네임")
     private String nickname;
