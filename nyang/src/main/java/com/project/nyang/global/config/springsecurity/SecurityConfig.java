@@ -1,21 +1,15 @@
-package com.project.nyang.global.security.config;
+package com.project.nyang.global.config.springsecurity;
 
 import com.project.nyang.global.security.jwt.JwtTokenFilter;
 import com.project.nyang.global.security.oauth2.OAuth2LoginSuccessHandler;
 import com.project.nyang.global.security.oauth2.OAuth2UserService;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -56,7 +50,8 @@ public class SecurityConfig {
                                 .requestMatchers(
                                         "/api/auth/**",       // 로그인/리프레시/로그아웃 등 인증 없이 사용
                                         "/oauth2/**",         // OAuth2 리디렉션
-                                        "/login/**"          // 스프링 시큐리티 내부 로그인 관련 엔드포인트
+                                        "/login/**",          // 스프링 시큐리티 내부 로그인 관련
+                                        "/api/test/**" // ✅ 이 줄 추가: 공통 응답 테스트 컨트롤러 허용
                                 ).permitAll()
 
                                 .requestMatchers(
@@ -79,7 +74,7 @@ public class SecurityConfig {
 
 
                 .oauth2Login(oauth2->oauth2
-                        .loginPage("/index.html")
+//                        .loginPage("/index.html")
                         .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
                         .successHandler(oAuth2LoginSuccessHandler)
                 )

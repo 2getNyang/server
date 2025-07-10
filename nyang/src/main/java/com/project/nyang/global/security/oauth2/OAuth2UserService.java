@@ -24,6 +24,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+//카카오 로그인창 이동 경로
+//localhost:8080/oauth2/authorization/kakao
+
 @Service
 @RequiredArgsConstructor
 public class OAuth2UserService extends DefaultOAuth2UserService {
@@ -53,7 +56,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
         // 소셜 사용자 정보 추출
         Map<String, Object> attributes = oAuth2User.getAttributes();
-        String loginId, nickname, email;
+        String loginId, name, email;
 
 
         // provider 별로 파싱 방식이 다름
@@ -63,19 +66,19 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
             Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
             email = (String) kakaoAccount.get("email");
             Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
-            nickname = (String) profile.get("nickname");
+            name = (String) profile.get("nickname");
 
         } else {
             // 기타 provider 처리 안함
             email = null;
-            nickname = null;
+            name = null;
             loginId = null;
 
         }
 
         System.out.println(provider+" 로그인 확인 loginId = "+loginId);
         System.out.println(provider+" 로그인 확인 email = "+email);
-        System.out.println(provider+" 로그인 확인 nickname = "+nickname);
+        System.out.println(provider+" 로그인 확인 name = "+ name);
 
         // 회원 정보가 DB에 존재하는지 확인
         User user = userRepository.findByLoginId(loginId)
@@ -84,7 +87,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
                     User newUser = User.builder()
                             .loginId(loginId)
                             .loginType("kakao")  // 필요시 구분용
-                            .nickname(nickname != null ? nickname : "소셜유저")
+                            .nickname(name != null ? name : "소셜유저")
                             .email(email != null ? email : "")
                             .build();
 
@@ -111,6 +114,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         Map<String, Object> customAttributes = new HashMap<>(attributes);
         customAttributes.put("accessToken", accessToken);
         customAttributes.put("refreshToken", refreshToken);
+        customAttributes.put("name", name);
         customAttributes.put("id", user.getId()); // ← PK(id) 추가
 
         // Auth 엔티티에 토큰 저장 (User와 1:1 매핑)
