@@ -6,10 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  *
@@ -23,9 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/boards/sns")
 public class SNSBoardController {
+
     private final SNSBoardService snsBoardService;
 
-    /* sns 게시판 검색 */
+    /* SNS 게시판 검색 */
     @GetMapping("/search")
     public ResponseEntity<Page<SNSBoardDTO>> searchSNSBoards(
             @RequestParam String keyword,
@@ -33,5 +31,15 @@ public class SNSBoardController {
     ) {
         Page<SNSBoardDTO> results = snsBoardService.searchSNSBoards(keyword, pageable);
         return ResponseEntity.ok(results);
+    }
+
+    /* SNS 게시판 글 등록 */
+    @PostMapping
+    public ResponseEntity<SNSBoardDTO> createBoard(
+            @PathVariable String slug,
+            @RequestBody SNSBoardDTO boardDTO
+    ) {
+        SNSBoardDTO createdBoard = snsBoardService.createSNSBoard(boardDTO);
+        return ResponseEntity.ok(createdBoard);
     }
 }

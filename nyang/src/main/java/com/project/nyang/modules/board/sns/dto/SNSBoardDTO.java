@@ -32,6 +32,8 @@ public class SNSBoardDTO {
     private LocalDateTime modifiedAt;
     private LocalDateTime deletedAt;
 
+    private Long user_id;
+
     public SNSBoardDTO(Board entity) {
         this.id = entity.getId();
         this.category = entity.getCategory();
