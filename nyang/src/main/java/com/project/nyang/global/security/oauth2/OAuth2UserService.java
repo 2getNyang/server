@@ -70,7 +70,14 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
             Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
             name = (String) profile.get("nickname");
 
-        } else {
+        }else if("naver".equals(provider)){
+            Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+            loginId = response.get("id").toString() + "@naver"; // 고유 id + 구분자
+            email = (String) response.get("email");
+            //여기서 나타내는 name 이 닉네임 맞겠죠?
+            name = (String) response.get("nickname");
+        }
+        else {
             // 기타 provider 처리 안함
             email = null;
             name = null;
@@ -88,7 +95,8 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
                     //회원이 없다면 자동 회원가입 처리
                     User newUser = User.builder()
                             .loginId(loginId)
-                            .loginType("kakao")  // 필요시 구분용
+//                            .loginType("kakao")  // 필요시 구분용
+                            .loginType(provider) // kakao/naver/google 구분용. 주석해제시 다른소셜로그인도 kakao로 들어갈수있음.
                             .nickname(name != null ? name : "소셜유저")
                             .email(email != null ? email : "")
                             .build();

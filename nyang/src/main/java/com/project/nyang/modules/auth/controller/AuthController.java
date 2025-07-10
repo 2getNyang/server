@@ -83,30 +83,30 @@ public class AuthController {
     }
 
 
+    @Operation(summary = "로그아웃", description = "JWT(accessToken) 쿠키를 삭제해 로그아웃합니다")
+    //소셜로그인은 브라우저에 쿠키가 저장되는데 그걸 삭제 하면 로그아웃처리
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
 
-//    //소셜로그인은 브라우저에 쿠키가 저장되는데 그걸 삭제 해야함
-//    @PostMapping("/logout")
-//    public ResponseEntity<?> logout(HttpServletResponse response) {
-//
-//        // accessToken 쿠키 삭제
-//        Cookie accessTokenCookie = new Cookie("accessToken", null);
-//        accessTokenCookie.setHttpOnly(true);
-//        accessTokenCookie.setPath("/");
-//        accessTokenCookie.setMaxAge(0); // 즉시 만료!
-//
-//        // refreshToken 쿠키 삭제
-//        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
-//        refreshTokenCookie.setHttpOnly(true);
-//        refreshTokenCookie.setPath("/");
-//        refreshTokenCookie.setMaxAge(0);
-//
-//        // 응답에 쿠키 삭제 포함
-//        response.addCookie(accessTokenCookie);
-//        response.addCookie(refreshTokenCookie);
-//
-//        // (추가) 서버 세션도 있다면 만료
-//        // request.getSession().invalidate();
-//
-//        return ResponseEntity.ok().body("로그아웃 완료 (쿠키 삭제됨)");
-//    }
+        // accessToken 쿠키 삭제
+        Cookie accessTokenCookie = new Cookie("accessToken", null);
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(0); // 즉시 만료!
+
+        // refreshToken 쿠키 삭제
+        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(0);
+
+        // 응답에 쿠키 삭제 포함
+        response.addCookie(accessTokenCookie);
+        response.addCookie(refreshTokenCookie);
+
+        // (추가) 서버 세션도 있다면 만료
+        // request.getSession().invalidate();
+
+        return ResponseEntity.ok().body("로그아웃 완료 (쿠키 삭제됨)");
+    }
 }
