@@ -1,5 +1,7 @@
 package com.project.nyang.modules.auth.service;
 
+import com.project.nyang.global.exception.CustomException;
+import com.project.nyang.global.exception.ErrorCode;
 import com.project.nyang.global.security.core.CustomUserDetails;
 import com.project.nyang.global.security.jwt.JwtTokenProvider;
 import com.project.nyang.modules.auth.entity.Auth;
@@ -11,7 +13,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-//여기 빌더 패턴으로 바꿔야할거 같음
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -33,7 +34,7 @@ public class AuthService {
         //리프레시 토큰 유효성 검사
         if(jwtTokenProvider.validateToken(refreshtoken)) {
             Auth auth = authRepository.findByRefreshToken(refreshtoken).orElseThrow(
-                    () -> new IllegalArgumentException("해당 REFRESH_TOKEN 을 찾을 수 없습니다. \nREFRESH_TOKEN = " + refreshtoken));
+                    () -> new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
 
             //있으면 인증객체를 만들어서 새로운 토큰 발급
             String newAccessToken = jwtTokenProvider.generateToken(
@@ -47,7 +48,7 @@ public class AuthService {
             return newAccessToken;
         }
         else{
-            throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
+            throw new CustomException(ErrorCode.REFRESH_TOKEN_INVALID);
         }
     }
 
