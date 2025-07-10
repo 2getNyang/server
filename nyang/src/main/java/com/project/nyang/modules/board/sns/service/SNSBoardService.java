@@ -5,8 +5,9 @@ import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.modules.board.Board;
 import com.project.nyang.modules.board.sns.dto.SNSBoardDTO;
 import com.project.nyang.modules.board.sns.repository.SNSBoardRepository;
-import com.project.nyang.modules.board.sns.repository.UserRepository; //개발을 위한 user repository 나중엔 user.UserRepository 로 변경해주세요
+ //개발을 위한 user repository 나중엔 user.UserRepository 로 변경해주세요
 import com.project.nyang.modules.user.entity.User;
+import com.project.nyang.modules.user.repository.UserRepository;
 import com.project.nyang.reference.entity.Category;
 import com.project.nyang.reference.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
