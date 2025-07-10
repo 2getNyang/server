@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * @author : 이지은
@@ -22,7 +23,7 @@ public class AnimalDTO {
     private String desertionNo;//동물번호
     private LocalDate happenDt; //발견일자
     private String happenPlace; //발견장소
-    private String kindFullNm; //동물 종류 전체 이름 ex.[개] 시바
+
     private String colorCd;
     private String age;
     private String weight;
@@ -34,9 +35,30 @@ public class AnimalDTO {
     private String popfile1;
     private String popfile2;
     private String popfile3;
+    //보호상태 (NOTICE / PROTECT / FINISH)
+    private String processState;
+    // 성별 (M / F / Q)
+    private String sexCd;
+    //중성화 여부 (Y / N / U)
+    private String neuterYn;
+    //특이 사항
+    private String specialMark;
+    //API 수정 시각
+    private LocalDateTime updTm;
 
-    private String processState;// 보호상태(NOTICE / PROTECT / FINISH)
-    private String sexCd;//성별
-    private String neuterYn; //중성화 여부
-    private String specialMark; //특이사항
+    //Shelter Entity
+    //보호소 번호
+    private String careRegNumber;
+
+    //UpKind, Kind Entity
+    //동물 종류 전체 이름 ex.[개] 시바
+    private String kindFullNm;
+    //축종코드
+    private String upKindCd;
+    //축종 이름 ex.개
+    private String upKindNm;
+    //품종 코드
+    private String kindCd;
+    //품종명 ex.시바
+    private String kindNm;
 }
