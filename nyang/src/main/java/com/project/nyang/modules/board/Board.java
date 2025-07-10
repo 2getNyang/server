@@ -44,11 +44,11 @@ public class Board extends BaseTime {
     private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "region_code", nullable = false)
+    @JoinColumn(name = "region_code")
     private Region region;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sub_region_code", nullable = false)
+    @JoinColumn(name = "sub_region_code")
     private SubRegion subRegion;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -56,11 +56,11 @@ public class Board extends BaseTime {
     private PetApplicationForm petApplicationForm;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "kind_cd", nullable = false)
+    @JoinColumn(name = "kind_cd")
     private Kind kind;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "up_kind_cd", nullable = false)
+    @JoinColumn(name = "up_kind_cd")
     private UpKind upKind;
 
     @Column(name = "board_title", nullable = false)
@@ -135,7 +135,7 @@ public class Board extends BaseTime {
 
     @Builder(toBuilder = true)
     public Board(Long id, User user, Category category, Region region, SubRegion subRegion,
-                 PetApplicationForm petApplicationForm,
+                 PetApplicationForm petApplicationForm, String lostType,
                  String boardTitle, String boardContent, Long viewCount, String instagramLink,
                  String gender, Integer age, String furColor, String distinctFeatures,
                  LocalDate missingDate, String missingLocation, String phone,
@@ -145,6 +145,7 @@ public class Board extends BaseTime {
         this.id = id;
         this.user = user;
         this.category = category;
+        this.lostType = lostType;
         this.region = region;
         this.subRegion = subRegion;
         this.petApplicationForm = petApplicationForm;
