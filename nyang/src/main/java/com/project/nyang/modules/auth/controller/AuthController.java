@@ -3,6 +3,7 @@ package com.project.nyang.modules.auth.controller;
 import com.project.nyang.global.common.api.ApiSuccessResponse;
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
+import com.project.nyang.global.security.oauth2.OAuth2UnlinkService;
 import com.project.nyang.modules.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -41,8 +42,7 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthService authService;
-
-
+    private final OAuth2UnlinkService oAuth2UnlinkService;
     /**
      * 토큰갱신 API
      **/
@@ -86,7 +86,25 @@ public class AuthController {
 
         return ResponseEntity.ok(ApiSuccessResponse.success(res, "토큰이 성공적으로 갱신되었습니다."));
     }
-
+    @Operation(
+            summary = "네이버 연동 해제 (토큰 폐기)",
+            description = """
+                    네이버 소셜 로그인 연동 해제(토큰 폐기)를 수행합니다.  
+                    연동 해제 후 사용자는 동일 네이버 계정으로 재로그인 시 신규 회원으로 가입 처리됩니다.
+                    """,
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "연동 해제(토큰 폐기) 성공"),
+                    @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+                    @ApiResponse(responseCode = "500", description = "서버 오류")
+            }
+    )
+    @PostMapping("/unlink")
+    public ResponseEntity<?> unlinkNaver(
+            @RequestParam String accessToken
+    ){
+        oAuth2UnlinkService.unlinkNaver(accessToken);
+        return ResponseEntity.ok().build();
+    }
 
     //    //소셜로그인은 브라우저에 쿠키가 저장되는데 그걸 삭제 해야함
 //    @PostMapping("/logout")
@@ -113,31 +131,7 @@ public class AuthController {
 //
 //        return ResponseEntity.ok().body("로그아웃 완료 (쿠키 삭제됨)");
 //    }
-//    @GetMapping("/logout")
-//    public ResponseEntity<?> logout(@AuthenticationPrincipal OAuth2User oAuth2User, HttpServletResponse response) {
-//
-//        String name = (String) oAuth2User.getAttributes().get("name");
-//        String email = (String) oAuth2User.getAttributes().get("email");
-//
-//        System.out.println("[OAuth2_LOG] 로그아웃 시도한 이름 = " + name);
-//        System.out.println("[OAuth2_LOG] 로그아웃 시도한 이메일 = " + email);
-//
-//        // accessToken 쿠키 삭제
-//        Cookie accessTokenCookie = new Cookie("accessToken", null);
-//        accessTokenCookie.setHttpOnly(true);
-//        accessTokenCookie.setPath("/");
-//        accessTokenCookie.setMaxAge(0);
-//
-//        // refreshToken 쿠키 삭제
-//        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
-//        refreshTokenCookie.setHttpOnly(true);
-//        refreshTokenCookie.setPath("/");
-//        refreshTokenCookie.setMaxAge(0);
-//
-//        response.addCookie(accessTokenCookie);
-//        response.addCookie(refreshTokenCookie);
-//
-//        return ResponseEntity.ok().body("로그아웃 완료 (쿠키 삭제됨)");
-//    }
+
+
 
 }

@@ -67,6 +67,8 @@ public class SecurityConfig {
                 //기본적으로 스프링시큐리티는 세션을 생성함
                 //하지만 JWT 기반 인증은 세션상태를 저장하지 않는 무상태방식
                 //인증 정보를 세션에 저장하지 않고, 매 요청마다 토큰으로 인증
+
+                /* 여기서 세션 저장안하기 때문에 logoutSuccessHandler 에 authentication 이 null 로 들어옵니다. */
                 .sessionManagement(session ->session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 

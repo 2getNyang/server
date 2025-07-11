@@ -39,7 +39,7 @@ public class OAuth2LogoutSuccessHandler implements LogoutSuccessHandler {
         if (authentication!=null && authentication.getPrincipal() instanceof DefaultOAuth2User auth2User){
 
             Map<String,Object> attributes = auth2User.getAttributes();
-
+            System.out.println("attributes: "+attributes);
 
             Object email = attributes.get("email");
             // 네이버 로그아웃
@@ -51,15 +51,16 @@ public class OAuth2LogoutSuccessHandler implements LogoutSuccessHandler {
             }
 
             // 카카오 로그인 사용자인 경우 (attributes에 'id' 키가 있음)
-            else if (attributes.containsKey("id")){
-
+            else if (attributes.containsKey("id")) {
                 System.out.println("카카오 로그아웃입니다.");
 
                 redirectUrl = "https://kauth.kakao.com/oauth/logout?client_id=" + kakaoClientId
                         + "&logout_redirect_uri=" + kakaoLogoutRedirectUri;
             }
+
         }
         /* 냅다 쿠키삭제  = 소셜로그인은 쿠키삭제래요 */
+
         deleteCookie(response, "accessToken");
         deleteCookie(response, "refreshToken");
 

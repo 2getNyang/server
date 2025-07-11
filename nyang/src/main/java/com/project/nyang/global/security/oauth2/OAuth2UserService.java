@@ -87,20 +87,36 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         System.out.println(provider+" 로그인 확인 email = "+email);
         System.out.println(provider+" 로그인 확인 name = "+ name);
 
-        // 회원 정보가 DB에 존재하는지 확인
-        User user = userRepository.findByLoginId(loginId)
-                .orElseGet(() -> {
-                    //회원이 없다면 자동 회원가입 처리
-                    User newUser = User.builder()
-                            .loginId(loginId)
-                            .loginType(provider)  // 필요시 구분용
-                            .nickname(name != null ? name : "소셜유저")
-                            .email(email != null ? email : "")
-                            .build();
+        // db 에 유저 있는지 확인
+        Optional<User> optionalUser = userRepository.findByLoginId(loginId);
+        User user;
 
+        if (optionalUser.isPresent()) {
+            User existingUser = optionalUser.get();
+            //deleted at 에 timestamp 가 없으면 기존회원 로그인
+            if (existingUser.getDeletedAt() == null) {
+                user = existingUser;
+            } else {
+                // 기존회원에 deletedAt 에 timestamp 있는경우 => 신규가입
+                User newUser = User.builder()
+                        .loginId(loginId)
+                        .loginType(provider)
+                        .nickname(name != null ? name : "소셜유저")
+                        .email(email != null ? email : "")
+                        .build();
+                user = userRepository.save(newUser);
+            }
+        } else {
+            // 회원이 없다면 신규 가입
+            User newUser = User.builder()
+                    .loginId(loginId)
+                    .loginType(provider)
+                    .nickname(name != null ? name : "소셜유저")
+                    .email(email != null ? email : "")
+                    .build();
+            user = userRepository.save(newUser);
+        }
 
-                    return userRepository.save(newUser);   // 회원가입 저장
-                });
 
         // 시큐리티에서 사용할 인증 객체 생성
         CustomUserDetails customUserDetails = new CustomUserDetails(user);
