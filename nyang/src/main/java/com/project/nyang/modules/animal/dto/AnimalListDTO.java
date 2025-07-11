@@ -45,9 +45,6 @@ public class AnimalListDTO{
     @Schema(description = "이미지1", example = "http://example.com/311303202500535.jpg")
     private String popfile1;
 
-    @Schema(description = "공고 시작일", example = "2025-07-18")
-    private LocalDate noticeSdt;
-
     @Schema(description = "축종 코드", example = "417000")
     private String upKindCd;
 
