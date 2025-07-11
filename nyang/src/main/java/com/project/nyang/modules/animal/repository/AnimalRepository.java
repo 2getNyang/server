@@ -8,6 +8,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.time.LocalDate;
 
 /**
  * AnimalRepository입니다
@@ -31,11 +34,26 @@ public interface AnimalRepository extends JpaRepository<Animal, String> {
             a.noticeNo,
             a.happenDt,
             a.happenPlace,
-            a.popfile1
+            a.popfile1,
+            a.noticeSdt,
+            up.upKindCd,
+            up.upKindNm,
+            k.kindCd,
+            k.kindNm,
+            r.regionCode,
+            r.regionName,
+            sr.subRegionCode,
+            sr.subRegionName
         )
         FROM Animal a
+        JOIN a.upKind up
+        JOIN a.kind k
+        JOIN a.shelter s
+        JOIN s.subRegion sr
+        JOIN sr.region r
         ORDER BY a.happenDt DESC
     """)
-    Page<AnimalListDTO> findAllAnimals(Pageable pageable);
     //페이징 처리 결과를 담는 페이징 객체입니다.
+    Page<AnimalListDTO> findAllAnimals(Pageable pageable);
+
 }
