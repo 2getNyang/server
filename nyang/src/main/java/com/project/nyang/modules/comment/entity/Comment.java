@@ -33,10 +33,6 @@ public class Comment extends BaseTime {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
 
@@ -55,9 +51,8 @@ public class Comment extends BaseTime {
     // created_at, modified_at, deleted_at 생략
 
    @Builder
-   public Comment(User user, Category category, Board board, Animal animal, Comment parent, String commentContent) {
+   public Comment(User user, Board board, Animal animal, Comment parent, String commentContent) {
        this.user = user;
-       this.category = category;
        this.board = board;
        this.animal = animal;
        this.parent = parent;
