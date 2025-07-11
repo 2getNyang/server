@@ -2,6 +2,7 @@ package com.project.nyang.global.config.springsecurity;
 
 import com.project.nyang.global.security.jwt.JwtTokenFilter;
 import com.project.nyang.global.security.oauth2.OAuth2LoginSuccessHandler;
+import com.project.nyang.global.security.oauth2.OAuth2LogoutSuccessHandler;
 import com.project.nyang.global.security.oauth2.OAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +21,7 @@ public class SecurityConfig {
 
     private final JwtTokenFilter jwtTokenFilter;
 
-//    private final OAuth2LogoutSuccessHandler oAuth2LogoutSuccessHandler;
+    private final OAuth2LogoutSuccessHandler oAuth2LogoutSuccessHandler;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2UserService oAuth2UserService;
 
@@ -52,7 +53,7 @@ public class SecurityConfig {
                                         "/oauth2/**",         // OAuth2 리디렉션
                                         "/login/**",          // 스프링 시큐리티 내부 로그인 관련
                                         "/api/test/**", // ✅ 이 줄 추가: 공통 응답 테스트 컨트롤러 허용
-                                        "*"
+                                        "/*"
                                 ).permitAll()
 
                                 .requestMatchers(
@@ -80,11 +81,11 @@ public class SecurityConfig {
                         .successHandler(oAuth2LoginSuccessHandler)
                 )
 
-//                .logout(logout -> logout
-//                        .logoutUrl("/logout")
-//                        .logoutSuccessHandler(oAuth2LogoutSuccessHandler)
-//                        .permitAll()
-//                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout") /* 저희 로그아웃 이쪽경로로 날려주세요*/
+                        .logoutSuccessHandler(oAuth2LogoutSuccessHandler)
+                        .permitAll()
+                )
 
 
                 .build(); //위 명시한 설정들을 적용

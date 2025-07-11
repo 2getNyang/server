@@ -17,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -40,7 +43,9 @@ public class AuthController {
     private final AuthService authService;
 
 
-    /** 토큰갱신 API **/
+    /**
+     * 토큰갱신 API
+     **/
     //refresh HTTP 요청 헤더에서 토큰을 추출하고 그 토큰으로 리프레시 토큰을 발급
     @Operation(
             summary = "🔁 토큰 재발급",
@@ -58,19 +63,19 @@ public class AuthController {
             HttpServletRequest request) {
         String refreshToken = null;
         //1. 쿠키에서 찾기
-        if(request.getCookies() != null) {
-            for(Cookie cookie : request.getCookies()) {
-                if("refreshToken".equals(cookie.getName())) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("refreshToken".equals(cookie.getName())) {
                     refreshToken = cookie.getValue();
                 }
             }
         }
 
         //2. Authorization 헤더 찾기
-        if(refreshToken == null&& authorizationHeader != null&& authorizationHeader.startsWith("Bearer ")) {
+        if (refreshToken == null && authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             refreshToken = authorizationHeader.replace("Bearer ", "").trim();
         }
-        if(refreshToken != null&&refreshToken.isEmpty()) {
+        if (refreshToken != null && refreshToken.isEmpty()) {
             throw new CustomException(ErrorCode.REFRESH_TOKEN_MISSING);
         }
         String newAccessToken = authService.refreshToken(refreshToken);
@@ -83,16 +88,15 @@ public class AuthController {
     }
 
 
-
-//    //소셜로그인은 브라우저에 쿠키가 저장되는데 그걸 삭제 해야함
+    //    //소셜로그인은 브라우저에 쿠키가 저장되는데 그걸 삭제 해야함
 //    @PostMapping("/logout")
 //    public ResponseEntity<?> logout(HttpServletResponse response) {
-//
 //        // accessToken 쿠키 삭제
 //        Cookie accessTokenCookie = new Cookie("accessToken", null);
 //        accessTokenCookie.setHttpOnly(true);
 //        accessTokenCookie.setPath("/");
 //        accessTokenCookie.setMaxAge(0); // 즉시 만료!
+//        System.out.println("accessTokenCookie: " + accessTokenCookie);
 //
 //        // refreshToken 쿠키 삭제
 //        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
@@ -109,4 +113,31 @@ public class AuthController {
 //
 //        return ResponseEntity.ok().body("로그아웃 완료 (쿠키 삭제됨)");
 //    }
+//    @GetMapping("/logout")
+//    public ResponseEntity<?> logout(@AuthenticationPrincipal OAuth2User oAuth2User, HttpServletResponse response) {
+//
+//        String name = (String) oAuth2User.getAttributes().get("name");
+//        String email = (String) oAuth2User.getAttributes().get("email");
+//
+//        System.out.println("[OAuth2_LOG] 로그아웃 시도한 이름 = " + name);
+//        System.out.println("[OAuth2_LOG] 로그아웃 시도한 이메일 = " + email);
+//
+//        // accessToken 쿠키 삭제
+//        Cookie accessTokenCookie = new Cookie("accessToken", null);
+//        accessTokenCookie.setHttpOnly(true);
+//        accessTokenCookie.setPath("/");
+//        accessTokenCookie.setMaxAge(0);
+//
+//        // refreshToken 쿠키 삭제
+//        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
+//        refreshTokenCookie.setHttpOnly(true);
+//        refreshTokenCookie.setPath("/");
+//        refreshTokenCookie.setMaxAge(0);
+//
+//        response.addCookie(accessTokenCookie);
+//        response.addCookie(refreshTokenCookie);
+//
+//        return ResponseEntity.ok().body("로그아웃 완료 (쿠키 삭제됨)");
+//    }
+
 }
