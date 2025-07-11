@@ -36,4 +36,27 @@ public class OAuth2DocController {
     public ResponseEntity<Void> kakaoLoginDoc() {
         return ResponseEntity.ok().build(); // 설명용 Swagger용 API — 실제로 사용되지 않음
     }
+
+    @Operation(summary = "네이버 로그인", description = "네이버 로그인또한 " +
+            "`http://localhost:8080/oauth2/authorization/naver`" +
+            "로 이동하면 로그인-회원가입 처리가 됩니다.")
+    @GetMapping("/authorization/naver")
+    public ResponseEntity<Void> naverLoginDoc() {
+        return ResponseEntity.ok().build();
+    }
+    @Operation(summary = "소셜 로그아웃", description = """
+            소셜 로그아웃은 아래 URL로 [GET] 요청하여 브라우저의 accessToken, refreshToken 쿠키를 삭제합니다.
+            OAuth2 로그아웃 SuccessHandler가 동작하여 쿠키 삭제 후 리다이렉트됩니다.
+            
+            🔗 요청 URL:
+            - GET `{호스트주소}/logout`
+            - 예시: `http://localhost:8080/logout`
+
+            ✅ 참고 사항:
+            - 로그아웃 시 자동으로 쿠키가 삭제됩니다.
+            """)
+    @GetMapping("/logout")
+    public ResponseEntity<Void> logoutDoc() {
+        return ResponseEntity.ok().build(); // Swagger 설명용 API
+    }
 }
