@@ -2,6 +2,7 @@ package com.project.nyang.modules.user.repository;
 
 import com.project.nyang.modules.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 

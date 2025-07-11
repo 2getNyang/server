@@ -50,9 +50,10 @@ public class SecurityConfig {
                                 .requestMatchers(
                                         "/api/auth/**",       // 로그인/리프레시/로그아웃 등 인증 없이 사용
                                         "/oauth2/**",         // OAuth2 리디렉션
-                                        "/login/**",          // 스프링 시큐리티 내부 로그인 관련
-                                        "/api/test/**", // ✅ 이 줄 추가: 공통 응답 테스트 컨트롤러 허용
-                                        "*"
+                                        "/login/**",// 스프링 시큐리티 내부 로그인 관련
+                                        "/api/test/**",// ✅ 이 줄 추가: 공통 응답 테스트 컨트롤러 허용
+                                        "/api/v1/boards/**",
+                                        "/*"
                                 ).permitAll()
 
                                 .requestMatchers(
