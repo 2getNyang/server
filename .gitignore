@@ -40,6 +40,3 @@ out/
 .env
 .env.*
 **/volumes/**/
-
-### application.yaml ###
-application*.yaml
