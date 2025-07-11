@@ -2,6 +2,7 @@ package com.project.nyang.modules.board.reveiw.controller;
 
 import com.project.nyang.global.common.api.ApiResponse;
 import com.project.nyang.global.common.api.ApiSuccessResponse;
+import com.project.nyang.global.security.core.CustomUserDetails;
 import com.project.nyang.modules.board.reveiw.dto.ReveiwBoardDetailDTO;
 import com.project.nyang.modules.board.reveiw.dto.ReveiwBoardListDTO;
 import com.project.nyang.modules.board.reveiw.dto.ReviewBoardCreateDTO;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -23,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Tag(name = "Review Board API", description = "입양 후기 게시판 관련 기능")
 @RestController
-@RequestMapping("api/v1/boards/2")
+@RequestMapping("/api/v1/boards/review")
 @RequiredArgsConstructor
 public class ReveiwBoardController {
 
@@ -36,9 +38,8 @@ public class ReveiwBoardController {
      */
     @Operation(summary = "입양 후기 게시글 등록")
     @PostMapping
-    public ResponseEntity<ApiResponse<Object>> createReviewBoard(@RequestBody ReviewBoardCreateDTO boardDTO) {
-        // TODO. userId 더미 데이터 입력 -> 추후 userId 받아오는 로직 추가 필요
-        Long userId = 1L;
+    public ResponseEntity<ApiResponse<Object>> createReviewBoard(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody ReviewBoardCreateDTO boardDTO) {
+        Long userId = userDetails.getId();
         reveiwBoardService.createReviewBoard(boardDTO, userId);
         return ResponseEntity.ok(ApiSuccessResponse.success(null, "입양 후기 게시물 등록 완료"));
     }
@@ -57,18 +58,16 @@ public class ReveiwBoardController {
 
     @Operation(summary = "입양 후기 게시글 삭제")
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Long>> deleteReviewBoard(@Parameter(description = "게시물 ID", example = "1") @PathVariable Long id) {
-        // TODO. userId 더미 데이터 입력 -> 추후 userId 받아오는 로직 추가 필요
-        Long userId = 1L;
+    public ResponseEntity<ApiResponse<Long>> deleteReviewBoard(@AuthenticationPrincipal CustomUserDetails userDetails, @Parameter(description = "게시물 ID", example = "1") @PathVariable Long id) {
+        Long userId = userDetails.getId();
         reveiwBoardService.deleteReviewBoard(id, userId);
         return ResponseEntity.ok(ApiSuccessResponse.success(id, "입양 후기 게시물 삭제 완료"));
     }
 
     @Operation(summary = "입양 후기 게시글 수정")
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Object>> updateReviewBoard(@Parameter(description = "게시물 ID", example = "1") @PathVariable Long id, @RequestBody ReviewBoardCreateDTO boardDTO) {
-        // TODO. userId 더미 데이터 입력 -> 추후 userId 받아오는 로직 추가 필요
-        Long userId = 1L;
+    public ResponseEntity<ApiResponse<Object>> updateReviewBoard(@AuthenticationPrincipal CustomUserDetails userDetails, @Parameter(description = "게시물 ID", example = "1") @PathVariable Long id, @RequestBody ReviewBoardCreateDTO boardDTO) {
+        Long userId = userDetails.getId();
         reveiwBoardService.updateReviewBoard(id, userId, boardDTO);
         return ResponseEntity.ok(ApiSuccessResponse.success(null, "입양 후기 게시물 수정 완료"));
     }

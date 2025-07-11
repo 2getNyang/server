@@ -8,7 +8,7 @@ import com.project.nyang.modules.board.reveiw.dto.ReveiwBoardListDTO;
 import com.project.nyang.modules.board.reveiw.dto.ReviewBoardCreateDTO;
 import com.project.nyang.modules.board.reveiw.repository.ReviewBoardRepository;
 import com.project.nyang.modules.user.entity.User;
-import com.project.nyang.modules.board.reveiw.repository.UserRepository;
+import com.project.nyang.modules.user.repository.UserRepository;
 import com.project.nyang.reference.entity.Category;
 import com.project.nyang.reference.repository.CategoryRepository;
 import jakarta.transaction.Transactional;
