@@ -36,6 +36,7 @@ public class OAuth2LogoutSuccessHandler implements LogoutSuccessHandler {
         // 기본 리디렉션 URL → 일반 로그아웃 시 index.html로 이동
         String redirectUrl = "/";
 
+        /* 현재 security config 에서 세션저장을 안하기때문에 이부분은 전부 null로 반환 */
         if (authentication!=null && authentication.getPrincipal() instanceof DefaultOAuth2User auth2User){
 
             Map<String,Object> attributes = auth2User.getAttributes();

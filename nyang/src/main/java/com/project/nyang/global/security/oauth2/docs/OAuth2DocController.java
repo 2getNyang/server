@@ -49,8 +49,8 @@ public class OAuth2DocController {
             OAuth2 로그아웃 SuccessHandler가 동작하여 쿠키 삭제 후 리다이렉트됩니다.
             
             🔗 요청 URL:
-            - GET `{호스트주소}/api/auth/logout`
-            - 예시: `http://localhost:8080/api/auth/logout`
+            - GET `{호스트주소}/logout`
+            - 예시: `http://localhost:8080/logout`
 
             ✅ 참고 사항:
             - 로그아웃 시 자동으로 쿠키가 삭제됩니다.
