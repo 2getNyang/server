@@ -36,4 +36,12 @@ public class OAuth2DocController {
     public ResponseEntity<Void> kakaoLoginDoc() {
         return ResponseEntity.ok().build(); // 설명용 Swagger용 API — 실제로 사용되지 않음
     }
+
+    @Operation(summary = "네이버 로그인", description = "네이버 로그인또한 " +
+            "`http://localhost:8080/oauth2/authorization/naver`" +
+            "로 이동하면 로그인-회원가입 처리가 됩니다.")
+    @GetMapping("/authorization/naver")
+    public ResponseEntity<Void> naverLoginDoc() {
+        return ResponseEntity.ok().build();
+    }
 }
