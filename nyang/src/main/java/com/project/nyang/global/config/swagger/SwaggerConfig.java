@@ -61,6 +61,16 @@ public class SwaggerConfig {
                 .build();
     }
 
+    // ✅ 좋아요/찜 API 그룹
+    @Bean
+    public GroupedOpenApi LikeItApi() {
+        return GroupedOpenApi.builder()
+                .group("⭐ 좋아요 API")
+                .pathsToMatch("/api/v1/bookmark/**", "/api/v1/like/**")
+                .addOpenApiCustomizer(jwtSecurityCustomizer())
+                .build();
+    }
+
     // ✅ 채팅 API 그룹
     @Bean
     public GroupedOpenApi chatApi() {
