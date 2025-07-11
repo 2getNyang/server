@@ -30,10 +30,6 @@ public class LikeIt {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
 
@@ -42,9 +38,8 @@ public class LikeIt {
     private Animal animal;
 
     @Builder
-    public LikeIt(User user, Category category, Board board, Animal animal) {
+    public LikeIt(User user, Board board, Animal animal) {
         this.user = user;
-        this.category = category;
         this.board = board;
         this.animal = animal;
     }
