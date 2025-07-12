@@ -2,6 +2,7 @@ package com.project.nyang.modules.board;
 
 import com.project.nyang.global.common.entity.BaseTime;
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
+import com.project.nyang.modules.board.reveiw.dto.ReviewBoardCreateDTO;
 import com.project.nyang.modules.comment.entity.Comment;
 import com.project.nyang.modules.image.entity.Image;
 import com.project.nyang.modules.like.entity.LikeIt;
@@ -120,6 +121,12 @@ public class Board extends BaseTime {
     public void changeImages(List<Image> newImages) {
         this.images.clear();         // 기존 이미지 제거 (orphanRemoval 적용됨)
         this.images.addAll(newImages);
+    }
+
+    public void updateReviewBoard(ReviewBoardCreateDTO boardDTO, PetApplicationForm form) {
+        boardTitle = boardDTO.getBoardTitle();
+        boardContent = boardDTO.getBoardContent();
+        petApplicationForm = form;
     }
 
     @Builder(toBuilder = true)

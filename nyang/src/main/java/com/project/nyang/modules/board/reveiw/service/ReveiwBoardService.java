@@ -181,14 +181,8 @@ public class ReveiwBoardService {
         if(boardDTO.getFormId() != null){
             form = adoptionRepository.findById(boardDTO.getFormId()).orElseThrow(() ->new IllegalArgumentException("입양 신청 내역이 없습니다."));
         }
-        Board updateBoard = board.toBuilder()
-                .petApplicationForm(form)
-                .boardContent(boardDTO.getBoardContent())
-                .boardTitle(boardDTO.getBoardTitle())
-                .build();
 
-
-        reviewBoardRepository.save(updateBoard);
+        board.updateReviewBoard(boardDTO, form);
 
         // TODO. image 추가 필요
 
