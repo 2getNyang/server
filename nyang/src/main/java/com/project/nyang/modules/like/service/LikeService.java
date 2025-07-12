@@ -10,6 +10,7 @@ import com.project.nyang.modules.like.repository.LikeRepository;
 import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.modules.user.repository.UserRepository;
 import com.project.nyang.reference.repository.CategoryRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,7 @@ public class LikeService {
      * @param boardId: 게시글 ID
      * @return
      */
+    @Transactional
     public LikeDto createLike(Long userId, Long boardId) {
         User user = userRepository.findById(userId).orElseThrow(()
                 -> new IllegalArgumentException("사용자 권한이 없습니다."));
@@ -44,7 +46,7 @@ public class LikeService {
 
         boolean alreadyLiked = likeRepository.existsByUserAndBoard(user, board);
         if (alreadyLiked) {
-            throw new IllegalStateException("이미 좋아요를 누른 게시글입니다.");
+            throw new IllegalArgumentException("이미 좋아요를 누른 게시글입니다.");
         }
 
         LikeIt like = LikeIt.builder()
@@ -67,6 +69,7 @@ public class LikeService {
      * @param desertionNo: 공고 번호
      * @return
      */
+    @Transactional
     public LikeDto createBookmark(Long userId, String desertionNo) {
         User user = userRepository.findById(userId).orElseThrow(()
                 -> new IllegalArgumentException("사용자 권한이 없습니다."));
@@ -76,7 +79,7 @@ public class LikeService {
 
         boolean alreadyLiked = likeRepository.existsByUserAndAnimal(user, animal);
         if (alreadyLiked) {
-            throw new IllegalStateException("이미 좋아요를 누른 게시글입니다.");
+            throw new IllegalArgumentException("이미 좋아요를 누른 게시글입니다.");
         }
 
         LikeIt like = LikeIt.builder()
@@ -98,6 +101,7 @@ public class LikeService {
      * @param boardId: 게시글 ID
      * @return
      */
+    @Transactional
     public LikeDto deleteLike(Long userId, Long boardId) {
         userRepository.findById(userId).orElseThrow(()
                 -> new IllegalArgumentException("사용자 권한이 없습니다."));
@@ -119,6 +123,7 @@ public class LikeService {
      * @param desertionNo: 공고 번호
      * @return
      */
+    @Transactional
     public LikeDto deleteBookmark(Long userId, String desertionNo) {
         userRepository.findById(userId).orElseThrow(()
                 -> new IllegalArgumentException("사용자 권한이 없습니다."));
