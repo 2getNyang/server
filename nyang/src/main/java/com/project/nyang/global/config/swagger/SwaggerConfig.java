@@ -81,6 +81,15 @@ public class SwaggerConfig {
                 .build();
     }
 
+     // ✅ 동물 API 그룹
+     @Bean
+     public GroupedOpenApi animalApi() {
+         return GroupedOpenApi.builder()
+                 .group("🐱 동물 API")
+                 .pathsToMatch("/api/v1/animals/**")
+                 .build();
+     }
+
     // ✅ API 메타정보
     @Bean
     public OpenAPI openAPI() {
