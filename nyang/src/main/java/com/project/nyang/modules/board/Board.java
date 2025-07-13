@@ -1,6 +1,5 @@
 package com.project.nyang.modules.board;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.nyang.global.common.entity.BaseTime;
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
 import com.project.nyang.modules.comment.entity.Comment;
@@ -14,7 +13,6 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -44,11 +42,11 @@ public class Board extends BaseTime {
     private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "region_code", nullable = false)
+    @JoinColumn(name = "region_code")
     private Region region;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sub_region_code", nullable = false)
+    @JoinColumn(name = "sub_region_code")
     private SubRegion subRegion;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -56,14 +54,14 @@ public class Board extends BaseTime {
     private PetApplicationForm petApplicationForm;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "kind_cd", nullable = false)
+    @JoinColumn(name = "kind_cd")
     private Kind kind;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "up_kind_cd", nullable = false)
+    @JoinColumn(name = "up_kind_cd")
     private UpKind upKind;
 
-    @Column(name = "board_title", nullable = false)
+    @Column(name = "board_title")
     private String boardTitle;
 
     @Column(name = "board_content", nullable = false)
@@ -108,20 +106,6 @@ public class Board extends BaseTime {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
-    //board<->image 연관관계 편의 메서드
-    public void addImage(Image image) {
-        images.add(image);
-        image.builder().board(this).build();
-
-    }
-
-    public void clearImages() {
-        for (Image image : images) {
-            image.builder().board(null).build();
-        }
-        images.clear();
-    }
-
     public void increaseViewCount() {
         this.viewCount += 1;
     }
@@ -133,9 +117,14 @@ public class Board extends BaseTime {
                 );
     }
 
+    public void changeImages(List<Image> newImages) {
+        this.images.clear();         // 기존 이미지 제거 (orphanRemoval 적용됨)
+        this.images.addAll(newImages);
+    }
+
     @Builder(toBuilder = true)
     public Board(Long id, User user, Category category, Region region, SubRegion subRegion,
-                 PetApplicationForm petApplicationForm,
+                 PetApplicationForm petApplicationForm, String lostType,
                  String boardTitle, String boardContent, Long viewCount, String instagramLink,
                  String gender, Integer age, String furColor, String distinctFeatures,
                  LocalDate missingDate, String missingLocation, String phone,
@@ -145,6 +134,7 @@ public class Board extends BaseTime {
         this.id = id;
         this.user = user;
         this.category = category;
+        this.lostType = lostType;
         this.region = region;
         this.subRegion = subRegion;
         this.petApplicationForm = petApplicationForm;

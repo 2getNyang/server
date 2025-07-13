@@ -17,7 +17,7 @@ import lombok.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Shelter{
+public class Shelter {
     @Id
     @Column(name = "care_reg_number", nullable = false)
     private String careRegNumber;
