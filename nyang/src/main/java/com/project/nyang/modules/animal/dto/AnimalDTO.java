@@ -6,8 +6,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
+ *
+ * AnimalDTO 상세조회에 사용합니다.
+ *
  * @author : 이지은
  * @fileName : AnimalDTO
  * @since : 25. 7. 9.
@@ -29,6 +33,7 @@ public class AnimalDTO {
     private String noticeNo; //공고번호
     private LocalDate noticeSdt; //공고시작시간
     private LocalDate noticeEdt; //공고종료시간
+    private LocalDateTime updTm; //API 수정 시각
 
     //동물 이미지
     private String popfile1;
