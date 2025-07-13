@@ -1,11 +1,15 @@
 package com.project.nyang.modules.board.sns.service;
 
 
+import com.project.nyang.global.common.S3.S3Service;
 import com.project.nyang.global.exception.CustomException;
+import com.project.nyang.global.security.jwt.JwtTokenProvider;
 import com.project.nyang.modules.board.Board;
 import com.project.nyang.modules.board.sns.dto.SNSBoardDTO;
 import com.project.nyang.modules.board.sns.repository.SNSBoardRepository;
-import com.project.nyang.modules.board.sns.repository.UserRepository; //개발을 위한 user repository 나중엔 user.UserRepository 로 변경해주세요
+import com.project.nyang.modules.image.entity.Image;
+import com.project.nyang.modules.image.repository.ImageRepository;
+import com.project.nyang.modules.user.repository.UserRepository; //개발을 위한 user repository 나중엔 user.UserRepository 로 변경해주세요
 import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.reference.entity.Category;
 import com.project.nyang.reference.repository.CategoryRepository;
@@ -15,7 +19,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.project.nyang.global.exception.ErrorCode.UNAUTHORIZED;
@@ -34,26 +40,35 @@ public class SNSBoardService {
     private final SNSBoardRepository snsBoardRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final ImageRepository imageRepository;
+
+    private final S3Service s3Service;
+    private final JwtTokenProvider jwtTokenProvider;
+
 
     /* 카테고리 타입: sns게시판
     * 카테고리id 1:동물공고 / 2:입양후기 3:sns홍보 4:실종/목격제보 */
     private static final Long SNS_CATEGORY_ID = 3L;
 
+    /* image 폴더 덮어쓰기 + \global\common\s3 폴더 추가 */
     /* SNS 게시판 글 등록 */
     @Transactional
-    public SNSBoardDTO createSNSBoard(SNSBoardDTO boardDTO){
+    public SNSBoardDTO createSNSBoard(SNSBoardDTO boardDTO, List<MultipartFile> imageFiles,Long userId) {
 
-        if(boardDTO.getUserId() == null){
-            throw new IllegalArgumentException("유저못찾아잉");
-        }
+        /* 카테고리가 SNS가 맞는지 확인*/
         Category category = categoryRepository.findById(SNS_CATEGORY_ID)
                 .orElseThrow(() -> new IllegalArgumentException("SNS 카테고리를 찾을 수 없습니다."));
 
+        /* 유효한 사용자인지 확인 */
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
 
-        // User 조회
-        User user = userRepository.findById(boardDTO.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다. id=" + boardDTO.getUserId()));
 
+        // 이미지 업로드
+        List<String> uploadedUrls = new ArrayList<>();
+        if (imageFiles != null && !imageFiles.isEmpty()) {
+            uploadedUrls = s3Service.uploadFile(imageFiles);  // 예외 발생 가능
+        }
 
         Board board = Board.builder()
                 .category(category)
@@ -64,6 +79,22 @@ public class SNSBoardService {
                 .user(user)
                 .build();
         snsBoardRepository.save(board);
+
+        //  이미지 DB 저장
+        for (int i = 0; i < uploadedUrls.size(); i++) {
+            MultipartFile file = imageFiles.get(i);
+            String url = uploadedUrls.get(i);
+
+            Image image = Image.builder()
+                    .board(board)
+                    .originFileName(file.getOriginalFilename())
+                    .fileSize(String.valueOf(file.getSize()))
+                    .s3Url(url)
+                    .thumbnailIs(i == 0 ? "Y" : "N")
+                    .build();
+
+            imageRepository.save(image);
+        }
         return toDto(board);
 
     }
@@ -85,32 +116,34 @@ public class SNSBoardService {
     }
     /* SNS 게시글 수정*/
     @Transactional
-    public void updateSNSBoard(Long boardId, SNSBoardDTO dto) {
+    public void updateSNSBoard(Long boardId, SNSBoardDTO dto,Long userId) {
 
-        // 게시글 작성자가 맞는지
-        User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다. ID: " + dto.getUserId()));
+        // 로그인된 사용자가 유효한지 확인
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
+
 
         // 경로 게시글 ID 와 본문 게시글 ID 가 다를때
         if (dto.getId() != null && !dto.getId().equals(boardId)) {
             throw new IllegalArgumentException("요청 경로의 게시글 ID와 요청 본문의 게시글 ID가 일치하지 않습니다.");
         }
 
-
+        // 게시글이 존재하는지
         Board board = snsBoardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글 없음: " + boardId));
 
         if (board.getCategory() == null ||
                 !board.getCategory().getCategoryId().equals(SNS_CATEGORY_ID)) {
             throw new IllegalArgumentException("SNS 게시글만 수정 가능합니다. 호출된 게시글 ID: " + boardId);
+            
         } else if (board.getDeletedAt() != null) {
             throw new IllegalArgumentException("해당 글은 삭제되었습니다. ID: " + boardId);
         }
-
-        if (!board.getUser().getId().equals(dto.getUserId())) {
+        // 게시글 작성자와 요청한사람이 동일인물인지
+        if (!board.getUser().getId().equals(userId)) {
             throw new IllegalArgumentException("수정 권한이 없습니다.");
         }
-
+        // 인스타그램 게시글을 실수로 지웠을때
         if (board.getInstagramLink() == null) {
             throw new IllegalArgumentException("SNS 게시글 링크가 사라졌습니다.");
         }
@@ -132,6 +165,10 @@ public class SNSBoardService {
     * JwtToken 으로 Invalid User 인지 확인하는 과정을 넣읍시다.*/
     @Transactional
     public void deleteSNSBoard(Long boardId,Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
+
         Board board = snsBoardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글 없음: " + boardId));
 

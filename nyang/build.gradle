@@ -55,6 +55,10 @@ dependencies {
 	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+	// S3 이미지 업로드를 위한 AWS SDK v2
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.696' // 최신 버전은 변경 가능
+
+
 }
 
 tasks.named('test') {

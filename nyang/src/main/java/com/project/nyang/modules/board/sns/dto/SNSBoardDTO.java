@@ -27,7 +27,6 @@ public class SNSBoardDTO {
     private String boardContent;
     private Long viewCount;
     private String instagramLink;
-
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private LocalDateTime deletedAt;
