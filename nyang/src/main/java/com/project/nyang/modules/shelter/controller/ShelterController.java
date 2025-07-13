@@ -49,21 +49,23 @@ public class ShelterController {
     }
 
     @Operation(
-            summary = "보호소 목록 시/도, 시/군/구에 대해 필터 검색 (페이징)",
+            summary = "보호소 목록 시/도, 시/군/구에 대해 필터 검색 + 보호소 이름으로 검색 (페이징)",
             description = """
-            보호소 전체 목록을 시/도, 시/군/구에 대한 조건으로 필터링하여 검색한 내용을 페이징하여 조회합니다.  
+            보호소 전체 목록을 시/도, 시/군/구, 보호소 이름에 대한 조건으로 필터링하여 검색한 내용을 페이징하여 조회합니다.  
             기본적으로 한 페이지에 12개의 보호소를 반환하며,  
             page는 0부터 시작합니다.
             """
     )
     //시/도(regionName), 시/군/구(subRegionName) 조건으로 보호소를 필터링하여 조회
+    // 보호소 이름 검색 기능도 추가
     @GetMapping("/filter")
     public Page<ShelterListDTO> filterShelters(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size,
             @RequestParam(required = false) String regionName,
-            @RequestParam(required = false) String subRegionName
+            @RequestParam(required = false) String subRegionName,
+            @RequestParam(required = false) String careName
     ) {
-        return shelterService.filterShelters(page, size, regionName, subRegionName);
+        return shelterService.filterShelters(page, size, regionName, subRegionName, careName);
     }
 }

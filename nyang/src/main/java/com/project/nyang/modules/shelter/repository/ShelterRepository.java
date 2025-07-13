@@ -48,4 +48,34 @@ public interface ShelterRepository extends JpaRepository<Shelter, String> {
             "WHERE r.regionName = :regionName AND sr.subRegionName = :subRegionName")
     Page<ShelterListDTO> findByRegionAndSubRegion(String regionName, String subRegionName, Pageable pageable);
 
+    // 이름으로만 검색 (전체 지역 + 전체 시군구)
+    @Query("SELECT new com.project.nyang.modules.shelter.dto.ShelterListDTO(" +
+            "s.careName, s.careTel, r.regionName, sr.subRegionName) " +
+            "FROM Shelter s " +
+            "JOIN s.region r " +
+            "JOIN s.subRegion sr " +
+            "WHERE s.careName LIKE %:careName%")
+    Page<ShelterListDTO> findByCareNameContaining(String careName, Pageable pageable);
+
+    // 시도 + 이름 검색
+    @Query("SELECT new com.project.nyang.modules.shelter.dto.ShelterListDTO(" +
+            "s.careName, s.careTel, r.regionName, sr.subRegionName) " +
+            "FROM Shelter s " +
+            "JOIN s.region r " +
+            "JOIN s.subRegion sr " +
+            "WHERE r.regionName = :regionName AND s.careName LIKE %:careName%")
+    Page<ShelterListDTO> findByRegionAndCareName(String regionName, String careName, Pageable pageable);
+
+    // 시도 + 시군구 + 이름 검색
+    @Query("SELECT new com.project.nyang.modules.shelter.dto.ShelterListDTO(" +
+            "s.careName, s.careTel, r.regionName, sr.subRegionName) " +
+            "FROM Shelter s " +
+            "JOIN s.region r " +
+            "JOIN s.subRegion sr " +
+            "WHERE r.regionName = :regionName AND sr.subRegionName = :subRegionName " +
+            "AND s.careName LIKE %:careName%")
+    Page<ShelterListDTO> findByRegionAndSubRegionAndCareName(
+            String regionName, String subRegionName, String careName, Pageable pageable);
+
+
 }

@@ -30,21 +30,31 @@ public class ShelterService {
 
     //필터 조건(regionName, subRegionName)에 따라 보호소를 조회하는 메서드
     public Page<ShelterListDTO> filterShelters(
-            int page, int size, String regionName, String subRegionName) {
+            int page, int size, String regionName, String subRegionName,String careName) {
 
         Pageable pageable = PageRequest.of(page, size);
 
+        //지역 필터와 연동하여 보호소 이름으로 검색 기능 추가하기 위해 모든 지역 필터 기능에 조건문 추가
         // 전체 지역인 경우 → 전체 보호소
         if (regionName == null || regionName.equals("전체 지역")) {
+            if (careName != null && !careName.isBlank()) {
+                return shelterRepository.findByCareNameContaining(careName, pageable);
+            }
             return shelterRepository.findAllShelters(pageable);
         }
 
         // 시/도는 선택됐고, 시/군/구는 전체 → 시/도 필터만 적용
         if (subRegionName == null || subRegionName.equals("전체")) {
+            if (careName != null && !careName.isBlank()) {
+                return shelterRepository.findByRegionAndCareName(regionName, careName, pageable);
+            }
             return shelterRepository.findByRegion(regionName, pageable);
         }
 
         // 시/도 + 시/군/구 모두 선택 → 둘 다 필터
+        if (careName != null && !careName.isBlank()) {
+            return shelterRepository.findByRegionAndSubRegionAndCareName(regionName, subRegionName, careName, pageable);
+        }
         return shelterRepository.findByRegionAndSubRegion(regionName, subRegionName, pageable);
     }
 }
