@@ -106,6 +106,33 @@ public class AuthController {
 //        return ResponseEntity.ok().build();
 //    }
 
+//    @Operation(summary = "로그아웃", description = "JWT(accessToken) 쿠키를 삭제해 로그아웃합니다")
+//    //보통 로그아웃은 쿠키삭제로 처리한다.
+//    @PostMapping("/logout")
+//    public ResponseEntity<?> logout(HttpServletResponse response) {
+//
+//        // accessToken 쿠키 삭제
+//        Cookie accessTokenCookie = new Cookie("accessToken", null);
+//        accessTokenCookie.setHttpOnly(true);
+//        accessTokenCookie.setPath("/");
+//        accessTokenCookie.setMaxAge(0); // 즉시 만료!
+//
+//        // refreshToken 쿠키 삭제
+//        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
+//        refreshTokenCookie.setHttpOnly(true);
+//        refreshTokenCookie.setPath("/");
+//        refreshTokenCookie.setMaxAge(0);
+//
+//        // 응답에 쿠키 삭제 포함
+//        response.addCookie(accessTokenCookie);
+//        response.addCookie(refreshTokenCookie);
+//
+//        // (추가) 서버 세션도 있다면 만료
+//        // request.getSession().invalidate();
+//
+//        return ResponseEntity.ok().body("로그아웃 완료 (쿠키 삭제됨)");
+//    }
+
 
 
 }
