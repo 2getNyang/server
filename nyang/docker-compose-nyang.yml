@@ -1,6 +1,8 @@
 services:
   nyang1:  # 서비스 이름은 컨테이너간 통신하기 위한 이름
     build: .
+    env_file:
+      - .env
     image: nyang
     container_name: nyang1
     environment:

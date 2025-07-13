@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  *
  * Image 엔티티 클래스입니다.
@@ -41,15 +43,37 @@ public class Image {
     @Column(name = "thumbnail_is", length = 1)
     private String thumbnailIs;
 
+    @Column(name="deleted_at")
+    private LocalDateTime deletedAt;
+
+    //softDelete용 메서드
+    public void softDelete() {
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    //썸네일 지정 메서드
+    public void markAsThumbnail() { this.thumbnailIs = "Y"; }
+
+
+
     @Builder
-    public Image(Board board, String originFileName,
+    public Image(Long imageId, String originFileName,
                     String s3Url, String fileSize,
-                    String thumbnailIs) {
-        this.board = board;
+                    String thumbnailIs, Board board) {
         this.originFileName = originFileName;
         this.s3Url = s3Url;
         this.fileSize = fileSize;
         this.thumbnailIs = thumbnailIs;
+        this.board = board;
+    }
+
+    public ImageBuilder toBuilder() {
+        return builder()
+                .imageId(this.imageId)  // imageId는 변경하지 않도록 설정
+                .originFileName(this.originFileName)
+                .s3Url(this.s3Url)
+                .fileSize(this.fileSize)
+                .thumbnailIs(this.thumbnailIs);  // 기존 thumbnailYN 값을 그대로 복사
     }
 
 

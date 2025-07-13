@@ -21,6 +21,26 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
 
+     // ✅ 소셜 로그인 API 그룹
+     @Bean
+     public GroupedOpenApi oauthApi() {
+         return GroupedOpenApi.builder()
+                 .group("🌐 소셜 로그인 API")
+                 .pathsToMatch("/oauth2/docs/**")
+                 .addOpenApiCustomizer(jwtSecurityCustomizer())
+                 .build();
+     }
+
+     // ✅ 인증 API 그룹
+     @Bean
+     public GroupedOpenApi authApi() {
+         return GroupedOpenApi.builder()
+                 .group("🔐 인증 API")
+                 .pathsToMatch("/api/auth/**")
+                 .addOpenApiCustomizer(jwtSecurityCustomizer())
+                 .build();
+     }
+
     // ✅ 사용자 API 그룹
     @Bean
     public GroupedOpenApi userApi() {

@@ -60,7 +60,7 @@ public class Board extends BaseTime {
     @JoinColumn(name = "up_kind_cd")
     private UpKind upKind;
 
-    @Column(name = "board_title", nullable = false)
+    @Column(name = "board_title")
     private String boardTitle;
 
     @Column(name = "board_content", nullable = false)
@@ -105,20 +105,6 @@ public class Board extends BaseTime {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
-    //board<->image 연관관계 편의 메서드
-    public void addImage(Image image) {
-        images.add(image);
-        image.builder().board(this).build();
-
-    }
-
-    public void clearImages() {
-        for (Image image : images) {
-            image.builder().board(null).build();
-        }
-        images.clear();
-    }
-
     public void increaseViewCount() {
         this.viewCount += 1;
     }
@@ -128,6 +114,19 @@ public class Board extends BaseTime {
                 anyMatch(like ->
                         like.getUser().getId().equals(userId) && like.getBoard().getId().equals(boardId)
                 );
+    }
+
+    public void changeImages(List<Image> newImages) {
+        this.images.clear();         // 기존 이미지 제거 (orphanRemoval 적용됨)
+        this.images.addAll(newImages);
+    }
+
+    //soft delete용 메서드
+    public void softDelete() {
+        super.markDeleted(); // BaseTime의 메서드 활용
+        for (Image image : this.images) {
+            image.softDelete();
+        }
     }
 
     @Builder(toBuilder = true)
@@ -167,4 +166,24 @@ public class Board extends BaseTime {
         this.likeList = likeList != null ? likeList : new ArrayList<>();
         this.comments = comments != null ? comments : new ArrayList<>();
     }
+
+    //실종/목격 글 수정 메서드
+//    public void updateBoardInfo(LostUpdateRequestDTO dto, Region region, SubRegion subRegion,
+//                                Kind kind, UpKind upKind, Category category) {
+//        this.boardContent = dto.getContent();
+//        this.lostType = dto.getLostType();
+//        this.gender = dto.getGender();
+//        this.age = dto.getAge();
+//        this.furColor = dto.getFurColor();
+//        this.distinctFeatures = dto.getDistinctFeatures();
+//        this.missingDate = dto.getMissingDate();
+//        this.missingLocation = dto.getMissingLocation();
+//        this.phone = dto.getPhone();
+//        this.region = region;
+//        this.subRegion = subRegion;
+//        this.kind = kind;
+//        this.upKind = upKind;
+//        this.category = category;
+//    }
+
 }
