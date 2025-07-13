@@ -79,6 +79,9 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
             loginId = attributes.get("sub").toString() + "@google";     // 고유 id + 구분자
             email = (String) attributes.get("email");
             name = (String) attributes.get("name");
+            // 구글 연동해제에 필요한 구글 액세스 토큰. jwt 액세스 토큰과 다름
+//            String googleAccessToken = userRequest.getAccessToken().getTokenValue();
+//            System.out.println("구글 access token: " + googleAccessToken);
         } else {
             // 기타 provider 처리 안함
             email = null;
