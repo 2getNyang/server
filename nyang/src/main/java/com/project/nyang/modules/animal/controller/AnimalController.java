@@ -47,11 +47,11 @@ public class AnimalController {
     @GetMapping("/filter")
     public Page<AnimalListDTO> getFilterAnimals(
             @Parameter(description = "시작일", example = "2025-07-11") @RequestParam(required = false) LocalDate startDate,
-            @Parameter(description = "종료일", example = "2025-07-11") @RequestParam(required = false) LocalDate endDate,
-            @Parameter(description = "축종 코드", example = "422400") @RequestParam(required = false) String upKindCd,
-            @Parameter(description = "품종 코드", example = "000184") @RequestParam(required = false) String kindCd,
-            @Parameter(description = "시도 코드", example = "6110000") @RequestParam(required = false) String regionCode,
-            @Parameter(description = "시군구 코드", example = "3030000") @RequestParam(required = false) String subRegionCode,
+            @Parameter(description = "종료일", example = "2025-07-20") @RequestParam(required = false) LocalDate endDate,
+            @Parameter(description = "축종 코드", example = "417000") @RequestParam(required = false) String upKindCd,
+            @Parameter(description = "품종 코드", example = "000139") @RequestParam(required = false) String kindCd,
+            @Parameter(description = "시도 코드", example = "6260000") @RequestParam(required = false) String regionCode,
+            @Parameter(description = "시군구 코드", example = "3340000") @RequestParam(required = false) String subRegionCode,
             @Parameter(description = "페이지 번호", example = "0") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "페이지 당 데이터 개수", example = "12") @RequestParam(defaultValue = "12") int size
     ){

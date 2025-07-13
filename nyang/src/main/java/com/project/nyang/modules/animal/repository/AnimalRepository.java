@@ -78,10 +78,10 @@ public interface AnimalRepository extends JpaRepository<Animal, String> {
         FROM Animal a
         WHERE a.noticeSdt <= :endDate
             AND a.noticeEdt >= :startDate
-            AND (:upKindCd IS NULL OR a.upKind.upKindCd <=:upKindCd)
-            AND (:kindCd IS NULL OR a.kind.kindCd <=:kindCd)
-            AND (:regionCode IS NULL OR a.shelter.region.regionCode <=:regionCode)
-            AND (:subRegionCode IS NULL OR a.shelter.subRegion.subRegionCode <=:subRegionCode)
+            AND (:upKindCd IS NULL OR a.upKind.upKindCd = :upKindCd)
+            AND (:kindCd IS NULL OR a.kind.kindCd = :kindCd)
+            AND (:regionCode IS NULL OR a.shelter.region.regionCode = :regionCode)
+            AND (:subRegionCode IS NULL OR a.shelter.subRegion.subRegionCode = :subRegionCode)
     """)
     Page<AnimalListDTO> getFilterAnimals(@Param("startDate") LocalDate startDate,
                                          @Param("endDate") LocalDate endDate,

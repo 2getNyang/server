@@ -53,6 +53,16 @@ public class AnimalService {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
 
+        // 축종이 null인데 품종 값이 들어왔을 경우 예외 처리
+        if(upKindCd == null && kindCd != null) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+
+        // 시도가 null인데 시군구 값이 들어왔을 경우 예외 처리
+        if(regionCode == null && subRegionCode != null) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+
         return animalRepository.getFilterAnimals(startDate, endDate, upKindCd, kindCd, regionCode, subRegionCode, pageable);
     }
 
