@@ -27,4 +27,24 @@ public class ShelterService {
         Pageable pageable = PageRequest.of(page, size);
         return shelterRepository.findAllShelters(pageable); // 이미 DTO로 매핑되어 반환됨
     }
+
+    //필터 조건(regionName, subRegionName)에 따라 보호소를 조회하는 메서드
+    public Page<ShelterListDTO> filterShelters(
+            int page, int size, String regionName, String subRegionName) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        // 전체 지역인 경우 → 전체 보호소
+        if (regionName == null || regionName.equals("전체 지역")) {
+            return shelterRepository.findAllShelters(pageable);
+        }
+
+        // 시/도는 선택됐고, 시/군/구는 전체 → 시/도 필터만 적용
+        if (subRegionName == null || subRegionName.equals("전체")) {
+            return shelterRepository.findByRegion(regionName, pageable);
+        }
+
+        // 시/도 + 시/군/구 모두 선택 → 둘 다 필터
+        return shelterRepository.findByRegionAndSubRegion(regionName, subRegionName, pageable);
+    }
 }

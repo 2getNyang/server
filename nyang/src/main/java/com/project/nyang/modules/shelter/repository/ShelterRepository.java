@@ -29,4 +29,23 @@ public interface ShelterRepository extends JpaRepository<Shelter, String> {
             "JOIN s.region r " +
             "JOIN s.subRegion sr")
     Page<ShelterListDTO> findAllShelters(Pageable pageable);
+
+    // 시/도 필터
+    @Query("SELECT new com.project.nyang.modules.shelter.dto.ShelterListDTO(" +
+            "s.careName, s.careTel, r.regionName, sr.subRegionName) " +
+            "FROM Shelter s " +
+            "JOIN s.region r " +
+            "JOIN s.subRegion sr " +
+            "WHERE r.regionName = :regionName")
+    Page<ShelterListDTO> findByRegion(String regionName, Pageable pageable);
+
+    // 시/도 + 시/군/구 필터
+    @Query("SELECT new com.project.nyang.modules.shelter.dto.ShelterListDTO(" +
+            "s.careName, s.careTel, r.regionName, sr.subRegionName) " +
+            "FROM Shelter s " +
+            "JOIN s.region r " +
+            "JOIN s.subRegion sr " +
+            "WHERE r.regionName = :regionName AND sr.subRegionName = :subRegionName")
+    Page<ShelterListDTO> findByRegionAndSubRegion(String regionName, String subRegionName, Pageable pageable);
+
 }

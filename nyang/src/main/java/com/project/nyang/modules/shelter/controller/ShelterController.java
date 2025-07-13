@@ -47,4 +47,15 @@ public class ShelterController {
     ) {
         return shelterService.getAllShelters(page, size);
     }
+
+    //시/도(regionName), 시/군/구(subRegionName) 조건으로 보호소를 필터링하여 조회
+    @GetMapping("/filter")
+    public Page<ShelterListDTO> filterShelters(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size,
+            @RequestParam(required = false) String regionName,
+            @RequestParam(required = false) String subRegionName
+    ) {
+        return shelterService.filterShelters(page, size, regionName, subRegionName);
+    }
 }
