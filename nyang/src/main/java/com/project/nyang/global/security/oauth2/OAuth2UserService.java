@@ -75,6 +75,10 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
             email = (String) response.get("email");
             //여기서 나타내는 name 이 닉네임 맞겠죠?
             name = (String) response.get("nickname");
+        } else if("google".equals(provider)){
+            loginId = attributes.get("sub").toString() + "@google";     // 고유 id + 구분자
+            email = (String) attributes.get("email");
+            name = (String) attributes.get("name");
         } else {
             // 기타 provider 처리 안함
             email = null;
