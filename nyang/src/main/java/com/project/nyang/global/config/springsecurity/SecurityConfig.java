@@ -2,6 +2,7 @@ package com.project.nyang.global.config.springsecurity;
 
 import com.project.nyang.global.security.jwt.JwtTokenFilter;
 import com.project.nyang.global.security.oauth2.OAuth2LoginSuccessHandler;
+import com.project.nyang.global.security.oauth2.OAuth2LogoutSuccessHandler;
 import com.project.nyang.global.security.oauth2.OAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +21,7 @@ public class SecurityConfig {
 
     private final JwtTokenFilter jwtTokenFilter;
 
-//    private final OAuth2LogoutSuccessHandler oAuth2LogoutSuccessHandler;
+    private final OAuth2LogoutSuccessHandler oAuth2LogoutSuccessHandler;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2UserService oAuth2UserService;
 
@@ -52,7 +53,7 @@ public class SecurityConfig {
                                         "/oauth2/**",         // OAuth2 리디렉션
                                         "/login/**",          // 스프링 시큐리티 내부 로그인 관련
                                         "/api/test/**", // ✅ 이 줄 추가: 공통 응답 테스트 컨트롤러 허용
-                                        "*"
+                                        "/*"
                                 ).permitAll()
 
                                 .requestMatchers(
@@ -66,6 +67,8 @@ public class SecurityConfig {
                 //기본적으로 스프링시큐리티는 세션을 생성함
                 //하지만 JWT 기반 인증은 세션상태를 저장하지 않는 무상태방식
                 //인증 정보를 세션에 저장하지 않고, 매 요청마다 토큰으로 인증
+
+                /* 여기서 세션 저장안하기 때문에 logoutSuccessHandler 에 authentication 이 null 로 들어옵니다. */
                 .sessionManagement(session ->session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
@@ -80,11 +83,11 @@ public class SecurityConfig {
                         .successHandler(oAuth2LoginSuccessHandler)
                 )
 
-//                .logout(logout -> logout
-//                        .logoutUrl("/logout")
-//                        .logoutSuccessHandler(oAuth2LogoutSuccessHandler)
-//                        .permitAll()
-//                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout") /* 저희 로그아웃 이쪽경로로 날려주세요*/
+                        .logoutSuccessHandler(oAuth2LogoutSuccessHandler)
+                        .permitAll()
+                )
 
 
                 .build(); //위 명시한 설정들을 적용
