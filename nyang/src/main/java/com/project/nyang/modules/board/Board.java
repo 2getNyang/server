@@ -122,6 +122,14 @@ public class Board extends BaseTime {
         this.images.addAll(newImages);
     }
 
+    //soft delete용 메서드
+    public void softDelete() {
+        super.markDeleted(); // BaseTime의 메서드 활용
+        for (Image image : this.images) {
+            image.softDelete();
+        }
+    }
+
     @Builder(toBuilder = true)
     public Board(Long id, User user, Category category, Region region, SubRegion subRegion,
                  PetApplicationForm petApplicationForm, String lostType,
@@ -159,4 +167,24 @@ public class Board extends BaseTime {
         this.likeList = likeList != null ? likeList : new ArrayList<>();
         this.comments = comments != null ? comments : new ArrayList<>();
     }
+
+    //실종/목격 글 수정 메서드
+//    public void updateBoardInfo(LostUpdateRequestDTO dto, Region region, SubRegion subRegion,
+//                                Kind kind, UpKind upKind, Category category) {
+//        this.boardContent = dto.getContent();
+//        this.lostType = dto.getLostType();
+//        this.gender = dto.getGender();
+//        this.age = dto.getAge();
+//        this.furColor = dto.getFurColor();
+//        this.distinctFeatures = dto.getDistinctFeatures();
+//        this.missingDate = dto.getMissingDate();
+//        this.missingLocation = dto.getMissingLocation();
+//        this.phone = dto.getPhone();
+//        this.region = region;
+//        this.subRegion = subRegion;
+//        this.kind = kind;
+//        this.upKind = upKind;
+//        this.category = category;
+//    }
+
 }
