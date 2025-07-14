@@ -1,6 +1,6 @@
 package com.project.nyang.modules.board.lost.dto;
 
-import com.project.nyang.modules.board.Board;
+import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.modules.image.entity.Image;
 import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.reference.entity.*;
@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

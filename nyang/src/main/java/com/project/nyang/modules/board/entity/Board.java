@@ -1,4 +1,4 @@
-package com.project.nyang.modules.board;
+package com.project.nyang.modules.board.entity;
 
 import com.project.nyang.global.common.entity.BaseTime;
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
@@ -22,7 +22,6 @@ import java.util.List;
  * @fileName : Board
  * @since : 2025-07-07
  */
-// TODO. BaseTime extends 필요
 @Entity
 @Getter
 @NoArgsConstructor
