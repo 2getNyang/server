@@ -5,11 +5,13 @@ import com.project.nyang.global.common.S3.S3Service;
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.security.jwt.JwtTokenProvider;
 import com.project.nyang.modules.board.entity.Board;
+import com.project.nyang.modules.board.lost.dto.LostDetailResponseDTO;
 import com.project.nyang.modules.board.sns.dto.SNSBoardDTO;
 import com.project.nyang.modules.board.sns.dto.SNSBoardUpdateDTO;
 import com.project.nyang.modules.board.sns.repository.SNSBoardRepository;
 import com.project.nyang.modules.image.entity.Image;
 import com.project.nyang.modules.image.repository.ImageRepository;
+import com.project.nyang.modules.like.repository.LikeRepository;
 import com.project.nyang.modules.user.repository.UserRepository; //개발을 위한 user repository 나중엔 user.UserRepository 로 변경해주세요
 import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.reference.entity.Category;
@@ -41,6 +43,7 @@ public class SNSBoardService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
+    private final LikeRepository likeRepository;
 
     private final S3Service s3Service;
 
@@ -177,7 +180,7 @@ public class SNSBoardService {
             board.getImages().addAll(uploadedImages);
         }
 
-        // 5. 게시글 정보 수정
+        //4. 게시글 정보 수정
         Board updatedBoard = board.toBuilder()
                 .boardTitle(dto.getBoardTitle() != null ? dto.getBoardTitle() : board.getBoardTitle())
                 .boardContent(dto.getBoardContent() != null ? dto.getBoardContent() : board.getBoardContent())
@@ -241,12 +244,35 @@ public class SNSBoardService {
             throw new IllegalArgumentException("SNS 게시글만 조회 가능합니다. 현재 불러오는 카테고리 id: " + board.getCategory().getCategoryId());
         }
 
+        // image 가져옴
         List<Image> visibleImages = board.getImages().stream()
                 .filter(image -> image.getDeletedAt() == null)
                 .collect(Collectors.toList());
+        // 댓글가져옴
+        List<LostDetailResponseDTO.CommentDTO> commentDTOList = board.getComments().stream()
+                .filter(comment -> comment.getDeletedAt() == null)
+                .map(LostDetailResponseDTO.CommentDTO::toDTO)
+                .collect(Collectors.toList());
+        //좋아요 수 조회
+        Long likeCount = likeRepository.countByBoardId(boardId);
 
-        return toDto(board, visibleImages); // 이미지 반영된 DTO 변환 메서드 필요
+        return SNSBoardDTO.builder()
+                .id(board.getId())
+                .category(board.getCategory())
+                .userId(board.getUser() != null ? board.getUser().getId() : null)
+                .boardTitle(board.getBoardTitle())
+                .boardContent(board.getBoardContent())
+                .instagramLink(board.getInstagramLink())
+                .viewCount(board.getViewCount())
+                .images(visibleImages)
+                .comments(commentDTOList)
+                .likeCount(likeCount)
+                .createdAt(board.getCreatedAt())
+                .modifiedAt(board.getModifiedAt())
+                .build();
     }
+
+
     /* SNS 게시판 페이징 */
     @Transactional(readOnly = true)
     public Page<SNSBoardDTO> getBoardsPaged(Pageable pageable) {
