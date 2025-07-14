@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
+ *
+ * AnimalDetailController 상세조회 페이지의 기능 컨트롤러입니다.
+ *
  * @author : 이지은
  * @fileName : AnimalDetailController
  * @since : 25. 7. 9.
@@ -17,12 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/animal")
+@RequestMapping("/api/v1/animals")
 public class AnimalDetailController {
 
     private final AnimalDetailService animalDetailService;
 
-    @GetMapping("/detail/{desertionNo}")
+    @GetMapping("/{desertionNo}")
     public ResponseEntity<AnimalDTO> getAnimalDetail(@PathVariable String desertionNo){
     return ResponseEntity.ok(animalDetailService.getAnimalDetail(desertionNo));
     }

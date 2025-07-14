@@ -42,14 +42,23 @@ public class Image {
     private String thumbnailIs;
 
     @Builder
-    public Image(Board board, String originFileName,
+    public Image(Long imageId, String originFileName,
                     String s3Url, String fileSize,
-                    String thumbnailIs) {
-        this.board = board;
+                    String thumbnailIs, Board board) {
         this.originFileName = originFileName;
         this.s3Url = s3Url;
         this.fileSize = fileSize;
         this.thumbnailIs = thumbnailIs;
+        this.board = board;
+    }
+
+    public ImageBuilder toBuilder() {
+        return builder()
+                .imageId(this.imageId)  // imageId는 변경하지 않도록 설정
+                .originFileName(this.originFileName)
+                .s3Url(this.s3Url)
+                .fileSize(this.fileSize)
+                .thumbnailIs(this.thumbnailIs);  // 기존 thumbnailYN 값을 그대로 복사
     }
 
 

@@ -9,6 +9,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
+ *
+ * AnimalDTO 상세조회에 사용합니다.
+ *
  * @author : 이지은
  * @fileName : AnimalDTO
  * @since : 25. 7. 9.
@@ -16,39 +19,32 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class AnimalDTO {
+    //유기 동물 번호
+    private String desertionNo;
+    //발견일
+    private LocalDate happenDt;
+    //발견 장소
+    private String happenPlace;
 
-    private String desertionNo;//동물번호
-    private LocalDate happenDt; //발견일자
-    private String happenPlace; //발견장소
-
+    //털색, 무늬
     private String colorCd;
+    //나이
     private String age;
+    //무게
     private String weight;
-    private String noticeNo; //공고번호
-    private LocalDate noticeSdt; //공고시작시간
-    private LocalDate noticeEdt; //공고종료시간
-
-    //동물 이미지
+    //공고 번호
+    private String noticeNo;
+    //공고 시작
+    private LocalDate noticeSdt;
+    //공고 종료
+    private LocalDate noticeEdt;
+    //이미지 1~3
     private String popfile1;
     private String popfile2;
     private String popfile3;
-    //보호상태 (NOTICE / PROTECT / FINISH)
-    private String processState;
-    // 성별 (M / F / Q)
-    private String sexCd;
-    //중성화 여부 (Y / N / U)
-    private String neuterYn;
-    //특이 사항
-    private String specialMark;
-    //API 수정 시각
-    private LocalDateTime updTm;
-
-    //Shelter Entity
-    //보호소 번호
-    private String careRegNumber;
 
     //UpKind, Kind Entity
     //동물 종류 전체 이름 ex.[개] 시바
@@ -61,4 +57,5 @@ public class AnimalDTO {
     private String kindCd;
     //품종명 ex.시바
     private String kindNm;
+
 }
