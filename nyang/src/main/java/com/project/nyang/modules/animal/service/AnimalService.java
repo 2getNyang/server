@@ -35,8 +35,7 @@ public class AnimalService {
 
     //페이징 전체 목록
     @Transactional
-    public Page<AnimalListDTO> getAnimals(int page, int size) {
-        PageRequest pageable = PageRequest.of(page, size);
+    public Page<AnimalListDTO> getAnimals(PageRequest pageable) {
         return animalRepository.findAllAnimals(pageable); //페이저블에 페이징에대한 정보를 담아서 레포지토리에 전달하는 역할
     }
 
