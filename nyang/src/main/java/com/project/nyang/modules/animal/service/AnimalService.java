@@ -4,6 +4,7 @@ import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
 import com.project.nyang.modules.animal.dto.AnimalDTO;
 import com.project.nyang.modules.animal.dto.AnimalListDTO;
+import com.project.nyang.modules.animal.entity.Animal;
 import com.project.nyang.modules.animal.repository.AnimalRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,13 +13,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * AnimalService입니다
  *
- * @author : 엄아영
+ * @author : 엄아영, 이지은
  * @fileName : AnimalService
  * @since : 2025-07-09
  */
@@ -31,12 +34,13 @@ public class AnimalService {
     private final AnimalRepository animalRepository;
 
     //페이징 전체 목록
-    public Page<AnimalListDTO> getAnimals(int page, int size) {
-        PageRequest pageable = PageRequest.of(page, size);
+    @Transactional
+    public Page<AnimalListDTO> getAnimals(PageRequest pageable) {
         return animalRepository.findAllAnimals(pageable); //페이저블에 페이징에대한 정보를 담아서 레포지토리에 전달하는 역할
     }
 
     //페이징 동물 필터 검색
+    @Transactional
     public Page<AnimalListDTO> getFilterAnimals(LocalDate startDate, LocalDate endDate,
                                                 String upKindCd, String kindCd,
                                                 String regionCode, String subRegionCode,
@@ -66,4 +70,38 @@ public class AnimalService {
         return animalRepository.getFilterAnimals(startDate, endDate, upKindCd, kindCd, regionCode, subRegionCode, pageable);
     }
 
+    @Transactional
+    public AnimalDTO getAnimalDetail(String desertionNo) {
+        Animal animal = animalRepository.findByDesertionNo(desertionNo)
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_ANIMAL));
+        return toDTO(animal);
+    }
+
+    // Entity → DTO 변환
+    private AnimalDTO toDTO(Animal animal) {
+        return AnimalDTO.builder()
+                .desertionNo(animal.getDesertionNo())
+                .happenDt(animal.getHappenDt())
+                .happenPlace(animal.getHappenPlace())
+                .kindFullNm(animal.getKindFullNm())
+                .colorCd(animal.getColorCd())
+                .age(animal.getAge())
+                .weight(animal.getWeight())
+                .noticeNo(animal.getNoticeNo())
+                .noticeSdt(animal.getNoticeSdt())
+                .noticeEdt(animal.getNoticeEdt())
+                .popfile1(animal.getPopfile1())
+                .popfile2(animal.getPopfile2())
+                .popfile3(animal.getPopfile3())
+                .processState(animal.getProcessState())
+                .sexCd(animal.getSexCd())
+                .neuterYn(animal.getNeuterYn())
+                .specialMark(animal.getSpecialMark())
+                .build();
+    }
+
+    @Transactional
+    public List<AnimalListDTO> getRecommendAnimals() {
+        return animalRepository.findRecommendAnimals(PageRequest.of(0, 12));
+    }
 }
