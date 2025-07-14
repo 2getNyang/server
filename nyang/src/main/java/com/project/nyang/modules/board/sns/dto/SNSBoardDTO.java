@@ -1,6 +1,7 @@
 package com.project.nyang.modules.board.sns.dto;
 
-import com.project.nyang.modules.board.Board;
+import com.project.nyang.modules.board.entity.Board;
+import com.project.nyang.modules.image.entity.Image;
 import com.project.nyang.reference.entity.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /*
  * sns board 가 사용하는 dto 입니다.
@@ -27,6 +29,8 @@ public class SNSBoardDTO {
     private String boardContent;
     private Long viewCount;
     private String instagramLink;
+
+    private List<Image> images;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private LocalDateTime deletedAt;
@@ -40,6 +44,7 @@ public class SNSBoardDTO {
         this.boardContent = entity.getBoardContent();
         this.viewCount = entity.getViewCount();
         this.instagramLink = entity.getInstagramLink();
+        this.images = entity.getImages();
         this.createdAt = entity.getCreatedAt();
         this.modifiedAt = entity.getModifiedAt();
         this.deletedAt = entity.getDeletedAt();
