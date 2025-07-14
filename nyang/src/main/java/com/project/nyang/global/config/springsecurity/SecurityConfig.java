@@ -55,6 +55,7 @@ public class SecurityConfig {
                                         "/api/test/**", // ✅ 이 줄 추가: 공통 응답 테스트 컨트롤러 허용
                                         "/api/v1/animals/**",
                                         "/api/v1/boards/**",
+                                        "/api/v1/recommendations/**",
                                         "/*"
 
                                 ).permitAll()
@@ -64,8 +65,8 @@ public class SecurityConfig {
                                         "/api/v1/shelters/**",
                                         "/api/v1/comments/**",
                                         "/api/v1/bookmark/**",
-                                        "/api/v1/like/**"
-
+                                        "/api/v1/like/**",
+                                        "/api/v1/user/**"
                                 ).authenticated() //인증이 필요한 경로
 
 

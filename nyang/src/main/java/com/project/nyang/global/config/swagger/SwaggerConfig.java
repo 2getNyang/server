@@ -56,7 +56,7 @@ public class SwaggerConfig {
     public GroupedOpenApi userApi() {
         return GroupedOpenApi.builder()
                 .group("👤 사용자 API")
-                .pathsToMatch("/api/v1/users/**")
+                .pathsToMatch("/api/v1/user/**")
                 .addOpenApiCustomizer(jwtSecurityCustomizer())
                 .build();
     }
@@ -107,6 +107,16 @@ public class SwaggerConfig {
          return GroupedOpenApi.builder()
                  .group("🐱 동물 API")
                  .pathsToMatch("/api/v1/animals/**")
+                 .build();
+     }
+
+     // ✅ 이달의 동물 추천 API 그룹
+     @Bean
+     public GroupedOpenApi animalRecommendationApi() {
+         return GroupedOpenApi.builder()
+                 .group("😽 동물 추천 API")
+                 .pathsToMatch("/api/v1/recommendations/**")
+                 .addOpenApiCustomizer(jwtSecurityCustomizer())
                  .build();
      }
 

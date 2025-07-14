@@ -112,5 +112,4 @@ public class Animal{
     @JoinColumn(name = "kind_cd", insertable = false, updatable = false)
     private Kind kind;
 
-
 }
