@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
  */
 @Getter
 public class ReveiwBoardListDTO {
+    @Schema(description = "게시글 ID")
+    private Long id;
     @Schema(description = "사용자 닉네임")
     private String nickname;
     @Schema(description = "게시글 제목")
@@ -27,20 +29,21 @@ public class ReveiwBoardListDTO {
     private LocalDateTime createdAt;
     @Schema(description = "조회수")
     private Long boardViewCount;
-    @Schema(description = "좋아요 수")
-    private int likeItCount;
-    @Schema(description = "좋아요 여부")
-    private Boolean isLiked;
+//    @Schema(description = "좋아요 수")
+//    private int likeItCount;
+//    @Schema(description = "좋아요 여부")
+//    private Boolean isLiked;
 
     @Builder
-    public ReveiwBoardListDTO(String nickname, String boardTitle, String boardContent, String imageUrl, LocalDateTime createdAt, Long boardViewCount, int likeItCount, int commentCount, Boolean isLiked) {
+    public ReveiwBoardListDTO(Long id, String nickname, String boardTitle, String boardContent, String imageUrl, LocalDateTime createdAt, Long boardViewCount) {
+        this.id = id;
         this.nickname = nickname;
         this.boardTitle = boardTitle;
         this.boardContent = boardContent;
         this.imageUrl = imageUrl;
         this.createdAt = createdAt;
         this.boardViewCount = boardViewCount;
-        this.likeItCount = likeItCount;
-        this.isLiked = isLiked;
+//        this.likeItCount = likeItCount;
+//        this.isLiked = isLiked;
     }
 }

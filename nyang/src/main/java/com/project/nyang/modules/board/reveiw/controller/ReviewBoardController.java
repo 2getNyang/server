@@ -6,15 +6,20 @@ import com.project.nyang.global.security.core.CustomUserDetails;
 import com.project.nyang.modules.board.reveiw.dto.ReveiwBoardDetailDTO;
 import com.project.nyang.modules.board.reveiw.dto.ReveiwBoardListDTO;
 import com.project.nyang.modules.board.reveiw.dto.ReviewBoardCreateDTO;
+import com.project.nyang.modules.board.reveiw.dto.ReviewBoardUpdateDTO;
 import com.project.nyang.modules.board.reveiw.service.ReveiwBoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * 입양 후기 게시판 요청 받는 Controller
@@ -27,9 +32,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/boards/review")
 @RequiredArgsConstructor
-public class ReveiwBoardController {
-
-    // TODO. @AuthenticationPrincipal CustomUserDetails userDetails에서 userId를 추출하는 로직으로 api 수정 필요
+public class ReviewBoardController {
 
     private final ReveiwBoardService reveiwBoardService;
 
@@ -37,10 +40,12 @@ public class ReveiwBoardController {
      * 사용자가 입양 후기를 작성하는 기능
      */
     @Operation(summary = "입양 후기 게시글 등록")
-    @PostMapping
-    public ResponseEntity<ApiResponse<Object>> createReviewBoard(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody ReviewBoardCreateDTO boardDTO) {
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ApiResponse<Object>> createReviewBoard(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                 @RequestPart ReviewBoardCreateDTO boardDTO,
+                                                                 @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         Long userId = userDetails.getId();
-        reveiwBoardService.createReviewBoard(boardDTO, userId);
+        reveiwBoardService.createReviewBoard(userId, boardDTO, images);
         return ResponseEntity.ok(ApiSuccessResponse.success(null, "입양 후기 게시물 등록 완료"));
     }
 
@@ -66,9 +71,12 @@ public class ReveiwBoardController {
 
     @Operation(summary = "입양 후기 게시글 수정")
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Object>> updateReviewBoard(@AuthenticationPrincipal CustomUserDetails userDetails, @Parameter(description = "게시물 ID", example = "1") @PathVariable Long id, @RequestBody ReviewBoardCreateDTO boardDTO) {
+    public ResponseEntity<ApiResponse<Object>> updateReviewBoard(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                 @Parameter(description = "게시물 ID", example = "1") @PathVariable Long id,
+                                                                 @RequestPart ReviewBoardUpdateDTO boardDTO,
+                                                                 @RequestPart(required = false) List<MultipartFile> newImages) {
         Long userId = userDetails.getId();
-        reveiwBoardService.updateReviewBoard(id, userId, boardDTO);
+        reveiwBoardService.updateReviewBoard(userId, id, boardDTO, newImages);
         return ResponseEntity.ok(ApiSuccessResponse.success(null, "입양 후기 게시물 수정 완료"));
     }
 
