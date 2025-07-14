@@ -1,26 +1,24 @@
 package com.project.nyang.modules.animal.dto;
 
-import jakarta.persistence.Column;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * AnimalDTO입니다.
  *
- * @author : 엄아영
+ * AnimalDTO 상세조회에 사용합니다.
+ *
+ * @author : 이지은, 엄아영
  * @fileName : AnimalDTO
- * @since : 2025-07-09
+ * @since : 25. 7. 9.
  */
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class AnimalDTO {
     //유기 동물 번호
     private String desertionNo;
