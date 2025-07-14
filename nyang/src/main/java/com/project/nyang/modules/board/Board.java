@@ -2,6 +2,7 @@ package com.project.nyang.modules.board;
 
 import com.project.nyang.global.common.entity.BaseTime;
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
+import com.project.nyang.modules.board.lost.dto.LostUpdateRequestDTO;
 import com.project.nyang.modules.comment.entity.Comment;
 import com.project.nyang.modules.image.entity.Image;
 import com.project.nyang.modules.like.entity.LikeIt;
@@ -169,22 +170,22 @@ public class Board extends BaseTime {
     }
 
     //실종/목격 글 수정 메서드
-//    public void updateBoardInfo(LostUpdateRequestDTO dto, Region region, SubRegion subRegion,
-//                                Kind kind, UpKind upKind, Category category) {
-//        this.boardContent = dto.getContent();
-//        this.lostType = dto.getLostType();
-//        this.gender = dto.getGender();
-//        this.age = dto.getAge();
-//        this.furColor = dto.getFurColor();
-//        this.distinctFeatures = dto.getDistinctFeatures();
-//        this.missingDate = dto.getMissingDate();
-//        this.missingLocation = dto.getMissingLocation();
-//        this.phone = dto.getPhone();
-//        this.region = region;
-//        this.subRegion = subRegion;
-//        this.kind = kind;
-//        this.upKind = upKind;
-//        this.category = category;
-//    }
+    public void updateBoardInfo(LostUpdateRequestDTO dto, Region region, SubRegion subRegion,
+                                Kind kind, UpKind upKind, Category category) {
+        this.boardContent = dto.getContent();
+        this.lostType = dto.getLostType();
+        this.gender = dto.getGender();
+        this.age = dto.getAge();
+        this.furColor = dto.getFurColor();
+        this.distinctFeatures = dto.getDistinctFeatures();
+        this.missingDate = dto.getMissingDate();
+        this.missingLocation = dto.getMissingLocation();
+        this.phone = dto.getPhone();
+        this.region = region;
+        this.subRegion = subRegion;
+        this.kind = kind;
+        this.upKind = upKind;
+        this.category = category;
+    }
 
 }
