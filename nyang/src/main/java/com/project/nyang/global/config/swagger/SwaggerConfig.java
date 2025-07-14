@@ -56,7 +56,7 @@ public class SwaggerConfig {
     public GroupedOpenApi userApi() {
         return GroupedOpenApi.builder()
                 .group("👤 사용자 API")
-                .pathsToMatch("/api/v1/users/**")
+                .pathsToMatch("/api/v1/user/**")
                 .addOpenApiCustomizer(jwtSecurityCustomizer())
                 .build();
     }
