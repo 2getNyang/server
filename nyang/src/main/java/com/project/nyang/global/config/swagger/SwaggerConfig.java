@@ -41,6 +41,16 @@ public class SwaggerConfig {
                  .build();
      }
 
+     // ✅ 보호소 API 그룹
+     @Bean
+     public GroupedOpenApi shelterApi() {
+         return GroupedOpenApi.builder()
+                 .group("🏠 보호소 API")
+                 .pathsToMatch("/api/v1/shelters/**")
+                 .addOpenApiCustomizer(jwtSecurityCustomizer())
+                 .build();
+     }
+
     // ✅ 사용자 API 그룹
     @Bean
     public GroupedOpenApi userApi() {
@@ -90,6 +100,15 @@ public class SwaggerConfig {
                 .addOpenApiCustomizer(jwtSecurityCustomizer())
                 .build();
     }
+
+     // ✅ 동물 API 그룹
+     @Bean
+     public GroupedOpenApi animalApi() {
+         return GroupedOpenApi.builder()
+                 .group("🐱 동물 API")
+                 .pathsToMatch("/api/v1/animals/**")
+                 .build();
+     }
 
     // ✅ API 메타정보
     @Bean
