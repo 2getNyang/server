@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -54,16 +55,15 @@ public class Image {
     //썸네일 지정 메서드
     public void markAsThumbnail() { this.thumbnailIs = "Y"; }
 
-
-
     @Builder
     public Image(Long imageId, String originFileName,
-                    String s3Url, String fileSize,
-                    String thumbnailIs, Board board) {
+                 String s3Url, String fileSize,
+                 String thumbnailIs, LocalDateTime deletedAt, Board board) {
         this.originFileName = originFileName;
         this.s3Url = s3Url;
         this.fileSize = fileSize;
         this.thumbnailIs = thumbnailIs;
+        this.deletedAt = deletedAt;
         this.board = board;
     }
 
@@ -73,6 +73,7 @@ public class Image {
                 .originFileName(this.originFileName)
                 .s3Url(this.s3Url)
                 .fileSize(this.fileSize)
+                .deletedAt(this.deletedAt)
                 .thumbnailIs(this.thumbnailIs);  // 기존 thumbnailYN 값을 그대로 복사
     }
 
