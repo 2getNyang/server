@@ -224,15 +224,6 @@ public class SNSBoardService {
 //        snsBoardRepository.save(board);
     }
 
-    /* SNS 게시판 글 전체조회 */
-    @Transactional(readOnly = true)
-    public List<SNSBoardDTO> getAllBoards() {
-        List<Board> boards = snsBoardRepository.findByCategory_CategoryIdAndDeletedAtIsNull(SNS_CATEGORY_ID);
-        return boards.stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
-    }
-
 
     /* SNS 게시판 글 상세조회 */
     @Transactional
@@ -249,9 +240,9 @@ public class SNSBoardService {
                 .filter(image -> image.getDeletedAt() == null)
                 .collect(Collectors.toList());
         // 댓글가져옴
-        List<LostDetailResponseDTO.CommentDTO> commentDTOList = board.getComments().stream()
+        List<SNSBoardDTO.CommentDTO> commentDTOList = board.getComments().stream()
                 .filter(comment -> comment.getDeletedAt() == null)
-                .map(LostDetailResponseDTO.CommentDTO::toDTO)
+                .map(SNSBoardDTO.CommentDTO::toDTO)
                 .collect(Collectors.toList());
         //좋아요 수 조회
         Long likeCount = likeRepository.countByBoardId(boardId);

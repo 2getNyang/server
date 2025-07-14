@@ -2,7 +2,7 @@ package com.project.nyang.modules.board.sns.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.project.nyang.modules.board.entity.Board;
-import com.project.nyang.modules.board.lost.dto.LostDetailResponseDTO;
+
 import com.project.nyang.modules.comment.entity.Comment;
 import com.project.nyang.modules.image.entity.Image;
 import com.project.nyang.reference.entity.Category;
@@ -53,7 +53,7 @@ public class SNSBoardDTO {
     private Long likeCount;
 
     @Schema(description = "댓글 리스트")
-    private List<LostDetailResponseDTO.CommentDTO> comments;
+    private List<CommentDTO> comments;
 
     private Long userId;
 

@@ -71,14 +71,6 @@ public class SNSBoardController {
         return ResponseEntity.ok(ApiSuccessResponse.success(result));
     }
 
-    /* sns 게시판 전체조회 */
-    @Operation(summary = "sns 게시글 전체조회", description = "SNS 카테고리 전체게시글 조회")
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<SNSBoardDTO>>> getAllBoard() {
-        List<SNSBoardDTO> boards = snsBoardService.getAllBoards();
-        return ResponseEntity.ok(ApiSuccessResponse.success(boards));
-    }
-
 
 
     /* SNS 게시판 상세조회 */
