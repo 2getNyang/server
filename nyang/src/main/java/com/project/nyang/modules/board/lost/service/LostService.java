@@ -4,7 +4,7 @@ import com.project.nyang.global.common.S3.S3Service;
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
 import com.project.nyang.global.security.core.CustomUserDetails;
-import com.project.nyang.modules.board.Board;
+import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.modules.board.lost.dto.*;
 import com.project.nyang.modules.board.lost.repository.LostRepository;
 import com.project.nyang.modules.image.entity.Image;
