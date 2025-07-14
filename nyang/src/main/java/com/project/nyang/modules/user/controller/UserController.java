@@ -1,6 +1,9 @@
 package com.project.nyang.modules.user.controller;
 
+import com.project.nyang.global.common.api.ApiResponse;
+import com.project.nyang.global.common.api.ApiSuccessResponse;
 import com.project.nyang.global.security.core.CustomUserDetails;
+import com.project.nyang.modules.animal.dto.AnimalListDTO;
 import com.project.nyang.modules.user.dto.UpdateUserInfoDTO;
 import com.project.nyang.modules.user.dto.UserInfoDTO;
 import com.project.nyang.modules.user.service.UserService;
@@ -9,6 +12,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -33,20 +37,20 @@ public class UserController {
     //사용자 정보 조회
     @Operation(summary = "사용자 정보 조회", description = "로그인 사용자의 기본 정보(닉네임·이메일·소셜 타입 등)를 반환")
     @GetMapping("/info")
-    public ResponseEntity<UserInfoDTO> getMyInfo(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<ApiResponse<UserInfoDTO>> getMyInfo(@AuthenticationPrincipal CustomUserDetails userDetails) {
         Long userId = userDetails.getId();
         UserInfoDTO userInfo = userService.getUserInfo(userId);
-        return ResponseEntity.ok(userInfo);
+        return ResponseEntity.ok(ApiSuccessResponse.success(userInfo, "사용자 정보 조회에 성공하였습니다"));
     }
 
     //사용자 정보 수정
     //닉네임과 이메일만
     @Operation(summary = "사용자 정보 수정", description = "닉네임과 이메일 수정")
     @PutMapping("/info")
-    public ResponseEntity<UserInfoDTO> updateMyInfo(@AuthenticationPrincipal CustomUserDetails userDetails,
+    public ResponseEntity<ApiResponse<UserInfoDTO>> updateMyInfo(@AuthenticationPrincipal CustomUserDetails userDetails,
                                              @RequestBody UpdateUserInfoDTO updateUserInfoDTO) {
         Long userId = userDetails.getId();
         UserInfoDTO userInfo = userService.updateUserInfo(userId, updateUserInfoDTO);
-        return ResponseEntity.ok(userInfo);
+        return ResponseEntity.ok(ApiSuccessResponse.success(userInfo, "사용자 정보 수정에 성공하였습니다"));
     }
 }
