@@ -1,5 +1,7 @@
 package com.project.nyang.modules.animal.service;
 
+import com.project.nyang.global.exception.CustomException;
+import com.project.nyang.global.exception.ErrorCode;
 import com.project.nyang.modules.animal.dto.AnimalDTO;
 import com.project.nyang.modules.animal.entity.Animal;
 import com.project.nyang.modules.animal.repository.AnimalDetailRepository;
@@ -20,7 +22,7 @@ public class AnimalDetailService {
     @Transactional
     public AnimalDTO getAnimalDetail(String desertionNo) {
         Animal animal = animalDetailRepository.findByDesertionNo(desertionNo)
-                .orElseThrow(() -> new RuntimeException("해당 동물을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_ANIMAL));
         return toDTO(animal);
     }
 

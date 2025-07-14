@@ -45,6 +45,20 @@ public class AnimalDTO {
     private String popfile1;
     private String popfile2;
     private String popfile3;
+    //보호상태 (NOTICE / PROTECT / FINISH)
+    private String processState;
+    // 성별 (M / F / Q)
+    private String sexCd;
+    //중성화 여부 (Y / N / U)
+    private String neuterYn;
+    //특이 사항
+    private String specialMark;
+    //API 수정 시각
+    private LocalDateTime updTm;
+
+    //Shelter Entity
+    //보호소 번호
+    private String careRegNumber;
 
     //UpKind, Kind Entity
     //동물 종류 전체 이름 ex.[개] 시바
