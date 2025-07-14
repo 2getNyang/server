@@ -1,6 +1,7 @@
 package com.project.nyang.modules.animal.entity;
 
 import com.project.nyang.global.common.entity.BaseTime;
+import com.project.nyang.modules.comment.entity.Comment;
 import com.project.nyang.modules.shelter.entity.Shelter;
 import com.project.nyang.reference.entity.Kind;
 import com.project.nyang.reference.entity.SubRegion;
@@ -10,6 +11,8 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Animal Entitiy입니다.
@@ -111,5 +114,10 @@ public class Animal{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kind_cd", insertable = false, updatable = false)
     private Kind kind;
+
+    //일 대 다
+    //동물 상세 정보에는 여러개의 댓글이 달릴 수 있다.
+    @OneToMany(mappedBy = "animal", fetch = FetchType.LAZY, cascade =  CascadeType.ALL)
+    private List<Comment> comment = new ArrayList<>();
 
 }
