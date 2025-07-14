@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * AnimalService입니다
@@ -33,12 +34,14 @@ public class AnimalService {
     private final AnimalRepository animalRepository;
 
     //페이징 전체 목록
+    @Transactional
     public Page<AnimalListDTO> getAnimals(int page, int size) {
         PageRequest pageable = PageRequest.of(page, size);
         return animalRepository.findAllAnimals(pageable); //페이저블에 페이징에대한 정보를 담아서 레포지토리에 전달하는 역할
     }
 
     //페이징 동물 필터 검색
+    @Transactional
     public Page<AnimalListDTO> getFilterAnimals(LocalDate startDate, LocalDate endDate,
                                                 String upKindCd, String kindCd,
                                                 String regionCode, String subRegionCode,
@@ -98,4 +101,8 @@ public class AnimalService {
                 .build();
     }
 
+    @Transactional
+    public List<AnimalListDTO> getRecommendAnimals() {
+        return animalRepository.findRecommendAnimals(PageRequest.of(0, 12));
+    }
 }

@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * AnimalController입니다
@@ -62,11 +63,13 @@ public class AnimalController {
         return animalService.getFilterAnimals(startDate,endDate,upKindCd,kindCd,regionCode,subRegionCode,pageable);
     }
 
-
+    //상세 유기동물 조회
     @Operation(summary = "상세 유기동물 조회", description = "유기동물 고유 번호를 바탕으로 해당 동물의 상세 정보를 조회합니다.")
     @GetMapping("/{desertionNo}")
     public ResponseEntity<ApiResponse<AnimalDTO>> getAnimalDetail(@PathVariable String desertionNo){
         AnimalDTO animal = animalService.getAnimalDetail(desertionNo);
         return ResponseEntity.ok(ApiSuccessResponse.success(animal,"동물정보 조회에 성공하였습니다"));
     }
+
+
 }

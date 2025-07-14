@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -94,4 +95,34 @@ public interface AnimalRepository extends JpaRepository<Animal, String> {
 
     Optional<Animal> findByDesertionNo(String desertionNo);
 
+    //이달의 추천 동물
+    @Query("""
+    SELECT new com.project.nyang.modules.animal.dto.AnimalListDTO(
+        a.desertionNo,
+        a.processState,
+        a.sexCd,
+        a.kindFullNm,
+        a.noticeNo,
+        a.happenDt,
+        a.happenPlace,
+        a.popfile1,
+        a.upKind.upKindCd,
+        a.upKind.upKindNm,
+        a.kind.kindCd,
+        a.kind.kindNm,
+        a.shelter.region.regionCode,
+        a.shelter.region.regionName,
+        a.shelter.subRegion.subRegionCode,
+        a.shelter.subRegion.subRegionName
+    )
+    FROM Animal a
+    LEFT JOIN LikeIt l ON l.animal = a
+    WHERE a.noticeEdt >= CURRENT_DATE
+    GROUP BY a.desertionNo, a.noticeEdt
+    ORDER BY 
+        DATEDIFF(a.noticeEdt, CURRENT_DATE) ASC, 
+        COUNT(l.likeId) ASC,
+        FUNCTION('RAND')
+""")
+    List<AnimalListDTO> findRecommendAnimals(Pageable pageable);
 }
