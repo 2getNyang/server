@@ -1,5 +1,6 @@
 package com.project.nyang.modules.board.lost.dto;
 
+import com.project.nyang.modules.comment.entity.Comment;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,6 +52,10 @@ public class LostDetailResponseDTO {
     private String missingLocation;
     @Schema(description = "작성자 연락처", example = "010-2222-3333")
     private String phone;
+    @Schema(description = "좋아요 수", example = "5")
+    private Long likeCount;
+    @Schema(description = "댓글 리스트")
+    private List<CommentDTO> comments;
 
     @Schema(description = "이미지 S3 url 리스트", example = "[\"https://s3.amazonaws.com/bucket/image1.jpg\", \"https://s3.amazonaws.com/bucket/image2.jpg\"]")
     private List<String> imageUrls;
@@ -58,4 +63,38 @@ public class LostDetailResponseDTO {
     private LocalDateTime createdAt;
     @Schema(description = "삭제일자", example = "2025-07-13 14:30:00")
     private LocalDateTime deletedAt;
+
+
+    @Getter
+    public static class CommentDTO {
+        @Schema(description = "댓글 ID")
+        private Long id;
+        @Schema(description = "댓글 내용")
+        private String commnetContent;
+        @Schema(description = "댓글 생성 시간")
+        private LocalDateTime createdAt;
+        @Schema(description = "댓글 작성자")
+        private String commentNickname;
+        @Schema(description = "부모 댓글 ID")
+        private Long parentId;
+
+        @Builder
+        public CommentDTO(String commnetContent, LocalDateTime createdAt, String commentNickname, Long parentId, Long id) {
+            this.id = id;
+            this.commnetContent = commnetContent;
+            this.createdAt = createdAt;
+            this.commentNickname = commentNickname;
+            this.parentId = parentId;
+        }
+
+        public static CommentDTO toDTO(Comment comment) {
+            return CommentDTO.builder()
+                    .commnetContent(comment.getCommentContent())
+                    .createdAt(comment.getCreatedAt())
+                    .commentNickname(comment.getUser().getNickname())
+                    .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
+                    .id(comment.getId())
+                    .build();
+        }
+    }
 }

@@ -7,7 +7,9 @@ import com.project.nyang.global.security.core.CustomUserDetails;
 import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.modules.board.lost.dto.*;
 import com.project.nyang.modules.board.lost.repository.LostRepository;
+import com.project.nyang.modules.comment.repository.CommentRepository;
 import com.project.nyang.modules.image.entity.Image;
+import com.project.nyang.modules.like.repository.LikeRepository;
 import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.modules.user.repository.UserRepository;
 import com.project.nyang.reference.entity.*;
@@ -46,6 +48,8 @@ public class LostService {
     private final SubRegionRepository subRegionRepository;
     private final UpkindRepository upkindRepository;
     private final KindRepository kindRepository;
+    private final LikeRepository likeRepository;
+    private final CommentRepository commentRepository;
 
     private final S3Service s3Service;
     private final Long CATEGORY_ID = 4L;
@@ -98,9 +102,16 @@ public class LostService {
         if (board.getDeletedAt() != null) {
             throw new CustomException(ErrorCode.BOARD_ALLREDAY_DELETE);
         }
+        List<LostDetailResponseDTO.CommentDTO> commentDTOList = board.getComments().stream()
+                .filter(comment -> comment.getDeletedAt() == null)
+                .map(LostDetailResponseDTO.CommentDTO::toDTO)
+                .collect(Collectors.toList());
         
         //조회수 증가
         board.increaseViewCount();
+
+        //좋아요 수 조회
+        Long likeCount = likeRepository.countByBoardId(boardId);
 
         return LostDetailResponseDTO.builder()
                 .boardId(board.getId())
@@ -123,6 +134,8 @@ public class LostService {
                 .missingLocation(board.getMissingLocation())
                 .missingDate(board.getMissingDate())
                 .phone(board.getPhone())
+                .likeCount(likeCount)
+                .comments(commentDTOList)
                 .createdAt(board.getCreatedAt())
                 .deletedAt(board.getDeletedAt())
                 .imageUrls(board.getImages().stream()
