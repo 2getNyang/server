@@ -129,9 +129,9 @@ public class AuthController {
 //        if (success) {
 //            //Todo. 아직 회원 탈퇴 기능 작성 전이라 주석처리 해둠. 현재 계정연동끊는 기능만 하는중
 //            //userService.markUserWithdrawnByAccessToken(accessToken);
-//            return ResponseEntity.ok("구글 연결 해제 완료");
+//            return ResponseEntity.ok(ApiSuccessResponse.success(null,"구글 계정 연결 해제에 성공하였습니다."));
 //        } else {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("구글 연결 해제 실패");
+//            throw new CustomException(ErrorCode.GOOGLE_REVOKE_FAILED);
 //        }
 //
 //    }

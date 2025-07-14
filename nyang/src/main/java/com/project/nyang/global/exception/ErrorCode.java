@@ -33,7 +33,8 @@ public enum ErrorCode {
     FORBIDDEN(403, "권한이 없습니다."),
 
     //동물 관련 에러
-    INVALID_ANIMAL(404, "해당 동물을 찾을 수 없습니다.");
+    INVALID_ANIMAL(404, "해당 동물을 찾을 수 없습니다."),
+    GOOGLE_REVOKE_FAILED(500,"구글 계정 연결 해제에 실패했습니다");
 
 
 
