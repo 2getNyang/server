@@ -39,7 +39,13 @@ public class User extends BaseTime {
     @Column(name = "email", length = 100)
     private String email;
 
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
 
-    //mapped 관련하여서는 다른 엔티티들 보고 작성
+    public void updateEmail(String email) {
+        this.email = email;
+    }
+
 
 }

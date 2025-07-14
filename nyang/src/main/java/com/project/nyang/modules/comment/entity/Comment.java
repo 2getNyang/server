@@ -2,11 +2,13 @@ package com.project.nyang.modules.comment.entity;
 
 import com.project.nyang.global.common.entity.BaseTime;
 import com.project.nyang.modules.animal.entity.Animal;
-import com.project.nyang.modules.board.Board;
+import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.modules.user.entity.User;
-import com.project.nyang.reference.entity.Category;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -48,6 +50,9 @@ public class Comment extends BaseTime {
     @Column(name = "comment_content", nullable = false)
     private String commentContent;
 
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
     // created_at, modified_at, deleted_at 생략
 
    @Builder
@@ -58,4 +63,9 @@ public class Comment extends BaseTime {
        this.parent = parent;
        this.commentContent = commentContent;
    }
+
+   public void updateComment(String content) {
+       this.commentContent = content;
+   }
+
 }
