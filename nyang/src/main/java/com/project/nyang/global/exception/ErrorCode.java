@@ -29,7 +29,10 @@ public enum ErrorCode {
     //게시글 관련 에러
     BOARD_NOT_FOUND(404, "게시글을 찾을 수 없습니다."),
     BOARD_ALLREDAY_DELETE(401, "삭제된 게시글입니다."),
-    FORBIDDEN(403, "권한이 없습니다.");
+    FORBIDDEN(403, "권한이 없습니다."),
+
+    //보호소 관련 에러
+    SHELTER_NOT_FOUND(404, "해당 보호소가 존재하지 않습니다.");
 
 
     private final int code;
