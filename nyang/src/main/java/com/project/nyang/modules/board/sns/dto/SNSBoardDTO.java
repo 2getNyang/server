@@ -27,26 +27,37 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SNSBoardDTO {
+    @Schema(description = "" ,example = "")
     private Long id;
 
+    @Schema(description = "" ,example = "")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Category category;
 
+    @Schema(description = "" ,example = "")
     private String boardTitle;
 
+    @Schema(description = "" ,example = "")
     private String boardContent;
 
+    @Schema(description = "" ,example = "")
     private Long viewCount;
 
+    @Schema(description = "" ,example = "")
     private String instagramLink;
+
+    @Schema(description = "" ,example = "")
     // 순환참조 막기위해서 JsonIgnoreProperties 추가
     @JsonIgnoreProperties({"board"})
     private List<Image> images;
 
+    @Schema(description = "" ,example = "")
     private LocalDateTime createdAt;
 
+    @Schema(description = "" ,example = "")
     private LocalDateTime modifiedAt;
 
+    @Schema(description = "" ,example = "")
     private LocalDateTime deletedAt;
 
     @Schema(description = "좋아요 수", example = "5")
@@ -55,7 +66,11 @@ public class SNSBoardDTO {
     @Schema(description = "댓글 리스트")
     private List<CommentDTO> comments;
 
+    @Schema(description = "" ,example = "")
     private Long userId;
+
+    @Schema(description = "" ,example = "")
+    private String nickname;
 
     public SNSBoardDTO(Board entity) {
         this.id = entity.getId();
@@ -65,21 +80,11 @@ public class SNSBoardDTO {
         this.viewCount = entity.getViewCount();
         this.instagramLink = entity.getInstagramLink();
         this.images = entity.getImages();
+        this.nickname = entity.getUser().getNickname();
         this.createdAt = entity.getCreatedAt();
         this.modifiedAt = entity.getModifiedAt();
         this.deletedAt = entity.getDeletedAt();
-    }
 
-    public void updateDto(SNSBoardDTO dto) {
-        if (dto.getBoardTitle() != null) {
-            this.boardTitle = dto.getBoardTitle();
-        }
-        if (dto.getBoardContent() != null) {
-            this.boardContent = dto.getBoardContent();
-        }
-        if (dto.getInstagramLink() != null) {
-            this.instagramLink = dto.getInstagramLink();
-        }
     }
 
     @Getter

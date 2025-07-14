@@ -276,6 +276,7 @@ public class SNSBoardService {
 
         return new PageImpl<>(dtoList, pageable, boardsPage.getTotalElements());
     }
+
     /*
      * SNS 게시판 검색 페이징
      * @param keyword 검색 키워드 (제목 또는 내용)
@@ -307,7 +308,10 @@ public class SNSBoardService {
                 .instagramLink(board.getInstagramLink())
                 .viewCount(board.getViewCount())
                 .createdAt(board.getCreatedAt())
-                .images(filteredImages) // deletedAt 없는 것만 넣기
+                .category(board.getCategory())
+                .userId(board.getUser() != null ? board.getUser().getId() : null)
+                .nickname(board.getUser() != null ? board.getUser().getNickname() : null)
+                .images(filteredImages)
                 .build();
     }
 
@@ -318,7 +322,7 @@ public class SNSBoardService {
                 .boardContent(board.getBoardContent())
                 .instagramLink(board.getInstagramLink())
                 .viewCount(board.getViewCount())
-                .images(visibleImages)  // ⬅️ 전달받은 필터링된 이미지만 사용
+                .images(visibleImages)
                 .build();
     }
 
