@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  *
  * Image 엔티티 클래스입니다.
@@ -40,6 +42,19 @@ public class Image {
 
     @Column(name = "thumbnail_is", length = 1)
     private String thumbnailIs;
+
+    @Column(name="deleted_at")
+    private LocalDateTime deletedAt;
+
+    //softDelete용 메서드
+    public void softDelete() {
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    //썸네일 지정 메서드
+    public void markAsThumbnail() { this.thumbnailIs = "Y"; }
+
+
 
     @Builder
     public Image(Long imageId, String originFileName,
