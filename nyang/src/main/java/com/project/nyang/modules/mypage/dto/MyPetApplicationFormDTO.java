@@ -13,5 +13,3 @@ public class MyPetApplicationFormDTO {
     private String kindFullNm;
     private Long formId;
 }
-
-푸
