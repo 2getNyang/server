@@ -1,7 +1,7 @@
 package com.project.nyang.modules.like.repository;
 
 import com.project.nyang.modules.animal.entity.Animal;
-import com.project.nyang.modules.board.Board;
+import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.modules.like.entity.LikeIt;
 import com.project.nyang.modules.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

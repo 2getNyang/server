@@ -1,15 +1,14 @@
 package com.project.nyang.modules.like.service;
 
 import com.project.nyang.modules.animal.entity.Animal;
-import com.project.nyang.modules.board.Board;
+import com.project.nyang.modules.animal.repository.AnimalRepository;
+import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.modules.like.dto.LikeDto;
 import com.project.nyang.modules.like.entity.LikeIt;
-import com.project.nyang.modules.like.repository.TempAnimalRepository;
-import com.project.nyang.modules.like.repository.BoardRepository;
+import com.project.nyang.modules.board.repository.BoardRepository;
 import com.project.nyang.modules.like.repository.LikeRepository;
 import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.modules.user.repository.UserRepository;
-import com.project.nyang.reference.repository.CategoryRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,7 @@ public class LikeService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final LikeRepository likeRepository;
-    private final TempAnimalRepository tempAnimalRepository;
+    private final AnimalRepository animalRepository;
 
     /**
      * 게시글에 좋아요를 추가하는 메서드
@@ -74,7 +73,7 @@ public class LikeService {
         User user = userRepository.findById(userId).orElseThrow(()
                 -> new IllegalArgumentException("사용자 권한이 없습니다."));
 
-        Animal animal = tempAnimalRepository.findByDesertionNo(desertionNo).orElseThrow(()
+        Animal animal = animalRepository.findByDesertionNo(desertionNo).orElseThrow(()
                 -> new IllegalArgumentException("공고 번호가 잘못되었습니다."));
 
         boolean alreadyLiked = likeRepository.existsByUserAndAnimal(user, animal);

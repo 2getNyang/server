@@ -1,20 +1,18 @@
 package com.project.nyang.modules.comment.service;
 
 import com.project.nyang.modules.animal.entity.Animal;
-import com.project.nyang.modules.board.Board;
+import com.project.nyang.modules.animal.repository.AnimalRepository;
+import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.modules.comment.dto.CreateCommentDTO;
 import com.project.nyang.modules.comment.dto.UpdateCommentDTO;
 import com.project.nyang.modules.comment.entity.Comment;
 import com.project.nyang.modules.comment.repository.CommentRepository;
-import com.project.nyang.modules.like.repository.BoardRepository;
-import com.project.nyang.modules.like.repository.TempAnimalRepository;
+import com.project.nyang.modules.board.repository.BoardRepository;
 import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.modules.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.sql.SQLOutput;
 
 /**
  * 댓글 Service
@@ -30,7 +28,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
-    private final TempAnimalRepository animalRepository;
+    private final AnimalRepository animalRepository;
 
     /**
      * 게시글 댓글 등록 메서드
@@ -124,6 +122,10 @@ public class CommentService {
     public void deleteComment(Long userId, Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
                 new IllegalArgumentException("해당 댓글이 존재하지 않습니다."));
+
+        if(comment.getDeletedAt() != null) {
+            throw new IllegalArgumentException("해당 댓글이 존재하지 않습니다.");
+        }
 
         if(!comment.getUser().getId().equals(userId)) {
             throw new IllegalArgumentException("댓글 삭제 권한이 없습니다.");
