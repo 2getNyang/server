@@ -54,13 +54,18 @@ public class SecurityConfig {
                                         "/login/**",          // 스프링 시큐리티 내부 로그인 관련
                                         "/api/test/**", // ✅ 이 줄 추가: 공통 응답 테스트 컨트롤러 허용
                                         "/api/v1/animals/**",
+                                        "/api/v1/boards/**",
                                         "/*"
 
                                 ).permitAll()
 
                                 .requestMatchers(
                                         "/api/user/**", // 사용자 정보 관련 API
-                                        "/api/v1/shelters/**"
+                                        "/api/v1/shelters/**",
+                                        "/api/v1/comments/**",
+                                        "/api/v1/bookmark/**",
+                                        "/api/v1/like/**"
+
                                 ).authenticated() //인증이 필요한 경로
 
 
