@@ -51,34 +51,9 @@ public class SNSBoardService {
     */
     private static final Long SNS_CATEGORY_ID = 3L;
 
-    /* SNS 게시판 글 전체조회 */
-    @Transactional(readOnly = true)
-    public List<SNSBoardDTO> getAllBoards() {
-        List<Board> boards = snsBoardRepository.findByCategory_CategoryIdAndDeletedAtIsNull(SNS_CATEGORY_ID);
-        return boards.stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
-    }
-
-    /* SNS 게시판 글 상세조회 */
-    @Transactional
-    public SNSBoardDTO getBoardDetail(Long boardId) {
-        Board board = snsBoardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글 없음: " + boardId));
-
-        if (!board.getCategory().getCategoryId().equals(SNS_CATEGORY_ID)) {
-            throw new IllegalArgumentException("SNS 게시글만 조회 가능합니다. 현재 불러오는 카테고리 id: " + board.getCategory().getCategoryId());
-        }
-
-        List<Image> visibleImages = board.getImages().stream()
-                .filter(image -> image.getDeletedAt() == null)
-                .collect(Collectors.toList());
-
-        return toDto(board, visibleImages); // 이미지 반영된 DTO 변환 메서드 필요
-    }
     /* SNS 게시판 글 등록 */
     @Transactional
-    public SNSBoardDTO createSNSBoard(SNSBoardDTO boardDTO, List<MultipartFile> imageFiles, Long userId) {
+    public SNSBoardDTO createSNSBoard(SNSBoardDTO boardDTO, List<MultipartFile> images, Long userId) {
         // 카테고리 확인
         Category category = categoryRepository.findById(SNS_CATEGORY_ID)
                 .orElseThrow(() -> new IllegalArgumentException("SNS 카테고리를 찾을 수 없습니다."));
@@ -103,27 +78,25 @@ public class SNSBoardService {
                 .build();
         snsBoardRepository.save(board);
 
-        // 이미지 업로드
-        if (imageFiles != null && !imageFiles.isEmpty()) {
-            List<String> uploadedUrls = s3Service.uploadFile(imageFiles);
+        //이미지가 존재하면 이미지 업로드 및 이미지 엔티티 저장
+        if (images != null && !images.isEmpty()) {
+            List<String> s3Urls = s3Service.uploadFile(images); //전체 URL 리스트 반환
 
-            for (int i = 0; i < uploadedUrls.size(); i++) {
-                String url = uploadedUrls.get(i);
-                MultipartFile file = imageFiles.get(i);
-
-                if (url == null || url.trim().isEmpty()) {
-                    throw new RuntimeException("S3 업로드 URL이 비어 있습니다: " + file.getOriginalFilename());
-                }
+            for (int i = 0; i < s3Urls.size(); i++) {
+                MultipartFile file = images.get(i);
+                String s3Url = s3Urls.get(i);
+                String fileName = file.getOriginalFilename();
+                String fileSize = String.valueOf(file.getSize());
 
                 Image image = Image.builder()
+                        .originFileName(fileName)
+                        .s3Url(s3Url)
+                        .fileSize(fileSize)
+                        .thumbnailIs(i == 0 ? "Y" : "N")    //첫번쨰 이미지를 썸네일로
                         .board(board)
-                        .originFileName(file.getOriginalFilename())
-                        .fileSize(String.valueOf(file.getSize()))
-                        .s3Url(url)
-                        .thumbnailIs(i == 0 ? "Y" : "N")
                         .build();
 
-                imageRepository.save(image);
+                board.getImages().add(image);
             }
         }
 
@@ -248,7 +221,32 @@ public class SNSBoardService {
 //        snsBoardRepository.save(board);
     }
 
+    /* SNS 게시판 글 전체조회 */
+    @Transactional(readOnly = true)
+    public List<SNSBoardDTO> getAllBoards() {
+        List<Board> boards = snsBoardRepository.findByCategory_CategoryIdAndDeletedAtIsNull(SNS_CATEGORY_ID);
+        return boards.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
 
+
+    /* SNS 게시판 글 상세조회 */
+    @Transactional
+    public SNSBoardDTO getBoardDetail(Long boardId) {
+        Board board = snsBoardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글 없음: " + boardId));
+
+        if (!board.getCategory().getCategoryId().equals(SNS_CATEGORY_ID)) {
+            throw new IllegalArgumentException("SNS 게시글만 조회 가능합니다. 현재 불러오는 카테고리 id: " + board.getCategory().getCategoryId());
+        }
+
+        List<Image> visibleImages = board.getImages().stream()
+                .filter(image -> image.getDeletedAt() == null)
+                .collect(Collectors.toList());
+
+        return toDto(board, visibleImages); // 이미지 반영된 DTO 변환 메서드 필요
+    }
     /* SNS 게시판 페이징 */
     @Transactional(readOnly = true)
     public Page<SNSBoardDTO> getBoardsPaged(Pageable pageable) {
@@ -269,12 +267,8 @@ public class SNSBoardService {
      */
     @Transactional(readOnly = true)
     public Page<SNSBoardDTO> searchSNSBoards(String keyword, Pageable pageable) {
-        Page<Board> boardsPage = snsBoardRepository
-                .searchKeywordSNS(
-                        SNS_CATEGORY_ID, keyword,
-                        SNS_CATEGORY_ID, keyword,
-                        pageable
-                );
+        Page<Board> boardsPage = snsBoardRepository.searchKeywordSNS(SNS_CATEGORY_ID, keyword, pageable);
+
 
         List<SNSBoardDTO> dtoList = boardsPage
                 .map(this::toDto)
@@ -285,18 +279,21 @@ public class SNSBoardService {
 
     /* Entity -> DTO 변환 */
     private SNSBoardDTO toDto(Board board) {
+        List<Image> filteredImages = board.getImages().stream()
+                .filter(image -> image.getDeletedAt() == null)
+                .collect(Collectors.toList());
+
         return SNSBoardDTO.builder()
                 .id(board.getId())
                 .boardTitle(board.getBoardTitle())
                 .boardContent(board.getBoardContent())
                 .instagramLink(board.getInstagramLink())
                 .viewCount(board.getViewCount())
-                .images(board.getImages().stream()
-                        .filter(image -> image.getDeletedAt() == null)
-                        .collect(Collectors.toList()))
-
+                .createdAt(board.getCreatedAt())
+                .images(filteredImages) // deletedAt 없는 것만 넣기
                 .build();
     }
+
     private SNSBoardDTO toDto(Board board, List<Image> visibleImages) {
         return SNSBoardDTO.builder()
                 .id(board.getId())

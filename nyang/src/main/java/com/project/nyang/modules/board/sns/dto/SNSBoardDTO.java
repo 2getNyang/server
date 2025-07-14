@@ -1,5 +1,6 @@
 package com.project.nyang.modules.board.sns.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.modules.image.entity.Image;
 import com.project.nyang.reference.entity.Category;
@@ -29,7 +30,7 @@ public class SNSBoardDTO {
     private String boardContent;
     private Long viewCount;
     private String instagramLink;
-
+    @JsonIgnoreProperties({"board"})
     private List<Image> images;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;

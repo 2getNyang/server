@@ -57,10 +57,10 @@ public class SNSBoardController {
     }
 
     /*
-    * sns 게시글 전체목록 조회
+    * sns 게시글 전체목록 조회 (paging)
     * 여기도 엘라스틱 서치 넣어야해요
     */
-    @Operation(summary = "SNS 게시글 전체 조회", description = "SNS 카테고리 전체 게시글 목록 조회 (페이징)")
+    @Operation(summary = "SNS 게시글 전체 페이징", description = "SNS 카테고리 전체 게시글 목록 조회 (페이징)")
     @GetMapping
     public ResponseEntity<ApiResponse<Page<SNSBoardDTO>>> getBoardList(
             @PathVariable String slug,
@@ -70,6 +70,15 @@ public class SNSBoardController {
         Page<SNSBoardDTO> result = snsBoardService.getBoardsPaged(pageable);
         return ResponseEntity.ok(ApiSuccessResponse.success(result));
     }
+
+    /* sns 게시판 전체조회 */
+    @Operation(summary = "sns 게시글 전체조회", description = "SNS 카테고리 전체게시글 조회")
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<List<SNSBoardDTO>>> getAllBoard() {
+        List<SNSBoardDTO> boards = snsBoardService.getAllBoards();
+        return ResponseEntity.ok(ApiSuccessResponse.success(boards));
+    }
+
 
 
     /* SNS 게시판 상세조회 */
