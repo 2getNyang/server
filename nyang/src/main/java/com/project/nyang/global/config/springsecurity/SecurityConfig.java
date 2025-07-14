@@ -64,8 +64,8 @@ public class SecurityConfig {
                                         "/api/v1/shelters/**",
                                         "/api/v1/comments/**",
                                         "/api/v1/bookmark/**",
-                                        "/api/v1/like/**"
-
+                                        "/api/v1/like/**",
+                                        "/api/v1/user/**"
                                 ).authenticated() //인증이 필요한 경로
 
 
