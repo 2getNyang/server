@@ -6,6 +6,9 @@ import com.project.nyang.modules.animal.dto.AnimalDTO;
 import com.project.nyang.modules.animal.dto.AnimalListDTO;
 import com.project.nyang.modules.animal.entity.Animal;
 import com.project.nyang.modules.animal.repository.AnimalRepository;
+import com.project.nyang.modules.comment.dto.AnimalCommentDTO;
+import com.project.nyang.modules.comment.entity.Comment;
+import com.project.nyang.modules.comment.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * AnimalService입니다
@@ -31,6 +35,7 @@ import java.time.LocalDate;
 public class AnimalService {
 
     private final AnimalRepository animalRepository;
+    private final CommentRepository commentRepository;
 
     //페이징 전체 목록
     public Page<AnimalListDTO> getAnimals(int page, int size) {
@@ -68,15 +73,23 @@ public class AnimalService {
         return animalRepository.getFilterAnimals(startDate, endDate, upKindCd, kindCd, regionCode, subRegionCode, pageable);
     }
 
-    @Transactional
+    //Animal 상세 조회
     public AnimalDTO getAnimalDetail(String desertionNo) {
         Animal animal = animalRepository.findByDesertionNo(desertionNo)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_ANIMAL));
-        return toDTO(animal);
+
+        // 댓글 조회
+        List<Comment> comments = commentRepository.findByAnimal_DesertionNo(desertionNo);
+        List<AnimalCommentDTO> commentDTOs = comments.stream()//리스트 안의 요소들을 하나씩 치러할수있는 파이프라인을 만듬
+                .map(AnimalCommentDTO::fromEntity)//스트림의 각 요소를 함수로 변환  (Comment 객체를 CommentDTO로 변환)
+                .toList(); //리스트로 수집함  (최종적으로 List<CommentDTO>를 얻음)
+
+        // DTO 변환 + 댓글 포함
+        return toDTO(animal, commentDTOs);
     }
 
     // Entity → DTO 변환
-    private AnimalDTO toDTO(Animal animal) {
+    private AnimalDTO toDTO(Animal animal, List<AnimalCommentDTO> comments) {
         return AnimalDTO.builder()
                 .desertionNo(animal.getDesertionNo())
                 .happenDt(animal.getHappenDt())
@@ -95,6 +108,7 @@ public class AnimalService {
                 .sexCd(animal.getSexCd())
                 .neuterYn(animal.getNeuterYn())
                 .specialMark(animal.getSpecialMark())
+                .comments(comments) // 댓글 리스트 포함
                 .build();
     }
 

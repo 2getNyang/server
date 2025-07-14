@@ -1,9 +1,11 @@
 package com.project.nyang.modules.animal.dto;
 
+import com.project.nyang.modules.comment.dto.AnimalCommentDTO;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  *
@@ -69,5 +71,7 @@ public class AnimalDTO {
     private String kindCd;
     //품종명 ex.시바
     private String kindNm;
+
+    private List<AnimalCommentDTO> comments;
 
 }
