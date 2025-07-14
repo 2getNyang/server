@@ -17,7 +17,7 @@ import java.util.Optional;
  * AnimalRepository입니다
  *
  *
- * @author : 엄아영
+ * @author : 엄아영, 이지은
  * @fileName : AnimalRepository
  * @since : 2025-07-09
  */
