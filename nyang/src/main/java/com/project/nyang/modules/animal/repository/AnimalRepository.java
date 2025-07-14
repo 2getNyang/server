@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 /**
  * AnimalRepository입니다
@@ -90,4 +91,7 @@ public interface AnimalRepository extends JpaRepository<Animal, String> {
                                          @Param("regionCode") String regionCode,
                                          @Param("subRegionCode") String subRegionCode,
                                          PageRequest pageable);
+
+    Optional<Animal> findByDesertionNo(String desertionNo);
+
 }

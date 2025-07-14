@@ -56,7 +56,7 @@ public class SwaggerConfig {
     public GroupedOpenApi userApi() {
         return GroupedOpenApi.builder()
                 .group("👤 사용자 API")
-                .pathsToMatch("/api/v1/users/**")
+                .pathsToMatch("/api/v1/user/**")
                 .addOpenApiCustomizer(jwtSecurityCustomizer())
                 .build();
     }
@@ -67,6 +67,26 @@ public class SwaggerConfig {
         return GroupedOpenApi.builder()
                 .group("📝 게시판 API")
                 .pathsToMatch("/api/v1/boards/**")
+                .addOpenApiCustomizer(jwtSecurityCustomizer())
+                .build();
+    }
+
+    // ✅ 게시판 API 그룹
+    @Bean
+    public GroupedOpenApi commentApi() {
+        return GroupedOpenApi.builder()
+                .group("📝 댓글 API")
+                .pathsToMatch("/api/v1/comments/**")
+                .addOpenApiCustomizer(jwtSecurityCustomizer())
+                .build();
+    }
+
+    // ✅ 좋아요/찜 API 그룹
+    @Bean
+    public GroupedOpenApi LikeItApi() {
+        return GroupedOpenApi.builder()
+                .group("⭐ 좋아요 API")
+                .pathsToMatch("/api/v1/bookmark/**", "/api/v1/like/**")
                 .addOpenApiCustomizer(jwtSecurityCustomizer())
                 .build();
     }

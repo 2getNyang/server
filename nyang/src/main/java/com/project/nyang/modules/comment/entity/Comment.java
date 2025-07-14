@@ -7,6 +7,9 @@ import com.project.nyang.modules.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * comment 엔티티 클래스입니다.
@@ -47,6 +50,9 @@ public class Comment extends BaseTime {
     @Column(name = "comment_content", nullable = false)
     private String commentContent;
 
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
     // created_at, modified_at, deleted_at 생략
 
    @Builder
@@ -57,4 +63,9 @@ public class Comment extends BaseTime {
        this.parent = parent;
        this.commentContent = commentContent;
    }
+
+   public void updateComment(String content) {
+       this.commentContent = content;
+   }
+
 }
