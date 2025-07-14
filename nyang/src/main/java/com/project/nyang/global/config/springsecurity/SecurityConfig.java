@@ -61,7 +61,11 @@ public class SecurityConfig {
 
                                 .requestMatchers(
                                         "/api/user/**", // 사용자 정보 관련 API
-                                        "/api/v1/shelters/**"
+                                        "/api/v1/shelters/**",
+                                        "/api/v1/comments/**",
+                                        "/api/v1/bookmark/**",
+                                        "/api/v1/like/**"
+
                                 ).authenticated() //인증이 필요한 경로
 
 
