@@ -1,13 +1,14 @@
 package com.project.nyang.modules.mypage.controller;
 
-import com.project.nyang.global.common.api.ApiErrorResponse;
 import com.project.nyang.global.common.api.ApiResponse;
 import com.project.nyang.global.common.api.ApiSuccessResponse;
 import com.project.nyang.global.security.core.CustomUserDetails;
-import com.project.nyang.modules.mypage.dto.MyAnimalListDTO;
+import com.project.nyang.modules.mypage.dto.MyAnimalDTO;
+import com.project.nyang.modules.mypage.dto.MyLikedBoardDTO;
 import com.project.nyang.modules.mypage.service.MyPageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +35,22 @@ public class MyPageController {
 
     @Operation(summary = "찜한 입양공고 리스트 조회")
     @GetMapping("/bookmarks")
-    public ResponseEntity<ApiResponse<Page<MyAnimalListDTO>>> getMyAnimals(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "12") int size) {
+    public ResponseEntity<ApiResponse<Page<MyAnimalDTO>>> getMyAnimals(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "12") int size) {
         Long userId = userDetails.getId();
-        return ResponseEntity.ok(ApiSuccessResponse.success(myPageService.getMyAnimals(userId, page, size), "게시글 댓글 등록 완료"));
+        return ResponseEntity.ok(ApiSuccessResponse.success(myPageService.getMyAnimals(userId, page, size), "찜한 입양 공고 리스트 조회 성공"));
     }
+
+    @Operation(summary = "좋아요한 게시글 리스트 조회")
+    @GetMapping("/likes")
+    public ResponseEntity<ApiResponse<Page<MyLikedBoardDTO>>> getLikedBoards(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "12") int size) {
+        Long userId = userDetails.getId();
+        return ResponseEntity.ok(ApiSuccessResponse.success(myPageService.getLikedBoards(userId, page, size), "좋아요한 게시글 리스트 조회 성공"));
+    }
+
+//    @Operation(summary = "사용자가 작성한 입양 후기 게시글 리스트 조회")
+//    @GetMapping("/boards/")
+//    public Re
+
+
 
 }

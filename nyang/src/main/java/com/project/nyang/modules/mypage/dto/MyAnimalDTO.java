@@ -3,6 +3,7 @@ package com.project.nyang.modules.mypage.dto;
 import com.project.nyang.modules.animal.entity.Animal;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
 import java.time.LocalDate;
 
@@ -10,11 +11,11 @@ import java.time.LocalDate;
  * 내가 찜한 입양공고 리스트 DTO
  *
  * @author : 박세정
- * @fileName : MyAnimalListDTO
+ * @fileName : MyAnimalDTO
  * @since : 2025-07-12
  */
-@Data
-public class MyAnimalListDTO {
+@Getter
+public class MyAnimalDTO {
     private String desertionNo;
     private String processState;
     private String sexCd;
@@ -25,7 +26,7 @@ public class MyAnimalListDTO {
     private String popfile1;
 
     @Builder
-    public MyAnimalListDTO(String desertionNo, String processState, String sexCd, String kindFullNm, String noticeNo, LocalDate happenDt, String happenPlace, String popfile1) {
+    public MyAnimalDTO(String desertionNo, String processState, String sexCd, String kindFullNm, String noticeNo, LocalDate happenDt, String happenPlace, String popfile1) {
         this.desertionNo = desertionNo;
         this.processState = processState;
         this.sexCd = sexCd;
@@ -36,8 +37,8 @@ public class MyAnimalListDTO {
         this.popfile1 = popfile1;
     }
 
-    public static MyAnimalListDTO of(Animal animal) {
-        return MyAnimalListDTO.builder()
+    public static MyAnimalDTO of(Animal animal) {
+        return MyAnimalDTO.builder()
                 .desertionNo(animal.getDesertionNo())
                 .processState(animal.getProcessState())
                 .sexCd(animal.getSexCd())
