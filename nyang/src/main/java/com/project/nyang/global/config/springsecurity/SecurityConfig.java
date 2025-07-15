@@ -56,13 +56,13 @@ public class SecurityConfig {
                                         "/api/v1/animals/**",
                                         "/api/v1/boards/**",
                                         "/api/v1/recommendations/**",
+                                        "/api/v1/shelters/**",
                                         "/*"
 
                                 ).permitAll()
 
                                 .requestMatchers(
                                         "/api/user/**", // 사용자 정보 관련 API
-                                        "/api/v1/shelters/**",
                                         "/api/v1/comments/**",
                                         "/api/v1/bookmark/**",
                                         "/api/v1/like/**",
