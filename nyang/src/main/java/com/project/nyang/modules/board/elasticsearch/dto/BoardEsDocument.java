@@ -25,6 +25,7 @@ public class BoardEsDocument {
     private String id;
     private Long boardViewCount;
     private Long categoryId;
+    private String imageUrl;
 
     // 입양 후기, sns 홍보
     private String boardTitle;
@@ -41,7 +42,7 @@ public class BoardEsDocument {
     private LocalDate missingDate;
 
     @Builder
-    public BoardEsDocument(String id, Long boardViewCount, Long categoryId, String boardTitle, String boardContent, LocalDateTime createdAt, String lostType, String kindName, String gender, Integer age, String furColor, String missingLocation, LocalDate missingDate) {
+    public BoardEsDocument(String id, Long boardViewCount, Long categoryId, String boardTitle, String boardContent, LocalDateTime createdAt, String lostType, String kindName, String gender, Integer age, String furColor, String missingLocation, LocalDate missingDate, String imageUrl) {
         this.id = id;
         this.boardViewCount = boardViewCount;
         this.categoryId = categoryId;
@@ -55,6 +56,7 @@ public class BoardEsDocument {
         this.furColor = furColor;
         this.missingLocation = missingLocation;
         this.missingDate = missingDate;
+        this.imageUrl = imageUrl;
     }
 
     public static BoardListDTO toBoardDTO(BoardEsDocument document) {
@@ -65,6 +67,7 @@ public class BoardEsDocument {
                 .boardTitle(document.getBoardTitle())
                 .boardContent(document.getBoardContent())
                 .createdAt(document.getCreatedAt())
+                .imageUrl(document.getImageUrl())
                 .build();
     }
 
@@ -80,6 +83,7 @@ public class BoardEsDocument {
                 .furColor(document.getFurColor())
                 .missingLocation(document.getMissingLocation())
                 .missingDate(document.getMissingDate())
+                .imageUrl(document.getImageUrl())
                 .build();
     }
 

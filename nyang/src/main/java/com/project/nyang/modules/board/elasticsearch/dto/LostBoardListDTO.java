@@ -35,9 +35,11 @@ public class LostBoardListDTO {
     private String missingLocation;
     @Schema(description = "실종/목격 날짜", example = "2025-07-12")
     private LocalDate missingDate;
+    @Schema(description = "대표 이미지 url")
+    private String imageUrl;
 
     @Builder
-    public LostBoardListDTO(String id, Long boardViewCount, Long categoryId, String lostType, String kindName, String gender, Integer age, String furColor, String missingLocation, LocalDate missingDate) {
+    public LostBoardListDTO(String id, Long boardViewCount, Long categoryId, String lostType, String kindName, String gender, Integer age, String furColor, String missingLocation, LocalDate missingDate, String imageUrl) {
         this.id = id;
         this.boardViewCount = boardViewCount;
         this.categoryId = categoryId;
@@ -48,5 +50,6 @@ public class LostBoardListDTO {
         this.furColor = furColor;
         this.missingLocation = missingLocation;
         this.missingDate = missingDate;
+        this.imageUrl = imageUrl;
     }
 }

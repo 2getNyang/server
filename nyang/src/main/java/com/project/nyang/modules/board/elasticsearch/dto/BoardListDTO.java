@@ -27,14 +27,17 @@ public class BoardListDTO {
     private String boardContent;
     @Schema(description = "생성일자")
     private LocalDateTime createdAt;
+    @Schema(description = "대표 이미지 url")
+    private String imageUrl;
 
     @Builder
-    public BoardListDTO(String id, Long boardViewCount, Long categoryId, String boardTitle, String boardContent, LocalDateTime createdAt) {
+    public BoardListDTO(String id, Long boardViewCount, Long categoryId, String boardTitle, String boardContent, LocalDateTime createdAt, String imageUrl) {
         this.id = id;
         this.boardViewCount = boardViewCount;
         this.categoryId = categoryId;
         this.boardTitle = boardTitle;
         this.boardContent = boardContent;
         this.createdAt = createdAt;
+        this.imageUrl = imageUrl;
     }
 }
