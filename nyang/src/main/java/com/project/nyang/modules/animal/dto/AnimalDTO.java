@@ -1,9 +1,12 @@
 package com.project.nyang.modules.animal.dto;
 
+import com.project.nyang.modules.comment.dto.AnimalCommentDTO;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  *
@@ -20,54 +23,79 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class AnimalDTO {
-    //유기 동물 번호
+    @Schema(description = "유기 동물 번호", example = "311303202500535")
     private String desertionNo;
-    //발견일
+
+    @Schema(description = "발견일", example = "2025-07-18")
     private LocalDate happenDt;
-    //발견 장소
+
+    @Schema(description = "발견 장소", example = "서울특별시 성동구")
     private String happenPlace;
 
-    //털색, 무늬
+    @Schema(description = "털색, 무늬")
     private String colorCd;
-    //나이
+
+    @Schema(description = "나이")
     private String age;
-    //무게
+
+    @Schema(description = "무게")
     private String weight;
-    //공고 번호
+
+    @Schema(description = "공고 번호", example = "서울특별시-성동구-2025-00535")
     private String noticeNo;
-    //공고 시작
+
+    @Schema(description = "공고 시작")
     private LocalDate noticeSdt;
-    //공고 종료
+
+    @Schema(description = "공고 종료")
     private LocalDate noticeEdt;
-    //이미지 1~3
+
+    @Schema(description = "이미지 1", example = "")
     private String popfile1;
+
+    @Schema(description = "이미지 2", example = "")
     private String popfile2;
+
+    @Schema(description = "이미지 3", example = "")
     private String popfile3;
-    //보호상태 (NOTICE / PROTECT / FINISH)
+
+    @Schema(description = "보호상태 (NOTICE / PROTECT / FINISH)", example = "NOTICE")
     private String processState;
-    // 성별 (M / F / Q)
+
+    @Schema(description = "성별 (M / F / Q)", example = "M")
     private String sexCd;
-    //중성화 여부 (Y / N / U)
+
+    @Schema(description = "중성화 여부 (Y / N / U)", example = "N")
     private String neuterYn;
-    //특이 사항
+
+    @Schema(description = "특이 사항", example = "산책을 좋아함")
     private String specialMark;
-    //API 수정 시각
+
+    @Schema(description = "API 수정 시각")
     private LocalDateTime updTm;
 
-    //Shelter Entity
-    //보호소 번호
+    @Schema(description = "보호소 번호", example = "")
     private String careRegNumber;
 
-    //UpKind, Kind Entity
-    //동물 종류 전체 이름 ex.[개] 시바
+    @Schema(description = "동물 종류 전체 이름", example = "[고양이] 샴")
     private String kindFullNm;
-    //축종코드
+
+    @Schema(description = "축종코드", example = "")
     private String upKindCd;
-    //축종 이름 ex.개
+
+    @Schema(description = "축종 이름", example = "개")
     private String upKindNm;
-    //품종 코드
+
+    @Schema(description = "품종 코드", example = "000114")
     private String kindCd;
-    //품종명 ex.시바
+
+    @Schema(description = "품종명", example = "시바")
     private String kindNm;
+
+    @Schema(description = "댓글 리스트")
+    private List<AnimalCommentDTO> comments;
+    
+    @Schema(description = "북마크 체크")
+    private boolean bookmarked;
 
 }
