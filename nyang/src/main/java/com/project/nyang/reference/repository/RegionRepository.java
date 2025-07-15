@@ -2,7 +2,9 @@ package com.project.nyang.reference.repository;
 
 import com.project.nyang.reference.entity.Region;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -14,4 +16,9 @@ import java.util.Optional;
  */
 public interface RegionRepository extends JpaRepository<Region, String> {
     Optional<Region> findByRegionName(String regionName);
+    /**
+     * 모든 시도 이름을 조회하는 쿼리
+     */
+    @Query("SELECT r.regionName FROM Region r")
+    List<String> findAllRegions();
 }

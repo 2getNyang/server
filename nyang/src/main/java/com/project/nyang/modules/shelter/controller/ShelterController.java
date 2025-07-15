@@ -46,9 +46,7 @@ public class ShelterController {
             @RequestParam(defaultValue = "12") int size
     ) {
 
-        System.out.println("전달받은 페이지 정보 + "+page+"  "+size);
         Page<ShelterListDTO> shelters = shelterService.getAllShelters(page, size);
-        System.out.println("데이터 내용: " + shelters.getContent());
         return shelterService.getAllShelters(page, size);
     }
 
