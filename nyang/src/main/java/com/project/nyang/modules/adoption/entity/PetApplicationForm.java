@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "PET_APPLICATION_FORM")
+@Builder
 @EntityListeners(AuditingEntityListener.class)
 public class PetApplicationForm {
 
@@ -67,9 +68,9 @@ public class PetApplicationForm {
     private YesNo experience;
 
     @CreatedDate
-    @Column(name = "noty_created_at", columnDefinition = "TIMESTAMP",
+    @Column(name = "form_created_at", columnDefinition = "TIMESTAMP",
             updatable = false, nullable = false)
-    private LocalDateTime notyCreatedAt;
+    private LocalDateTime formCreatedAt;
 
     @Column(name = "application_reason", columnDefinition = "TEXT", nullable = false)
     private String applicationReason;
@@ -94,38 +95,4 @@ public class PetApplicationForm {
         Y, N
     }
 
-    //전에 builder 패턴 사용하기로 했어서 임시 추가
-    @Builder
-    public PetApplicationForm(
-        String userName,
-        LocalDate userBirth,
-        Gender userGender,
-        String userPhone,
-        String familyPhone,
-        String family,
-        String address,
-        String detailAddress,
-        String job,
-        YesNo experience,
-        LocalDateTime submissionTime,
-        String applicationReason,
-        Animal animal,
-        Shelter shelter,
-        User user
-    ) {
-        this.userName = userName;
-        this.userBirth = userBirth;
-        this.userGender = userGender;
-        this.userPhone = userPhone;
-        this.familyPhone = familyPhone;
-        this.family = family;
-        this.address = address;
-        this.detailAddress = detailAddress;
-        this.job = job;
-        this.experience = experience;
-        this.applicationReason = applicationReason;
-        this.animal = animal;
-        this.shelter = shelter;
-        this.user = user;
-    }
 }

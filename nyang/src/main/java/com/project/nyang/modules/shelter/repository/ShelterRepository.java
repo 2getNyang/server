@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
+
 /**
  * ShelterRepository에 대한 클래스입니다.
  *
@@ -78,4 +80,5 @@ public interface ShelterRepository extends JpaRepository<Shelter, String> {
             String regionName, String subRegionName, String careName, Pageable pageable);
 
 
+    Optional<Shelter> findByCareRegNumber(String careRegNumber);
 }

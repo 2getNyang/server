@@ -33,7 +33,14 @@ public enum ErrorCode {
     FORBIDDEN(403, "권한이 없습니다."),
 
     //동물 관련 에러
-    INVALID_ANIMAL(404, "해당 동물을 찾을 수 없습니다.");
+    INVALID_ANIMAL(404, "해당 동물을 찾을 수 없습니다."),
+
+    //입양신청 관련 에러
+    INVALID_USER(404,"해당 유저를 찾을 수 없습니다."),
+    INVALID_SHELTER(404, "해당 보호소를 찾을 수 없습니다.")
+
+
+    ;
 
 
 
