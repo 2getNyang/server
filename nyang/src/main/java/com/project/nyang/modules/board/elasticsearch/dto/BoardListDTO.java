@@ -18,7 +18,7 @@ public class BoardListDTO {
     @Schema(description = "게시글 ID")
     private String id;
     @Schema(description = "조회수")
-    private Long boardViewCount;
+    private Long viewCount;
     @Schema(description = "카테고리 ID")
     private Long categoryId;
     @Schema(description = "게시글 제목")
@@ -31,9 +31,9 @@ public class BoardListDTO {
     private String imageUrl;
 
     @Builder
-    public BoardListDTO(String id, Long boardViewCount, Long categoryId, String boardTitle, String boardContent, LocalDateTime createdAt, String imageUrl) {
+    public BoardListDTO(String id, Long viewCount, Long categoryId, String boardTitle, String boardContent, LocalDateTime createdAt, String imageUrl) {
         this.id = id;
-        this.boardViewCount = boardViewCount;
+        this.viewCount = viewCount;
         this.categoryId = categoryId;
         this.boardTitle = boardTitle;
         this.boardContent = boardContent;

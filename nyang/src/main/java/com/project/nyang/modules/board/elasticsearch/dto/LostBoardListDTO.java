@@ -18,7 +18,7 @@ public class LostBoardListDTO {
     @Schema(description = "게시글 ID")
     private String id;
     @Schema(description = "조회수")
-    private Long boardViewCount;
+    private Long viewCount;
     @Schema(description = "카테고리 ID")
     private Long categoryId;
     @Schema(description = "게시글 타입. (MS:실종 / WT:목격)", example = "MS")
@@ -39,9 +39,9 @@ public class LostBoardListDTO {
     private String imageUrl;
 
     @Builder
-    public LostBoardListDTO(String id, Long boardViewCount, Long categoryId, String lostType, String kindName, String gender, Integer age, String furColor, String missingLocation, LocalDate missingDate, String imageUrl) {
+    public LostBoardListDTO(String id, Long viewCount, Long categoryId, String lostType, String kindName, String gender, Integer age, String furColor, String missingLocation, LocalDate missingDate, String imageUrl) {
         this.id = id;
-        this.boardViewCount = boardViewCount;
+        this.viewCount = viewCount;
         this.categoryId = categoryId;
         this.lostType = lostType;
         this.kindName = kindName;

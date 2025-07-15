@@ -23,7 +23,7 @@ public class BoardEsDocument {
     // 공통
     @Id
     private String id;
-    private Long boardViewCount;
+    private Long viewCount;
     private Long categoryId;
     private String imageUrl;
 
@@ -42,9 +42,9 @@ public class BoardEsDocument {
     private LocalDate missingDate;
 
     @Builder
-    public BoardEsDocument(String id, Long boardViewCount, Long categoryId, String boardTitle, String boardContent, LocalDateTime createdAt, String lostType, String kindName, String gender, Integer age, String furColor, String missingLocation, LocalDate missingDate, String imageUrl) {
+    public BoardEsDocument(String id, Long viewCount, Long categoryId, String boardTitle, String boardContent, LocalDateTime createdAt, String lostType, String kindName, String gender, Integer age, String furColor, String missingLocation, LocalDate missingDate, String imageUrl) {
         this.id = id;
-        this.boardViewCount = boardViewCount;
+        this.viewCount = viewCount;
         this.categoryId = categoryId;
         this.boardTitle = boardTitle;
         this.boardContent = boardContent;
@@ -62,7 +62,7 @@ public class BoardEsDocument {
     public static BoardListDTO toBoardDTO(BoardEsDocument document) {
         return BoardListDTO.builder()
                 .id(document.getId())
-                .boardViewCount(document.getBoardViewCount())
+                .viewCount(document.getViewCount())
                 .categoryId(document.getCategoryId())
                 .boardTitle(document.getBoardTitle())
                 .boardContent(document.getBoardContent())
@@ -74,7 +74,7 @@ public class BoardEsDocument {
     public static LostBoardListDTO toLostBoardDTO(BoardEsDocument document) {
         return LostBoardListDTO.builder()
                 .id(document.getId())
-                .boardViewCount(document.getBoardViewCount())
+                .viewCount(document.getViewCount())
                 .categoryId(document.getCategoryId())
                 .lostType(document.getLostType())
                 .kindName(document.getKindName())
