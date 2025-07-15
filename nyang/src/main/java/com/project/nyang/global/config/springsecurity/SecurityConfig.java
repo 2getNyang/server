@@ -57,6 +57,9 @@ public class SecurityConfig {
                                         "/api/v1/boards/**",
                                         "/api/v1/recommendations/**",
                                         "/api/v1/shelters/**",
+                                        "/ws-stomp/**",         //채팅관련
+                                        "/chat/**", "/sub/**", "/pub/**",
+                                        "/chat-room/**",
                                         "/*"
 
                                 ).permitAll()

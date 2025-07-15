@@ -62,6 +62,8 @@ dependencies {
 	implementation 'me.paulschwarz:spring-dotenv:2.2.0'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
 }
 
 tasks.named('test') {
