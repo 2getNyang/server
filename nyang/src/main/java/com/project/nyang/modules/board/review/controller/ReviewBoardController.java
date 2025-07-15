@@ -1,13 +1,13 @@
-package com.project.nyang.modules.board.reveiw.controller;
+package com.project.nyang.modules.board.review.controller;
 
 import com.project.nyang.global.common.api.ApiResponse;
 import com.project.nyang.global.common.api.ApiSuccessResponse;
 import com.project.nyang.global.security.core.CustomUserDetails;
-import com.project.nyang.modules.board.reveiw.dto.ReveiwBoardDetailDTO;
-import com.project.nyang.modules.board.reveiw.dto.ReveiwBoardListDTO;
-import com.project.nyang.modules.board.reveiw.dto.ReviewBoardCreateDTO;
-import com.project.nyang.modules.board.reveiw.dto.ReviewBoardUpdateDTO;
-import com.project.nyang.modules.board.reveiw.service.ReveiwBoardService;
+import com.project.nyang.modules.board.review.dto.ReveiwBoardDetailDTO;
+import com.project.nyang.modules.board.review.dto.ReveiwBoardListDTO;
+import com.project.nyang.modules.board.review.dto.ReviewBoardCreateDTO;
+import com.project.nyang.modules.board.review.dto.ReviewBoardUpdateDTO;
+import com.project.nyang.modules.board.review.service.ReveiwBoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

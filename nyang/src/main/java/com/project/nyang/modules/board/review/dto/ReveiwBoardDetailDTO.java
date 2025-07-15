@@ -1,4 +1,4 @@
-package com.project.nyang.modules.board.reveiw.dto;
+package com.project.nyang.modules.board.review.dto;
 
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
 import com.project.nyang.modules.comment.entity.Comment;

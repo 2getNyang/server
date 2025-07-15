@@ -1,9 +1,22 @@
 package com.project.nyang.modules.board.elasticsearch.service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.SortOrder;
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.Hit;
+import com.project.nyang.modules.board.elasticsearch.dto.BoardEsDocument;
+import com.project.nyang.modules.board.elasticsearch.dto.BoardListDTO;
 import com.project.nyang.modules.board.elasticsearch.repository.BoardEsRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * ElasticSearch 관련 Service
@@ -20,36 +33,24 @@ public class BoardEsService {
 
     private final BoardEsRepository repository;
 
-    /* TODO. board-index 저장 로직 추가 후 구현 예정
-    // 검색 키워드와 페이지 번호와 크기를 받아 엘라스틱서치에서 검색하는 메서드
-    // 검색된 정보와 페이징 정보도 함께 반환하도록 하기 위해 Page 객체를 사용하여 반환
-    public Page<BoardEsDocument> search(String keyword, int page, int size) {
+    public Page<BoardListDTO> searchBoard(Long categoryId, String keyword, int page, int size) {
         try {
-            // 엘라스틱서치에서 페이징을 위한 시작 위치를 계산하는 변수
             int from = page * size;
 
-            // 엘라스틱서치에서 사용할 검색조건을 담는 객체
             Query query;
 
-            // 검색 키워드가 없으면 모든 문서를 검색하는 matchAll 쿼리
             if (keyword == null || keyword.isBlank()) {
                 query = MatchAllQuery.of(m -> m)._toQuery(); // 전체 문서를 가져오는 쿼리를 생성하는 람다 함수
-                // MatchAllQuery는 엘라스틱서치에서 조건 없이 모든 문서를 검색할 때 사용하는 쿼리
             }
             // 검색어가 있을 때
             else {
-                // boolquery는 복수 조건을 조합할 때 사용하는 쿼리
-                // 이 쿼리 안에서 여러개의 조건을 나열
-                // 예를 들어서 백엔드라는 키워드가 들어왔을 때 이 백엔드 키워드를 어떻게 분석해 데이터를 보여줄 것인가 작성
                 query = BoolQuery.of(b -> {
 
-                    // PrefixQuery는 해당 필드가 특정 단어로 시작하는지 검사하는 쿼리
-                    // MatchQuery는 해당 단어가 포함되어 있는지 검사하는 쿼리
-
-                     * must: 모두 일치해야 함 (AND)
-                     * should: 하나라도 일치하면 됨 (OR)
-                     * must_not: 해당 조건을 만족하면 제외
-                     * filter : must와 같지만 점수 계산 안함 (속도가 빠름)
+                    b.filter(f -> f
+                            .term(t -> t
+                                    .field("categoryId")
+                                    .value(String.valueOf(categoryId)))
+                    );
 
                     // 접두어 글자 검색
                     b.should(PrefixQuery.of(p -> p.field("boardTitle").value(keyword))._toQuery());
@@ -59,9 +60,6 @@ public class BoardEsService {
                     b.should(MatchQuery.of(p -> p.field("boardTitle.ngram").query(keyword))._toQuery());
                     b.should(MatchQuery.of(p -> p.field("boardContent.ngram").query(keyword))._toQuery());
 
-                    // fuzziness: "AUTO"는  오타 허용 검색 기능을 자동으로 켜주는 설정 -> 유사도 계산을 매번 수행하기 때문에 느림
-                    //짧은 키워드에는 사용 xxx
-                    //오타 허용 (오타허용은 match만 가능 )
                     if (keyword.length() >= 3) {
                         b.should(MatchQuery.of(m -> m.field("boardTitle").query(keyword).fuzziness("AUTO"))._toQuery());
                         b.should(MatchQuery.of(m -> m.field("boardContent").query(keyword).fuzziness("AUTO"))._toQuery());
@@ -71,18 +69,15 @@ public class BoardEsService {
                 })._toQuery();
             }
 
-            // SearchRequest는 엘라스틱서치에서 검색을 하기 위한 검색요청 객체
-            // 인덱스명, 페이징 정보, 쿼리를 포함한 검색 요청
             SearchRequest request = SearchRequest.of(s -> s
                     .index("board-index")
                     .from(from)
                     .size(size)
                     .query(query)
 
-                    // 정렬
                     .sort(sort -> sort
                             .field(f -> f
-                                    .field("id")
+                                    .field("createdAt")
                                     .order(SortOrder.Desc)
                             )
                     )
@@ -99,18 +94,20 @@ public class BoardEsService {
                     .hits() // 검색 결과 안에 개별 리스트를 가져옴
                     .stream() // JAVA stream api를 사용
                     .map(Hit::source) // 각 Hit 객체에서 실제 문서를 꺼내는 작업
-                    .collect(Collectors.toList()); // 위에서 꺼낸 객체를 JAVA List에 넣는다
+                    .toList(); // 위에서 꺼낸 객체를 JAVA List에 넣는다
+
 
             // 전체 검색 결과 수 (총 문서의 갯수)
             long total = response.hits().total().value();
 
+            List<BoardListDTO> boardList = content.stream().map(BoardEsDocument::toBoardDTO).collect(Collectors.toList());
+
             // PageImpl 객체를 사용해서 Spring에서 사용할 수 있는 page 객체로 변환
-            return new PageImpl<>(content, PageRequest.of(page, size), total);
+            return new PageImpl<>(boardList, PageRequest.of(page, size), total);
 
         } catch (Exception e) {
             throw new RuntimeException("검색 중 오류 발생", e);
         }
     }
-    */
     
 }

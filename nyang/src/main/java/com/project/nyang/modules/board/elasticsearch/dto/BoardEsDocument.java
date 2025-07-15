@@ -1,9 +1,13 @@
 package com.project.nyang.modules.board.elasticsearch.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.elasticsearch.annotations.Document;
 
 import java.time.LocalDate;
@@ -19,6 +23,7 @@ import java.time.LocalDateTime;
 @JsonIgnoreProperties(ignoreUnknown = true) // 해당 설정을 넣지 않으면 class 속성이 들어가게 됨
 @Document(indexName = "board-index")
 @Getter
+@NoArgsConstructor
 public class BoardEsDocument {
     // 공통
     @Id
@@ -30,7 +35,7 @@ public class BoardEsDocument {
     // 입양 후기, sns 홍보
     private String boardTitle;
     private String boardContent;
-    private LocalDateTime createdAt;
+    private String createdAt;
 
     // 실종/목격
     private String lostType;    //MS : 실종 or WT : 목격
@@ -39,10 +44,10 @@ public class BoardEsDocument {
     private Integer age;
     private String furColor;
     private String missingLocation;
-    private LocalDate missingDate;
+    private String missingDate;
 
     @Builder
-    public BoardEsDocument(String id, Long viewCount, Long categoryId, String boardTitle, String boardContent, LocalDateTime createdAt, String lostType, String kindName, String gender, Integer age, String furColor, String missingLocation, LocalDate missingDate, String imageUrl) {
+    public BoardEsDocument(String id, Long viewCount, Long categoryId, String boardTitle, String boardContent, String createdAt, String lostType, String kindName, String gender, Integer age, String furColor, String missingLocation, String missingDate, String imageUrl) {
         this.id = id;
         this.viewCount = viewCount;
         this.categoryId = categoryId;
@@ -66,7 +71,7 @@ public class BoardEsDocument {
                 .categoryId(document.getCategoryId())
                 .boardTitle(document.getBoardTitle())
                 .boardContent(document.getBoardContent())
-                .createdAt(document.getCreatedAt())
+                .createdAt(LocalDateTime.parse(document.getCreatedAt()))
                 .imageUrl(document.getImageUrl())
                 .build();
     }
@@ -82,9 +87,13 @@ public class BoardEsDocument {
                 .age(document.getAge())
                 .furColor(document.getFurColor())
                 .missingLocation(document.getMissingLocation())
-                .missingDate(document.getMissingDate())
+                .missingDate(LocalDate.parse(document.getMissingDate()))
                 .imageUrl(document.getImageUrl())
                 .build();
+    }
+
+    public void increaseViewCount() {
+        this.viewCount += 1;
     }
 
 }

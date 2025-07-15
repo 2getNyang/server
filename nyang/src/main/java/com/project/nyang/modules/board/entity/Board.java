@@ -3,7 +3,7 @@ package com.project.nyang.modules.board.entity;
 import com.project.nyang.global.common.entity.BaseTime;
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
 import com.project.nyang.modules.board.lost.dto.LostUpdateRequestDTO;
-import com.project.nyang.modules.board.reveiw.dto.ReviewBoardUpdateDTO;
+import com.project.nyang.modules.board.review.dto.ReviewBoardUpdateDTO;
 import com.project.nyang.modules.comment.entity.Comment;
 import com.project.nyang.modules.image.entity.Image;
 import com.project.nyang.modules.like.entity.LikeIt;
