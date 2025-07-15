@@ -5,6 +5,7 @@ import com.project.nyang.modules.board.entity.Board;
 
 import com.project.nyang.modules.comment.entity.Comment;
 import com.project.nyang.modules.image.entity.Image;
+import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.reference.entity.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -27,37 +28,36 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SNSBoardDTO {
-    @Schema(description = "" ,example = "")
+
+    @Schema(description = "게시글 ID", example = "1")
     private Long id;
 
-    @Schema(description = "" ,example = "")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    private Category category;
+    @Schema(description = "카테고리 ID", example = "3")
+    private Long category;
 
-    @Schema(description = "" ,example = "")
+    @Schema(description = "게시글 제목", example = "고양이 귀여워요")
     private String boardTitle;
 
-    @Schema(description = "" ,example = "")
+    @Schema(description = "게시글 내용", example = "오늘 본 고양이는 너무 귀여웠어요~")
     private String boardContent;
 
-    @Schema(description = "" ,example = "")
+    @Schema(description = "조회수", example = "10")
     private Long viewCount;
 
-    @Schema(description = "" ,example = "")
+    @Schema(description = "인스타그램 링크", example = "https://www.instagram.com/reel/abc123/")
     private String instagramLink;
 
-    @Schema(description = "" ,example = "")
-    // 순환참조 막기위해서 JsonIgnoreProperties 추가
+    @Schema(description = "이미지 S3 URL 리스트", example = "[\"https://s3.amazonaws.com/bucket/image1.png\"]")
     @JsonIgnoreProperties({"board"})
-    private List<Image> images;
+    private List<String> images;
 
-    @Schema(description = "" ,example = "")
+    @Schema(description = "게시글 생성일시", example = "2025-07-15T12:34:56")
     private LocalDateTime createdAt;
 
-    @Schema(description = "" ,example = "")
+    @Schema(description = "게시글 수정일시", example = "2025-07-15T13:00:00")
     private LocalDateTime modifiedAt;
 
-    @Schema(description = "" ,example = "")
+    @Schema(description = "게시글 삭제일시 (삭제된 경우만 존재)", example = "2025-07-16T10:00:00")
     private LocalDateTime deletedAt;
 
     @Schema(description = "좋아요 수", example = "5")
@@ -66,38 +66,41 @@ public class SNSBoardDTO {
     @Schema(description = "댓글 리스트")
     private List<CommentDTO> comments;
 
-    @Schema(description = "" ,example = "")
+    @Schema(description = "작성자 ID", example = "1")
     private Long userId;
 
-    @Schema(description = "" ,example = "")
+    @Schema(description = "작성자 닉네임", example = "냥냥이")
     private String nickname;
 
-    public SNSBoardDTO(Board entity) {
-        this.id = entity.getId();
-        this.category = entity.getCategory();
-        this.boardTitle = entity.getBoardTitle();
-        this.boardContent = entity.getBoardContent();
-        this.viewCount = entity.getViewCount();
-        this.instagramLink = entity.getInstagramLink();
-        this.images = entity.getImages();
-        this.nickname = entity.getUser().getNickname();
-        this.createdAt = entity.getCreatedAt();
-        this.modifiedAt = entity.getModifiedAt();
-        this.deletedAt = entity.getDeletedAt();
-
+    public Board toEntity(User user, Category category, List<Image> images) {
+        return Board.builder()
+                .user(user)
+                .category(category)
+                .images(images)
+                .id(this.id)
+                .boardTitle(this.boardTitle)
+                .boardContent(this.boardContent)
+                .viewCount(this.viewCount)
+                .instagramLink(this.instagramLink)
+                .build();
     }
 
     @Getter
     public static class CommentDTO {
-        @Schema(description = "댓글 ID")
+
+        @Schema(description = "댓글 ID", example = "101")
         private Long id;
-        @Schema(description = "댓글 내용")
+
+        @Schema(description = "댓글 내용", example = "정말 귀엽네요!")
         private String commentContent;
-        @Schema(description = "댓글 생성 시간")
+
+        @Schema(description = "댓글 작성 시간", example = "2025-07-15T12:45:00")
         private LocalDateTime createdAt;
-        @Schema(description = "댓글 작성자")
+
+        @Schema(description = "댓글 작성자 닉네임", example = "고양집사")
         private String commentNickname;
-        @Schema(description = "부모 댓글 ID")
+
+        @Schema(description = "부모 댓글 ID (대댓글일 경우)", example = "100")
         private Long parentId;
 
         @Builder
@@ -119,5 +122,4 @@ public class SNSBoardDTO {
                     .build();
         }
     }
-
 }

@@ -5,7 +5,6 @@ import com.project.nyang.global.common.S3.S3Service;
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.security.jwt.JwtTokenProvider;
 import com.project.nyang.modules.board.entity.Board;
-import com.project.nyang.modules.board.lost.dto.LostDetailResponseDTO;
 import com.project.nyang.modules.board.sns.dto.SNSBoardDTO;
 import com.project.nyang.modules.board.sns.dto.SNSBoardUpdateDTO;
 import com.project.nyang.modules.board.sns.repository.SNSBoardRepository;
@@ -28,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.project.nyang.global.exception.ErrorCode.*;
+
 
 /**
  * snsboard service 입니다
@@ -48,10 +49,10 @@ public class SNSBoardService {
     private final S3Service s3Service;
 
 
-    /*
+    /**
     * 카테고리 타입: sns게시판
-    * 카테고리id 1:동물공고 / 2:입양후기 3:sns홍보 4:실종/목격제보
-    */
+    * 카테고리:ID 1:동물공고 / 2:입양후기 / 3: sns홍보 / 4:실종,목격제보
+    **/
     private static final Long SNS_CATEGORY_ID = 3L;
 
     /* SNS 게시판 글 등록 */
@@ -68,7 +69,7 @@ public class SNSBoardService {
 
         // 사용자 유효성 체크
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
+                .orElseThrow(() -> new IllegalArgumentException(String.valueOf(UNAUTHORIZED)));
 
         // 게시글 저장
         Board board = Board.builder()
@@ -108,9 +109,9 @@ public class SNSBoardService {
 
         // 저장된 게시글 + 이미지 포함 다시 조회
         Board fullBoard = snsBoardRepository.findById(board.getId())
-                .orElseThrow(() -> new RuntimeException("방금 저장된 게시글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException(String.valueOf(BOARD_NOT_FOUND)));
 
-        System.out.println("게시글 생성 완료: ID = " + fullBoard.getId());
+        System.out.println("게시글 생성 완료: 게시글 ID = " + fullBoard.getId());
 
         return toDto(fullBoard);
     }
@@ -124,19 +125,19 @@ public class SNSBoardService {
 
         // 1. 사용자 인증 및 게시글 조회
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
+                .orElseThrow(() -> new IllegalArgumentException(String.valueOf(UNAUTHORIZED)));
 
         Board board = snsBoardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글 없음: " + boardId));
+                .orElseThrow(() -> new IllegalArgumentException(String.valueOf(BOARD_NOT_FOUND)));
 
         if (board.getCategory() == null || !board.getCategory().getCategoryId().equals(SNS_CATEGORY_ID)) {
-            throw new IllegalArgumentException("SNS 게시글만 수정 가능합니다. 호출된 게시글 ID: " + boardId);
+            throw new IllegalArgumentException(String.valueOf(CATEGORY_NOT_FOUND));
         }
         if (board.getDeletedAt() != null) {
-            throw new IllegalArgumentException("해당 글은 삭제되었습니다. ID: " + boardId);
+            throw new IllegalArgumentException(String.valueOf(BOARD_ALLREDAY_DELETE));
         }
         if (!board.getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("수정 권한이 없습니다.");
+            throw new IllegalArgumentException(String.valueOf(FORBIDDEN));
         }
         if (board.getInstagramLink() == null) {
             throw new IllegalArgumentException("SNS 게시글 링크가 사라졌습니다.");
@@ -196,32 +197,26 @@ public class SNSBoardService {
 
 
 
-    /* SNS 게시판 글 삭제
-    * 삭제는 나중에 user 를 Request Param 으로 넣지말고
-    * JwtToken 으로 Invalid User 인지 확인하는 과정을 넣읍시다.*/
+    /* SNS 게시판 글 삭제 */
     @Transactional
     public void deleteSNSBoard(Long boardId,Long userId) {
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
-
+        //board id 찾기
         Board board = snsBoardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글 없음: " + boardId));
-
+                .orElseThrow(() -> new IllegalArgumentException(String.valueOf(BOARD_NOT_FOUND)));
+        //category id 확인
         if (board.getCategory() == null ||
                 !board.getCategory().getCategoryId().equals(SNS_CATEGORY_ID)) {
-            throw new IllegalArgumentException("SNS 게시글만 삭제 가능합니다. 현재 카테고리 id: " + board.getCategory().getCategoryId());
+            throw new IllegalArgumentException(String.valueOf(CATEGORY_NOT_FOUND));
         }
-
+        // 이미 삭제된 게시글인지
         if (board.getDeletedAt() != null) {
-            throw new IllegalArgumentException("이미 삭제된 게시글입니다. ID: " + boardId);
+            throw new IllegalArgumentException(String.valueOf(BOARD_ALLREDAY_DELETE));
         }
-
+        // 작성자와 같은 사람인지
         if (!board.getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("삭제 권한이 없습니다. 작성자 ID: " + board.getUser().getId());
+            throw new IllegalArgumentException(String.valueOf(FORBIDDEN));
         }
         board.softDelete();
-//        snsBoardRepository.save(board);
     }
 
 
@@ -229,15 +224,19 @@ public class SNSBoardService {
     @Transactional
     public SNSBoardDTO getBoardDetail(Long boardId) {
         Board board = snsBoardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글 없음: " + boardId));
-
+                .orElseThrow(() -> new IllegalArgumentException(String.valueOf(BOARD_NOT_FOUND)));
+        // 카테고리 확인
         if (!board.getCategory().getCategoryId().equals(SNS_CATEGORY_ID)) {
-            throw new IllegalArgumentException("SNS 게시글만 조회 가능합니다. 현재 불러오는 카테고리 id: " + board.getCategory().getCategoryId());
+            throw new IllegalArgumentException(String.valueOf(CATEGORY_NOT_FOUND));
         }
-
+        // 삭제된 글인지 확인
+        if(board.getDeletedAt()!=null){
+            throw new IllegalArgumentException(String.valueOf(BOARD_ALLREDAY_DELETE));
+        }
         // image 가져옴
-        List<Image> visibleImages = board.getImages().stream()
+        List<String> visibleImages = board.getImages().stream()
                 .filter(image -> image.getDeletedAt() == null)
+                .map(Image::getS3Url)
                 .collect(Collectors.toList());
         // 댓글가져옴
         List<SNSBoardDTO.CommentDTO> commentDTOList = board.getComments().stream()
@@ -249,7 +248,7 @@ public class SNSBoardService {
 
         return SNSBoardDTO.builder()
                 .id(board.getId())
-                .category(board.getCategory())
+                .category(board.getCategory().getCategoryId())
                 .userId(board.getUser() != null ? board.getUser().getId() : null)
                 .boardTitle(board.getBoardTitle())
                 .boardContent(board.getBoardContent())
@@ -264,7 +263,7 @@ public class SNSBoardService {
     }
 
 
-    /* SNS 게시판 페이징 */
+    /** SNS 게시판 페이징 **/
     @Transactional(readOnly = true)
     public Page<SNSBoardDTO> getBoardsPaged(Pageable pageable) {
         // category 가 SNS 친구만 페이징 조회
@@ -277,7 +276,7 @@ public class SNSBoardService {
         return new PageImpl<>(dtoList, pageable, boardsPage.getTotalElements());
     }
 
-    /*
+    /**
      * SNS 게시판 검색 페이징
      * @param keyword 검색 키워드 (제목 또는 내용)
      * @param pageable 페이징 정보
@@ -286,7 +285,6 @@ public class SNSBoardService {
     @Transactional(readOnly = true)
     public Page<SNSBoardDTO> searchSNSBoards(String keyword, Pageable pageable) {
         Page<Board> boardsPage = snsBoardRepository.searchKeywordSNS(SNS_CATEGORY_ID, keyword, pageable);
-
 
         List<SNSBoardDTO> dtoList = boardsPage
                 .map(this::toDto)
@@ -297,9 +295,6 @@ public class SNSBoardService {
 
     /* Entity -> DTO 변환 */
     private SNSBoardDTO toDto(Board board) {
-        List<Image> filteredImages = board.getImages().stream()
-                .filter(image -> image.getDeletedAt() == null)
-                .collect(Collectors.toList());
 
         return SNSBoardDTO.builder()
                 .id(board.getId())
@@ -308,24 +303,14 @@ public class SNSBoardService {
                 .instagramLink(board.getInstagramLink())
                 .viewCount(board.getViewCount())
                 .createdAt(board.getCreatedAt())
-                .category(board.getCategory())
+                .category(board.getCategory().getCategoryId())
                 .userId(board.getUser() != null ? board.getUser().getId() : null)
                 .nickname(board.getUser() != null ? board.getUser().getNickname() : null)
-                .images(filteredImages)
+                .images(board.getImages().stream()
+                        .map(Image::getS3Url) // getUrl()은 이미지 엔티티의 S3 URL 반환 메서드
+                        .toList())
                 .build();
     }
-
-    private SNSBoardDTO toDto(Board board, List<Image> visibleImages) {
-        return SNSBoardDTO.builder()
-                .id(board.getId())
-                .boardTitle(board.getBoardTitle())
-                .boardContent(board.getBoardContent())
-                .instagramLink(board.getInstagramLink())
-                .viewCount(board.getViewCount())
-                .images(visibleImages)
-                .build();
-    }
-
 
     @Transactional
     public void increaseViewCount(Long boardId) {

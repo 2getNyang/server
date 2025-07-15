@@ -36,6 +36,7 @@ import java.util.List;
 public class SNSBoardController {
 
     private final SNSBoardService snsBoardService;
+
     private void validateSlug(String slug) {
         if (!"sns".equals(slug)) {
             throw new IllegalArgumentException("category 가 sns 맞는지 확인해주세요 " + slug);
@@ -81,7 +82,7 @@ public class SNSBoardController {
             @PathVariable Long boardId
     ) {
         validateSlug(slug);
-        snsBoardService.increaseViewCount(boardId); // 👈 조회수 증가 트랜잭션 분리 호출
+        snsBoardService.increaseViewCount(boardId);
         SNSBoardDTO dto = snsBoardService.getBoardDetail(boardId);
         return ResponseEntity.ok(ApiSuccessResponse.success(dto));
     }
@@ -115,10 +116,10 @@ public class SNSBoardController {
     }
 
     // 수정
-@PutMapping(
+    @PutMapping(
         value = "/{boardId}",
         consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}
-)
+    )
     public ResponseEntity<ApiResponse<Void>> updateSNSBoard(
             @PathVariable String slug,
             @PathVariable Long boardId,
