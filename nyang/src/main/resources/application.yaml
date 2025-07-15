@@ -6,6 +6,18 @@ spring:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
 
+  elasticsearch:
+    uris: http://localhost:9200
+
+  kafka:
+    bootstrap-servers: localhost:29092
+    consumer:
+      group-id: search-log-group
+      auto-offset-reset: earliest
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+
   security:
     oauth2:
       client:
@@ -64,3 +76,28 @@ jwt:
   secretKey: ${JWT_SECRET_KEY}
   accessTokenExpirationTime: 900000          # 15분 (밀리초 기준)
   refreshTokenExpirationTime: 1209600000     # 14일
+
+# prometheus
+management:
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+  endpoint:
+    health:
+      show-details: always
+
+  health:
+    elasticsearch:
+      enabled: false
+
+#logging:
+#  pattern:
+#    console: %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight([%-3level]) %cyan(%logger{5}) - %msg%n
+

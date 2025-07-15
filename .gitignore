@@ -43,3 +43,6 @@ nyang/.env
 
 ### application.yaml ###
 application*.yaml
+
+### log ###
+logs/*

@@ -3,6 +3,7 @@ package com.project.nyang.modules.board.elasticsearch.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Id;
 import lombok.Builder;
+import lombok.Getter;
 import org.springframework.data.elasticsearch.annotations.Document;
 
 import java.time.LocalDate;
@@ -17,7 +18,8 @@ import java.time.LocalDateTime;
  */
 @JsonIgnoreProperties(ignoreUnknown = true) // 해당 설정을 넣지 않으면 class 속성이 들어가게 됨
 @Document(indexName = "board-index")
-public class BaordEsDocument {
+@Getter
+public class BoardEsDocument {
     // 공통
     @Id
     private String id;
@@ -39,7 +41,7 @@ public class BaordEsDocument {
     private LocalDate missingDate;
 
     @Builder
-    public BaordEsDocument(String id, Long boardViewCount, Long categoryId, String boardTitle, String boardContent, LocalDateTime createdAt, String lostType, String kindName, String gender, Integer age, String furColor, String missingLocation, LocalDate missingDate) {
+    public BoardEsDocument(String id, Long boardViewCount, Long categoryId, String boardTitle, String boardContent, LocalDateTime createdAt, String lostType, String kindName, String gender, Integer age, String furColor, String missingLocation, LocalDate missingDate) {
         this.id = id;
         this.boardViewCount = boardViewCount;
         this.categoryId = categoryId;
@@ -54,4 +56,31 @@ public class BaordEsDocument {
         this.missingLocation = missingLocation;
         this.missingDate = missingDate;
     }
+
+    public static BoardListDTO toBoardDTO(BoardEsDocument document) {
+        return BoardListDTO.builder()
+                .id(document.getId())
+                .boardViewCount(document.getBoardViewCount())
+                .categoryId(document.getCategoryId())
+                .boardTitle(document.getBoardTitle())
+                .boardContent(document.getBoardContent())
+                .createdAt(document.getCreatedAt())
+                .build();
+    }
+
+    public static LostBoardListDTO toLostBoardDTO(BoardEsDocument document) {
+        return LostBoardListDTO.builder()
+                .id(document.getId())
+                .boardViewCount(document.getBoardViewCount())
+                .categoryId(document.getCategoryId())
+                .lostType(document.getLostType())
+                .kindName(document.getKindName())
+                .gender(document.getGender())
+                .age(document.getAge())
+                .furColor(document.getFurColor())
+                .missingLocation(document.getMissingLocation())
+                .missingDate(document.getMissingDate())
+                .build();
+    }
+
 }
