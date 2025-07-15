@@ -117,6 +117,7 @@ public class SwaggerConfig {
          return GroupedOpenApi.builder()
                  .group("🐱 동물 API")
                  .pathsToMatch("/api/v1/animals/**")
+                 .addOpenApiCustomizer(jwtSecurityCustomizer())
                  .build();
      }
 

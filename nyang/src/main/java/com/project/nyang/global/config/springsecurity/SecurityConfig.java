@@ -56,6 +56,7 @@ public class SecurityConfig {
                                         "/api/v1/animals/**",
                                         "/api/v1/boards/**",
                                         "/api/v1/recommendations/**",
+                                        "/api/v1/shelters/**",
                                         "/*"
 
                                 ).permitAll()
@@ -67,6 +68,7 @@ public class SecurityConfig {
                                         "/api/v1/bookmark/**",
                                         "/api/v1/like/**",
                                         "/api/v1/user/**",
+                                        "/api/v1/boards/review/**",
                                         "/api/v1/my/**"
                                 ).authenticated() //인증이 필요한 경로
 

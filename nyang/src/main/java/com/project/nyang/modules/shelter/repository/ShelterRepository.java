@@ -1,11 +1,14 @@
 package com.project.nyang.modules.shelter.repository;
 
+import com.project.nyang.modules.shelter.dto.ShelterDetailDTO;
 import com.project.nyang.modules.shelter.dto.ShelterListDTO;
 import com.project.nyang.modules.shelter.entity.Shelter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+
+import java.util.Optional;
 
 /**
  * ShelterRepository에 대한 클래스입니다.
@@ -76,6 +79,17 @@ public interface ShelterRepository extends JpaRepository<Shelter, String> {
             "AND s.careName LIKE %:careName%")
     Page<ShelterListDTO> findByRegionAndSubRegionAndCareName(
             String regionName, String subRegionName, String careName, Pageable pageable);
+    
+    // 등록번호로 상세정보 조회(보호소 상세정보 페이지에 필요한 필드들 내용 select 할 수 있는 JPQL 구문)
+    @Query("SELECT new com.project.nyang.modules.shelter.dto.ShelterDetailDTO(" +
+            "s.careRegNumber, s.careName, s.careTel, " +
+            "s.careAddress, s.latitude, s.longitude, " +
+            "r.regionName, sr.subRegionName) " +
+            "FROM Shelter s " +
+            "JOIN s.region r " +
+            "JOIN s.subRegion sr " +
+            "WHERE s.careRegNumber = :careRegNumber")
+    Optional<ShelterDetailDTO> findDetailByCareRegNumber(String careRegNumber);
 
 
 }
