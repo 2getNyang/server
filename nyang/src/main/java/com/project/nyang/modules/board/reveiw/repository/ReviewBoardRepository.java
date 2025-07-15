@@ -14,7 +14,7 @@ import java.util.Optional;
  * @since : 2025-07-08
  */
 public interface ReviewBoardRepository extends JpaRepository<Board, Long> {
-    Page<Board> findAllByDeletedAtIsNull(Pageable pageable);
-
     Optional<Board> findByIdAndDeletedAtIsNull(Long id);
+
+    Page<Board> findAllByDeletedAtIsNullAndCategory_CategoryId(Pageable pageable, Long categoryCategoryId);
 }

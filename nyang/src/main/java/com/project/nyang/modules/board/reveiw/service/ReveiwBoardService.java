@@ -114,7 +114,7 @@ public class ReveiwBoardService {
      */
     @Transactional
     public Page<ReveiwBoardListDTO> getReviewBoards(int page, int size) {
-        Page<Board> boards = reviewBoardRepository.findAllByDeletedAtIsNull(PageRequest.of(page, size));
+        Page<Board> boards = reviewBoardRepository.findAllByDeletedAtIsNullAndCategory_CategoryId(PageRequest.of(page, size), CATEGORY_ID);
 
         return boards.map(board -> ReveiwBoardListDTO.builder()
                 .id(board.getId())
