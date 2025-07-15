@@ -3,7 +3,6 @@ package com.project.nyang.modules.adoption.controller;
 import com.project.nyang.global.common.api.ApiResponse;
 import com.project.nyang.global.common.api.ApiSuccessResponse;
 import com.project.nyang.modules.adoption.dto.AdoptionDTO;
-import com.project.nyang.modules.adoption.entity.PetApplicationForm;
 import com.project.nyang.modules.adoption.service.AdoptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

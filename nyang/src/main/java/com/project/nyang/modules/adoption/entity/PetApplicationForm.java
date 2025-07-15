@@ -3,6 +3,7 @@ package com.project.nyang.modules.adoption.entity;
 import com.project.nyang.modules.animal.entity.Animal;
 import com.project.nyang.modules.shelter.entity.Shelter;
 import com.project.nyang.modules.user.entity.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,10 +31,11 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class PetApplicationForm {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "form_id")
-    private Long id;
+    private Long formId;
 
     @Column(name = "user_name", nullable = false)
     private String userName;
@@ -75,6 +77,34 @@ public class PetApplicationForm {
     @Column(name = "application_reason", columnDefinition = "TEXT", nullable = false)
     private String applicationReason;
 
+    @Column(name = "adult_count", nullable = false)
+    private int adultCount;
+
+    @Column(name = "children_count", nullable = false)
+    private int childrenCount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "all_consent", nullable = false, length = 3)
+    private YesNo allConsent;  // YES/NO
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "housing_type", nullable = false, length = 20)
+    private HousingType housingType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "has_allergy", nullable = false, length = 3)
+    private YesNo hasAllergy;  // YES/NO
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "has_other_pets", nullable = false, length = 3)
+    private YesNo hasOtherPets; // YES/NO
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "consent_for_check", nullable = false, length = 3)
+    private YesNo consentForCheck; // YES/NO
+
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "desertion_no", referencedColumnName = "desertion_no")
     private Animal animal;
@@ -92,7 +122,15 @@ public class PetApplicationForm {
     }
 
     public enum YesNo {
-        Y, N
+        YES, NO
+    }
+
+    public enum HousingType {
+        DAGA_GU_JUTAUK,
+        DANDOK_JUTAUK,
+        APATEU,
+        ONE_ROOM,
+        ETC
     }
 
 }
