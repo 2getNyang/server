@@ -44,6 +44,7 @@ public class OAuth2DocController {
     public ResponseEntity<Void> naverLoginDoc() {
         return ResponseEntity.ok().build();
     }
+
     @Operation(summary = "소셜 로그아웃", description = """
             소셜 로그아웃은 아래 URL로 [GET] 요청하여 브라우저의 accessToken, refreshToken 쿠키를 삭제합니다.
             OAuth2 로그아웃 SuccessHandler가 동작하여 쿠키 삭제 후 리다이렉트됩니다.
@@ -59,4 +60,15 @@ public class OAuth2DocController {
     public ResponseEntity<Void> logoutDoc() {
         return ResponseEntity.ok().build(); // Swagger 설명용 API
     }
+
+
+    @Operation(summary = "구글 로그인", description = """
+            구글 로그인은 아래 URL로 이동하면 로그인-회원가입 처리가 됩니다.
+            `http://localhost:8080/oauth2/authorization/google`
+            """)
+    @GetMapping("/authorization/google")
+    public ResponseEntity<Void> googleLoginDoc() {
+        return ResponseEntity.ok().build();
+    }
+
 }

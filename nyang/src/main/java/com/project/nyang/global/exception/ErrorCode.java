@@ -40,6 +40,7 @@ public enum ErrorCode {
 
     //동물 관련 에러
     INVALID_ANIMAL(404, "해당 동물을 찾을 수 없습니다."),
+    GOOGLE_REVOKE_FAILED(500,"구글 계정 연결 해제에 실패했습니다"),
 
     //입양 신청 내역 에러
     APPLICATION_NOT_FOUND(404, "입양 신청 내역을 찾을 수 없습니다.");
