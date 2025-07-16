@@ -1,6 +1,13 @@
 spring:
   profiles:
     active: dev
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 100
+        order_inserts: true
+        order_updates: true
 
   jackson:
     serialization:
@@ -76,6 +83,9 @@ jwt:
   secretKey: ${JWT_SECRET_KEY}
   accessTokenExpirationTime: 900000          # 15분 (밀리초 기준)
   refreshTokenExpirationTime: 1209600000     # 14일
+
+publicapi:
+  service-key: ${publicapi.service-key}
 
 # prometheus
 management:

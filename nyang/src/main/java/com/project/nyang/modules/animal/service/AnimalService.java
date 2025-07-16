@@ -132,6 +132,6 @@ public class AnimalService {
 
     @Transactional
     public List<AnimalListDTO> getRecommendAnimals() {
-        return animalRepository.findRecommendAnimals(PageRequest.of(0, 12));
+        return animalRepository.findRecommendAnimals(PageRequest.of(0, 6));
     }
 }

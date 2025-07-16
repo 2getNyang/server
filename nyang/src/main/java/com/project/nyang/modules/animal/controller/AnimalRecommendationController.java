@@ -32,7 +32,7 @@ public class AnimalRecommendationController {
 
     // 이달의 추천 동물
     @Operation(summary = "이달의 추천 동물", description = "오늘 날짜를 기준으로 잔여 공고일이 가장 적은 동물부터, 동률 시 찜(좋아요) 수가 적은 순서로 정렬한다. \n" +
-            "이렇게 우선순위를 적용한 뒤 상위 limit 12마리만 잘라서 응답한다.")
+            "이렇게 우선순위를 적용한 뒤 상위 limit 6마리만 잘라서 응답한다.")
     @GetMapping()
     public ResponseEntity<ApiResponse<List<AnimalListDTO>>> getRecommendAnimals(){
         List<AnimalListDTO> recommendations = animalService.getRecommendAnimals();
