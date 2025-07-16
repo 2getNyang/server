@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
  * @fileName : ShelterController
  * @since : 2025-07-10
  */
+
 @Tag(name = "보호소 API", description = "보호소 정보 조회 관련 API입니다.")
 @RestController
 @RequestMapping("/api/v1/shelters")
@@ -44,6 +45,8 @@ public class ShelterController {
             @Parameter(description = "페이지당 항목 수", example = "12")
             @RequestParam(defaultValue = "12") int size
     ) {
+
+        Page<ShelterListDTO> shelters = shelterService.getAllShelters(page, size);
         return shelterService.getAllShelters(page, size);
     }
 
