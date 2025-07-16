@@ -9,9 +9,11 @@ import com.project.nyang.modules.auth.repository.AuthRepository;
 import com.project.nyang.modules.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +52,13 @@ public class AuthService {
         else{
             throw new CustomException(ErrorCode.REFRESH_TOKEN_INVALID);
         }
+    }
+
+    public boolean revokeGoogleAccessToken(String accessToken) {
+        String revokeUrl = "https://accounts.google.com/o/oauth2/revoke?token=" + accessToken;
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.getForEntity(revokeUrl, String.class);
+        return response.getStatusCode().is2xxSuccessful();
     }
 
 
