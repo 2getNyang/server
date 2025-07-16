@@ -45,9 +45,7 @@ public class SNSBoardController {
         }
     }
 
-    /* SNS 게시판 검색
-    * 나중에 엘라스틱 서치를 넣읍시다.
-    * */
+    @Operation(summary = "SNS 게시글 검색", description = "SNS 게시글 검색")
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<Page<SNSBoardDTO>>> searchSNSBoards(
             @PathVariable String slug,
@@ -117,6 +115,7 @@ public class SNSBoardController {
     }
 
     // 수정
+    @Operation(summary = "SNS 게시글 수정", description = "SNS 게시판 게시글 수정 (페이징)")
     @PutMapping(
         value = "/{boardId}",
         consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}
@@ -136,6 +135,7 @@ public class SNSBoardController {
 
 
     // 삭제
+    @Operation(summary = "SNS 게시글 삭제", description = "SNS 게시글 삭제")
     @DeleteMapping("/{boardId}")
     public ResponseEntity<ApiResponse<Void>> deleteSNSBoard(
             @PathVariable String slug,
