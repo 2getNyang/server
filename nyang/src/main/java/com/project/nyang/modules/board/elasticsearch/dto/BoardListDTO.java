@@ -3,6 +3,7 @@ package com.project.nyang.modules.board.elasticsearch.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
  * @since : 2025-07-15
  */
 @Getter
+@SuperBuilder
 public class BoardListDTO {
     @Schema(description = "게시글 ID")
     private String id;
@@ -26,12 +28,13 @@ public class BoardListDTO {
     @Schema(description = "게시글 내용")
     private String boardContent;
     @Schema(description = "생성일자")
-    private LocalDateTime createdAt;
+    private String createdAt;
     @Schema(description = "대표 이미지 url")
     private String imageUrl;
+    @Schema(description = "닉네임")
+    private String nickname;
 
-    @Builder
-    public BoardListDTO(String id, Long viewCount, Long categoryId, String boardTitle, String boardContent, LocalDateTime createdAt, String imageUrl) {
+    public BoardListDTO(String id, Long viewCount, Long categoryId, String boardTitle, String boardContent, String createdAt, String imageUrl,String nickname) {
         this.id = id;
         this.viewCount = viewCount;
         this.categoryId = categoryId;
@@ -39,5 +42,6 @@ public class BoardListDTO {
         this.boardContent = boardContent;
         this.createdAt = createdAt;
         this.imageUrl = imageUrl;
+        this.nickname = nickname;
     }
 }

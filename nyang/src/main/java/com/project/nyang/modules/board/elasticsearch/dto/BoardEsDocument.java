@@ -31,6 +31,7 @@ public class BoardEsDocument {
     private Long viewCount;
     private Long categoryId;
     private String imageUrl;
+    private String nickname;
 
     // 입양 후기, sns 홍보
     private String boardTitle;
@@ -47,7 +48,7 @@ public class BoardEsDocument {
     private String missingDate;
 
     @Builder
-    public BoardEsDocument(String id, Long viewCount, Long categoryId, String boardTitle, String boardContent, String createdAt, String lostType, String kindName, String gender, Integer age, String furColor, String missingLocation, String missingDate, String imageUrl) {
+    public BoardEsDocument(String id, Long viewCount, Long categoryId, String boardTitle, String boardContent, String createdAt, String lostType, String kindName, String gender, Integer age, String furColor, String missingLocation, String missingDate, String imageUrl, String nickname) {
         this.id = id;
         this.viewCount = viewCount;
         this.categoryId = categoryId;
@@ -62,6 +63,7 @@ public class BoardEsDocument {
         this.missingLocation = missingLocation;
         this.missingDate = missingDate;
         this.imageUrl = imageUrl;
+        this.nickname = nickname;
     }
 
     public static BoardListDTO toBoardDTO(BoardEsDocument document) {
@@ -71,8 +73,9 @@ public class BoardEsDocument {
                 .categoryId(document.getCategoryId())
                 .boardTitle(document.getBoardTitle())
                 .boardContent(document.getBoardContent())
-                .createdAt(LocalDateTime.parse(document.getCreatedAt()))
+                .createdAt(document.getCreatedAt())
                 .imageUrl(document.getImageUrl())
+                .nickname(document.getNickname())
                 .build();
     }
 
@@ -87,8 +90,9 @@ public class BoardEsDocument {
                 .age(document.getAge())
                 .furColor(document.getFurColor())
                 .missingLocation(document.getMissingLocation())
-                .missingDate(LocalDate.parse(document.getMissingDate()))
+                .missingDate(document.getMissingDate())
                 .imageUrl(document.getImageUrl())
+                .nickname(document.getNickname())
                 .build();
     }
 

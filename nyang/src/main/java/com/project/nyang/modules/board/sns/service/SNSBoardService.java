@@ -111,25 +111,26 @@ public class SNSBoardService {
 
         // DB 반영 강제 flush
         snsBoardRepository.flush();
-
-        // 저장된 게시글 + 이미지 포함 다시 조회
-        Board fullBoard = snsBoardRepository.findById(board.getId())
-                .orElseThrow(() -> new RuntimeException(String.valueOf(BOARD_NOT_FOUND)));
-
-        System.out.println("게시글 생성 완료: 게시글 ID = " + fullBoard.getId());
         /* elastic search 추가 */
         BoardEsDocument doc = BoardEsDocument.builder()
                 .id(String.valueOf(board.getId()))
                 .boardTitle(board.getBoardTitle())
                 .boardContent(board.getBoardContent())
                 .categoryId(board.getCategory().getCategoryId())
-                .imageUrl(String.valueOf(board.getImages()))
+                .imageUrl(board.getImages() != null && !board.getImages().isEmpty()
+                        ? board.getImages().stream()
+                        .filter(image -> image.getDeletedAt() == null && image.getThumbnailIs().equals("Y"))
+                        .map(Image::getS3Url)
+                        .findFirst()
+                        .orElse(null)
+                        : null)
                 .viewCount(board.getViewCount())
                 .createdAt(board.getCreatedAt().toString())
+                .nickname(board.getUser().getNickname())
                 .build();
         boardEsRepository.save(doc);
 
-        return toDto(fullBoard);
+        return toDto(board);
     }
 
 
@@ -214,6 +215,7 @@ public class SNSBoardService {
                         .findFirst()
                         .orElse(null)
                         : null)
+                .nickname(board.getUser().getNickname())
                         .build();
         boardEsRepository.save(doc);
     }

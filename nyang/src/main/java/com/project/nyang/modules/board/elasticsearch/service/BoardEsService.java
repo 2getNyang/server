@@ -9,8 +9,13 @@ import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.project.nyang.global.searchlog.dto.SearchLogMessage;
 import com.project.nyang.modules.board.elasticsearch.dto.BoardEsDocument;
 import com.project.nyang.modules.board.elasticsearch.dto.BoardListDTO;
+import com.project.nyang.modules.board.elasticsearch.dto.LostBoardListDTO;
 import com.project.nyang.modules.board.elasticsearch.repository.BoardEsRepository;
+import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.util.concurrent.ListenableFutureCallback;
+
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -19,7 +24,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -31,16 +38,26 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BoardEsService {
     // Elastic search에 명령을 전달하는 서버 API
     private final ElasticsearchClient client;
     private final KafkaTemplate<String, SearchLogMessage> kafkaTemplate;
 
-    public Page<BoardListDTO> searchBoard(Long categoryId, String keyword, int page, int size) {
+    public Page<?extends BoardListDTO> searchBoard(Long categoryId, String keyword, int page, int size) {
 
         String searchedAt = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
         SearchLogMessage message = new SearchLogMessage(keyword, searchedAt);
-        kafkaTemplate.send("search-log", message);  //search-log 토픽으로 메세지 전달
+
+        CompletableFuture<?> future = kafkaTemplate.send("search-log", message);
+
+        future.thenAccept(result -> log.info("Search log sent: {}", message))
+                .exceptionally(ex -> {
+                    log.warn("Failed to send search log: {}", ex.getMessage());
+                    return null;
+                });
+
+
 
         try {
             int from = page * size;
@@ -72,6 +89,11 @@ public class BoardEsService {
                         b.should(MatchQuery.of(m -> m.field("boardTitle").query(keyword).fuzziness("AUTO"))._toQuery());
                         b.should(MatchQuery.of(m -> m.field("boardContent").query(keyword).fuzziness("AUTO"))._toQuery());
                     }
+                    // categoryId 가 null 일때 방어코드.
+                    if (categoryId != null) {
+                        b.filter(f -> f.term(t -> t.field("categoryId").value(String.valueOf(categoryId))));
+                    }
+
 
                     return b;
                 })._toQuery();
@@ -108,10 +130,33 @@ public class BoardEsService {
             // 전체 검색 결과 수 (총 문서의 갯수)
             long total = response.hits().total().value();
 
-            List<BoardListDTO> boardList = content.stream().map(BoardEsDocument::toBoardDTO).collect(Collectors.toList());
+            List<BoardListDTO> boardList = new ArrayList<>();
+            List<LostBoardListDTO> lostBoardList = new ArrayList<>();
 
-            // PageImpl 객체를 사용해서 Spring에서 사용할 수 있는 page 객체로 변환
-            return new PageImpl<>(boardList, PageRequest.of(page, size), total);
+            for (BoardEsDocument doc : content) {
+                Long docCategoryId = doc.getCategoryId();
+                //카테고리ID 가 2,3 인 친구는 toBoardDTO 사용
+                if (docCategoryId != null) {
+                    if (docCategoryId == 2L || docCategoryId == 3L) {
+                        boardList.add(BoardEsDocument.toBoardDTO(doc));
+                        //카테고리 ID 가 4 인 친구만 toLostBoardDTO 사옹
+                    } else if (docCategoryId == 4L) {
+                        lostBoardList.add(BoardEsDocument.toLostBoardDTO(doc));
+                    }
+                }
+            }
+
+// PageImpl 객체 반환 (categoryId에 따라 분기)
+            // PageImpl 객체 반환 (categoryId에 따라 분기)
+            if (!boardList.isEmpty()) {
+                return new PageImpl<>(
+                        new ArrayList<>(boardList), PageRequest.of(page, size), total);
+            } else {
+                return new PageImpl<>(
+                        new ArrayList<>(lostBoardList), PageRequest.of(page, size), total);
+            }
+
+
 
         } catch (Exception e) {
             throw new RuntimeException("검색 중 오류 발생", e);

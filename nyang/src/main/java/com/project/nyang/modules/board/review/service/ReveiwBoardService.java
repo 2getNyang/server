@@ -117,6 +117,7 @@ public class ReveiwBoardService {
                         .filter(boardImages -> !boardImages.isEmpty())
                         .map(boardImages -> boardImages.get(0).getS3Url())
                         .orElse(null))
+                .nickname(board.getUser().getNickname())
                 .build();
 
         boardEsRepository.save(doc);
@@ -317,6 +318,7 @@ public class ReveiwBoardService {
                         .findFirst()
                         .orElse(null)
                         : null)
+                .nickname(board.getUser().getNickname())
                 .build();
 
         boardEsRepository.save(doc);
