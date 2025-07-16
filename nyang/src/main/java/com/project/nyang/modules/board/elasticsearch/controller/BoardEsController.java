@@ -34,7 +34,7 @@ public class BoardEsController {
     private static final Long LOST_CATEGORY_ID = 4L;
 
     @Operation(summary = "입양 후기 게시글 검색")
-    @GetMapping("/review/search")
+    @GetMapping("/review/elasticsearch")
     public ResponseEntity<ApiResponse<Page<BoardListDTO>>> searchReviewBoard(
             @Parameter(description = "검색어", example = "제목") @RequestParam String keyword,
             @Parameter(description = "페이지 번호", example = "0") @RequestParam(defaultValue = "0") int page,
@@ -44,7 +44,7 @@ public class BoardEsController {
     }
 
     @Operation(summary = "sns 홍보 게시글 검색")
-    @GetMapping("/sns/search")
+    @GetMapping("/sns/elasticsearch")
     public ResponseEntity<ApiResponse<Page<BoardListDTO>>> searchSnsBoard(
             @Parameter(description = "검색어", example = "제목") @RequestParam String keyword,
             @Parameter(description = "페이지 번호", example = "0")@RequestParam(defaultValue = "0") int page,

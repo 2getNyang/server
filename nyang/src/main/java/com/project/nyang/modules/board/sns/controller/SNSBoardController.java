@@ -9,6 +9,7 @@ import com.project.nyang.modules.board.sns.dto.SNSBoardDTO;
 import com.project.nyang.modules.board.sns.dto.SNSBoardUpdateDTO;
 import com.project.nyang.modules.board.sns.service.SNSBoardService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,7 @@ import java.util.List;
  * @since           : 25. 7. 9.
  * 
  */
+@Tag(name = "🐥SNS Board API", description = "내새꾸 자랑하는 SNS 게시판 관련 기능")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/boards/{slug}")
@@ -82,7 +84,6 @@ public class SNSBoardController {
             @PathVariable Long boardId
     ) {
         validateSlug(slug);
-        snsBoardService.increaseViewCount(boardId);
         SNSBoardDTO dto = snsBoardService.getBoardDetail(boardId);
         return ResponseEntity.ok(ApiSuccessResponse.success(dto));
     }

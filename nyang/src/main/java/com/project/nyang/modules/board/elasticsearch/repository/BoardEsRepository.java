@@ -13,4 +13,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface BoardEsRepository  extends ElasticsearchRepository<BoardEsDocument,String> {
+    // 문서 ID 로 데이터 삭제
+    void deleteById(String id);
 }
