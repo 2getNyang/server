@@ -22,7 +22,7 @@ import java.util.List;
 @Builder
 public class LostListResponseDTO {
     @Schema(description = "게시글 ID", example = "12")
-    private Long boardId;
+    private Long id;
     @Schema(description = "카테고리 ID", example = "4")
     private Long categoryId;
     @Schema(description = "유저 ID", example = "1")

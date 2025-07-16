@@ -4,10 +4,15 @@ import com.project.nyang.global.common.S3.S3Service;
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
 import com.project.nyang.global.security.core.CustomUserDetails;
+import com.project.nyang.modules.board.elasticsearch.dto.BoardEsDocument;
+import com.project.nyang.modules.board.elasticsearch.repository.BoardEsRepository;
+import com.project.nyang.modules.board.elasticsearch.service.BoardEsService;
 import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.modules.board.lost.dto.*;
 import com.project.nyang.modules.board.lost.repository.LostRepository;
+import com.project.nyang.modules.comment.repository.CommentRepository;
 import com.project.nyang.modules.image.entity.Image;
+import com.project.nyang.modules.like.repository.LikeRepository;
 import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.modules.user.repository.UserRepository;
 import com.project.nyang.reference.entity.*;
@@ -22,10 +27,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.project.nyang.global.exception.ErrorCode.*;
 
 /**
  * 실종/목격 게시판 서비스입니다.
@@ -46,9 +54,13 @@ public class LostService {
     private final SubRegionRepository subRegionRepository;
     private final UpkindRepository upkindRepository;
     private final KindRepository kindRepository;
+    private final LikeRepository likeRepository;
+    private final CommentRepository commentRepository;
 
     private final S3Service s3Service;
     private final Long CATEGORY_ID = 4L;
+    private final BoardEsRepository boardEsRepository;
+    private final BoardEsService boardEsService;
 
     //실종/목격 게시판의 모든 글 가져오는 메서드(페이징 처리완료)
     public Page<LostListResponseDTO> getLostBoard(Long categoryId, Pageable pageable) {
@@ -63,7 +75,7 @@ public class LostService {
                     .orElse(null);
 
             return LostListResponseDTO.builder()
-                    .boardId(board.getId())
+                    .id(board.getId())
                     .categoryId(board.getCategory().getCategoryId())
                     .userId(board.getUser().getId())
                     .nickName(board.getUser().getNickname())
@@ -98,9 +110,22 @@ public class LostService {
         if (board.getDeletedAt() != null) {
             throw new CustomException(ErrorCode.BOARD_ALLREDAY_DELETE);
         }
+        List<LostDetailResponseDTO.CommentDTO> commentDTOList = board.getComments().stream()
+                .filter(comment -> comment.getDeletedAt() == null)
+                .map(LostDetailResponseDTO.CommentDTO::toDTO)
+                .collect(Collectors.toList());
         
         //조회수 증가
         board.increaseViewCount();
+
+        //좋아요 수 조회
+        Long likeCount = likeRepository.countByBoardId(boardId);
+
+        //elastic search 조회수 증가
+        /** elasticSearch 조회수 증가 */
+        BoardEsDocument doc = boardEsRepository.findById(String.valueOf(board.getId())).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+        doc.increaseViewCount();
+        boardEsRepository.save(doc);
 
         return LostDetailResponseDTO.builder()
                 .boardId(board.getId())
@@ -123,6 +148,8 @@ public class LostService {
                 .missingLocation(board.getMissingLocation())
                 .missingDate(board.getMissingDate())
                 .phone(board.getPhone())
+                .likeCount(likeCount)
+                .comments(commentDTOList)
                 .createdAt(board.getCreatedAt())
                 .deletedAt(board.getDeletedAt())
                 .imageUrls(board.getImages().stream()
@@ -140,11 +167,10 @@ public class LostService {
 
         //1. 연관 엔티티 유효성 검사
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자 정보를 찾을 수 없습니다."));
-
+                .orElseThrow(() -> new EntityNotFoundException(String.valueOf(BAD_REQUEST)));
 
         Category category = categoryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException(String.valueOf(CATEGORY_NOT_FOUND)));
 
         Region region = regionRepository.findByRegionName(dto.getRegionName())
                 .orElse(null);
@@ -185,6 +211,27 @@ public class LostService {
                 board.getImages().add(image);
             }
         }
+        BoardEsDocument doc = BoardEsDocument.builder()
+                .id(String.valueOf(board.getId()))
+                .viewCount(board.getViewCount())
+                .categoryId(board.getCategory().getCategoryId())
+                .lostType(board.getLostType())
+                .kindName(board.getKind().getKindNm())
+                .gender(board.getGender())
+                .age(board.getAge())
+                .furColor(board.getFurColor())
+                .missingLocation(board.getMissingLocation())
+                .missingDate(String.valueOf(board.getMissingDate()))
+                .imageUrl(board.getImages() != null && !board.getImages().isEmpty()
+                        ? board.getImages().stream()
+                        .filter(image -> image.getDeletedAt() == null && image.getThumbnailIs().equals("Y"))
+                        .map(Image::getS3Url)
+                        .findFirst()
+                        .orElse(null)
+                        : null)
+                .nickname(board.getUser().getNickname())
+                .build();
+        boardEsRepository.save(doc);
 
         return board.getId();
     }
@@ -231,7 +278,8 @@ public class LostService {
         }
         // 게시글과 이미지 soft delete 수행(deleteAt에 타임스탬프)
         board.softDelete();
-
+        // 하지만 elastic search 에는 걍 삭제합니다
+        boardEsRepository.deleteById(String.valueOf(boardId));
         return new LostDeleteResponseDTO(board.getId(), board.getDeletedAt());
     }
 
@@ -349,6 +397,29 @@ public class LostService {
 
             newThumbnail.ifPresent(Image::markAsThumbnail);
         }
+        /** elastic search 반영 **/
+        BoardEsDocument doc = BoardEsDocument.builder()
+                .id(String.valueOf(board.getId()))
+                .viewCount(board.getViewCount())
+                .categoryId(board.getCategory().getCategoryId())
+                .lostType(board.getLostType())
+                .kindName(board.getKind().getKindNm())
+                .gender(board.getGender())
+                .age(board.getAge())
+                .furColor(board.getFurColor())
+                .missingLocation(board.getMissingLocation())
+                .missingDate(String.valueOf(board.getMissingDate()))
+                .imageUrl(board.getImages() != null && !board.getImages().isEmpty()
+                        ? board.getImages().stream()
+                        .filter(image -> image.getDeletedAt() == null && image.getThumbnailIs().equals("Y"))
+                        .map(Image::getS3Url)
+                        .findFirst()
+                        .orElse(null)
+                        : null)
+                .nickname(board.getUser().getNickname())
+                .build();
+        boardEsRepository.save(doc);
+
     }
 
     //s3 이미지 경로에서 앞의 접두사를 빼고 온전히 이미지의 이름+확장자만 가져오게 하는 메서드

@@ -1,9 +1,11 @@
 package com.project.nyang.modules.shelter.service;
 
+import com.project.nyang.global.exception.CustomException;
+import com.project.nyang.global.exception.ErrorCode;
+import com.project.nyang.modules.shelter.dto.ShelterDetailDTO;
 import com.project.nyang.modules.shelter.dto.ShelterListDTO;
 import com.project.nyang.modules.shelter.repository.ShelterRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -56,5 +58,12 @@ public class ShelterService {
             return shelterRepository.findByRegionAndSubRegionAndCareName(regionName, subRegionName, careName, pageable);
         }
         return shelterRepository.findByRegionAndSubRegion(regionName, subRegionName, pageable);
+    }
+
+    // 보호소 상세 정보 조회 로직
+    public ShelterDetailDTO getShelterDetail(String careRegNumber) {
+        // repository 호출 후 결과 없으면 예외 발생
+        return shelterRepository.findDetailByCareRegNumber(careRegNumber)
+                .orElseThrow(() -> new CustomException(ErrorCode.SHELTER_NOT_FOUND));
     }
 }

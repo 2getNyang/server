@@ -16,14 +16,14 @@ import lombok.Data;
 @AllArgsConstructor
 public class ShelterListDTO {
     @Schema(description = "보호소 이름", example = "서울 동물보호소")
-    private String careName;//보호소 이름
+    private String careName;
 
     @Schema(description = "보호소 전화번호", example = "02-1234-5678")
-    private String careTel;//보호소 전화번호
+    private String careTel;
 
     @Schema(description = "시/도 이름", example = "서울특별시")
-    private String regionName;//시/도 이름
+    private String regionName;
 
     @Schema(description = "시/군/구 이름", example = "강남구")
-    private String subRegionName;// 시/군/구 이름
+    private String subRegionName;
 }
