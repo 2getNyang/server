@@ -6,6 +6,7 @@ import co.elastic.clients.elasticsearch._types.query_dsl.*;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
+import com.project.nyang.global.searchlog.dto.SearchLogMessage;
 import com.project.nyang.modules.board.elasticsearch.dto.BoardEsDocument;
 import com.project.nyang.modules.board.elasticsearch.dto.BoardListDTO;
 import com.project.nyang.modules.board.elasticsearch.repository.BoardEsRepository;
@@ -13,8 +14,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,10 +34,14 @@ import java.util.stream.Collectors;
 public class BoardEsService {
     // Elastic search에 명령을 전달하는 서버 API
     private final ElasticsearchClient client;
-
-    private final BoardEsRepository repository;
+    private final KafkaTemplate<String, SearchLogMessage> kafkaTemplate;
 
     public Page<BoardListDTO> searchBoard(Long categoryId, String keyword, int page, int size) {
+
+        String searchedAt = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
+        SearchLogMessage message = new SearchLogMessage(keyword, searchedAt);
+        kafkaTemplate.send("search-log", message);  //search-log 토픽으로 메세지 전달
+
         try {
             int from = page * size;
 
