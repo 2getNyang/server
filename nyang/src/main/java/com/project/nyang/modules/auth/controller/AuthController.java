@@ -103,32 +103,32 @@ public class AuthController {
 //    }
 
 
-    @Operation(
-            summary = "구글 연동 해제 (토큰 폐기)",
-            description = """
-                    구글 소셜 로그인 연동 해제(토큰 폐기)를 수행합니다.
-                    연동 해제 후 사용자는 동일 구글 계정으로 재로그인 시 신규 회원으로 가입 처리됩니다.
-                    """,
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "연동 해제(토큰 폐기) 성공"),
-                    @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-                    @ApiResponse(responseCode = "500", description = "서버 오류")
-            }
-    )
-    @PostMapping("/revoke")
-    public ResponseEntity<?> revokeGoogle(@RequestHeader("Authorization") String authorizationHeader){
-        //Todo. DB에서 회원삭제처리에 대한 timestamp 처리는 있던데 해당 계정의 상태 컬럼은 따로 없는 것 같다. 07-14 회의후 User테이블 수정해야할 것 같다.
-        String accessToken = authorizationHeader.replace("Bearer ", "");
-        boolean success = authService.revokeGoogleAccessToken(accessToken);
-
-        if (success) {
-            //Todo. 아직 회원 탈퇴 기능 작성 전이라 주석처리 해둠. 현재 계정연동끊는 기능만 하는중
-            //userService.markUserWithdrawnByAccessToken(accessToken);
-            return ResponseEntity.ok("구글 연결 해제 완료");
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("구글 연결 해제 실패");
-        }
-
-    }
+//    @Operation(
+//            summary = "구글 연동 해제 (토큰 폐기)",
+//            description = """
+//                    구글 소셜 로그인 연동 해제(토큰 폐기)를 수행합니다.
+//                    연동 해제 후 사용자는 동일 구글 계정으로 재로그인 시 신규 회원으로 가입 처리됩니다.
+//                    """,
+//            responses = {
+//                    @ApiResponse(responseCode = "200", description = "연동 해제(토큰 폐기) 성공"),
+//                    @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+//                    @ApiResponse(responseCode = "500", description = "서버 오류")
+//            }
+//    )
+//    @PostMapping("/revoke")
+//    public ResponseEntity<?> revokeGoogle(@RequestHeader("Authorization") String authorizationHeader){
+//        //Todo. DB에서 회원삭제처리에 대한 timestamp 처리는 있던데 해당 계정의 상태 컬럼은 따로 없는 것 같다. 07-14 회의후 User테이블 수정해야할 것 같다.
+//        String accessToken = authorizationHeader.replace("Bearer ", "");
+//        boolean success = authService.revokeGoogleAccessToken(accessToken);
+//
+//        if (success) {
+//            //Todo. 아직 회원 탈퇴 기능 작성 전이라 주석처리 해둠. 현재 계정연동끊는 기능만 하는중
+//            //userService.markUserWithdrawnByAccessToken(accessToken);
+//            return ResponseEntity.ok(ApiSuccessResponse.success(null,"구글 계정 연결 해제에 성공하였습니다."));
+//        } else {
+//            throw new CustomException(ErrorCode.GOOGLE_REVOKE_FAILED);
+//        }
+//
+//    }
 
 }

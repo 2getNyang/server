@@ -41,12 +41,22 @@ public class SwaggerConfig {
                  .build();
      }
 
+     // ✅ 보호소 API 그룹
+     @Bean
+     public GroupedOpenApi shelterApi() {
+         return GroupedOpenApi.builder()
+                 .group("🏠 보호소 API")
+                 .pathsToMatch("/api/v1/shelters/**")
+                 .addOpenApiCustomizer(jwtSecurityCustomizer())
+                 .build();
+     }
+
     // ✅ 사용자 API 그룹
     @Bean
     public GroupedOpenApi userApi() {
         return GroupedOpenApi.builder()
                 .group("👤 사용자 API")
-                .pathsToMatch("/api/v1/users/**")
+                .pathsToMatch("/api/v1/user/**")
                 .addOpenApiCustomizer(jwtSecurityCustomizer())
                 .build();
     }
@@ -61,6 +71,26 @@ public class SwaggerConfig {
                 .build();
     }
 
+    // ✅ 게시판 API 그룹
+    @Bean
+    public GroupedOpenApi commentApi() {
+        return GroupedOpenApi.builder()
+                .group("📝 댓글 API")
+                .pathsToMatch("/api/v1/comments/**")
+                .addOpenApiCustomizer(jwtSecurityCustomizer())
+                .build();
+    }
+
+    // ✅ 좋아요/찜 API 그룹
+    @Bean
+    public GroupedOpenApi LikeItApi() {
+        return GroupedOpenApi.builder()
+                .group("⭐ 좋아요 API")
+                .pathsToMatch("/api/v1/bookmark/**", "/api/v1/like/**")
+                .addOpenApiCustomizer(jwtSecurityCustomizer())
+                .build();
+    }
+
     // ✅ 채팅 API 그룹
     @Bean
     public GroupedOpenApi chatApi() {
@@ -70,6 +100,15 @@ public class SwaggerConfig {
                 .addOpenApiCustomizer(jwtSecurityCustomizer())
                 .build();
     }
+
+     // ✅ 동물 API 그룹
+     @Bean
+     public GroupedOpenApi animalApi() {
+         return GroupedOpenApi.builder()
+                 .group("🐱 동물 API")
+                 .pathsToMatch("/api/v1/animals/**")
+                 .build();
+     }
 
     // ✅ API 메타정보
     @Bean

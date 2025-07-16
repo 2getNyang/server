@@ -1,7 +1,8 @@
-package com.project.nyang.modules.board;
+package com.project.nyang.modules.board.entity;
 
 import com.project.nyang.global.common.entity.BaseTime;
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
+import com.project.nyang.modules.board.lost.dto.LostUpdateRequestDTO;
 import com.project.nyang.modules.comment.entity.Comment;
 import com.project.nyang.modules.image.entity.Image;
 import com.project.nyang.modules.like.entity.LikeIt;
@@ -11,7 +12,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +22,6 @@ import java.util.List;
  * @fileName : Board
  * @since : 2025-07-07
  */
-// TODO. BaseTime extends 필요
 @Entity
 @Getter
 @NoArgsConstructor
@@ -122,6 +121,14 @@ public class Board extends BaseTime {
         this.images.addAll(newImages);
     }
 
+    //soft delete용 메서드
+    public void softDelete() {
+        super.markDeleted(); // BaseTime의 메서드 활용
+        for (Image image : this.images) {
+            image.softDelete();
+        }
+    }
+
     @Builder(toBuilder = true)
     public Board(Long id, User user, Category category, Region region, SubRegion subRegion,
                  PetApplicationForm petApplicationForm, String lostType,
@@ -159,4 +166,24 @@ public class Board extends BaseTime {
         this.likeList = likeList != null ? likeList : new ArrayList<>();
         this.comments = comments != null ? comments : new ArrayList<>();
     }
+
+    //실종/목격 글 수정 메서드
+    public void updateBoardInfo(LostUpdateRequestDTO dto, Region region, SubRegion subRegion,
+                                Kind kind, UpKind upKind, Category category) {
+        this.boardContent = dto.getContent();
+        this.lostType = dto.getLostType();
+        this.gender = dto.getGender();
+        this.age = dto.getAge();
+        this.furColor = dto.getFurColor();
+        this.distinctFeatures = dto.getDistinctFeatures();
+        this.missingDate = dto.getMissingDate();
+        this.missingLocation = dto.getMissingLocation();
+        this.phone = dto.getPhone();
+        this.region = region;
+        this.subRegion = subRegion;
+        this.kind = kind;
+        this.upKind = upKind;
+        this.category = category;
+    }
+
 }
