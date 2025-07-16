@@ -9,6 +9,7 @@ import com.project.nyang.modules.board.sns.dto.SNSBoardDTO;
 import com.project.nyang.modules.board.sns.dto.SNSBoardUpdateDTO;
 import com.project.nyang.modules.board.sns.service.SNSBoardService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,7 @@ import java.util.List;
  * @since           : 25. 7. 9.
  * 
  */
+@Tag(name = "🐥SNS Board API", description = "내새꾸 자랑하는 SNS 게시판 관련 기능")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/boards/{slug}")
@@ -43,9 +45,7 @@ public class SNSBoardController {
         }
     }
 
-    /* SNS 게시판 검색
-    * 나중에 엘라스틱 서치를 넣읍시다.
-    * */
+    @Operation(summary = "SNS 게시글 검색", description = "SNS 게시글 검색")
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<Page<SNSBoardDTO>>> searchSNSBoards(
             @PathVariable String slug,
@@ -82,7 +82,6 @@ public class SNSBoardController {
             @PathVariable Long boardId
     ) {
         validateSlug(slug);
-        snsBoardService.increaseViewCount(boardId);
         SNSBoardDTO dto = snsBoardService.getBoardDetail(boardId);
         return ResponseEntity.ok(ApiSuccessResponse.success(dto));
     }
@@ -116,6 +115,7 @@ public class SNSBoardController {
     }
 
     // 수정
+    @Operation(summary = "SNS 게시글 수정", description = "SNS 게시판 게시글 수정 (페이징)")
     @PutMapping(
         value = "/{boardId}",
         consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}
@@ -135,6 +135,7 @@ public class SNSBoardController {
 
 
     // 삭제
+    @Operation(summary = "SNS 게시글 삭제", description = "SNS 게시글 삭제")
     @DeleteMapping("/{boardId}")
     public ResponseEntity<ApiResponse<Void>> deleteSNSBoard(
             @PathVariable String slug,
