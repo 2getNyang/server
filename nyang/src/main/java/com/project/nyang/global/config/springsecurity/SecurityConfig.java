@@ -58,6 +58,7 @@ public class SecurityConfig {
                                         "/api/v1/recommendations/**",
                                         "/api/v1/shelters/**",
                                         "/api/v1/regions/**",
+                                        "/api/v1/public/**",
                                         "/*"
 
                                 ).permitAll()

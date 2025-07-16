@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * AnimalRepository입니다
@@ -123,6 +124,25 @@ public interface AnimalRepository extends JpaRepository<Animal, String> {
         DATEDIFF(a.noticeEdt, CURRENT_DATE) ASC, 
         COUNT(l.likeId) ASC,
         FUNCTION('RAND')
-""")
+    """)
     List<AnimalListDTO> findRecommendAnimals(Pageable pageable);
+
+    //DB에 있는 모든 유기동물 찾기
+    @Query("""
+        SELECT a.desertionNo FROM Animal a
+    """)
+    List<String> findAllDesertionNos();
+
+    //가장 오래된 발견 일자 찾기
+    @Query("""
+        SELECT MIN(a.happenDt) FROM Animal a
+    """)
+    LocalDate findOldestHappenDt();
+
+    // 가장 오래된 발견일자의 모든 동물 정보 불러오기
+    List<Animal> findAllByHappenDt(LocalDate oldestDate);
+
+
+    List<Animal> findByDesertionNoIn(Set<String> desertionNos);
+
 }
