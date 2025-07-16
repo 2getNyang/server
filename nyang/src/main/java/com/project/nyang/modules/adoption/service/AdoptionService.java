@@ -4,6 +4,8 @@ import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
 import com.project.nyang.modules.adoption.dto.AdoptionDTO;
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
+import com.project.nyang.modules.adoption.mail.service.MailService;
+import com.project.nyang.modules.adoption.pdf.WordGeneratorService;
 import com.project.nyang.modules.adoption.repository.AdoptionRepository;
 import com.project.nyang.modules.animal.entity.Animal;
 import com.project.nyang.modules.animal.repository.AnimalRepository;
@@ -11,9 +13,12 @@ import com.project.nyang.modules.shelter.entity.Shelter;
 import com.project.nyang.modules.shelter.repository.ShelterRepository;
 import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.modules.user.repository.UserRepository;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.io.File;
 
 /**
  * 입양신청서 데이터를 처리하는 서비스입니다
@@ -31,22 +36,40 @@ public class AdoptionService {
     private final AnimalRepository animalRepository;
     private final ShelterRepository shelterRepository;
     private final AdoptionRepository adoptionRepository;
+    private final WordGeneratorService wordGeneratorService;
 
+    private final MailService mailService;
+
+    @Operation(summary = "입양신청처리", description = "입양신청 데이터 처리 프로세스 메서드 입니다")
     public void processAdoptionApplication(AdoptionDTO dto) {
         // 1. DB 저장
        AdoptionDTO application = saveApplication(dto);
        System.out.println("입양신청서의 DB 저장이 완료되었습니다.");
 
-        // 2. PDF 생성
-        //File pdf = generatePdf(application);
+        //2. 워드로 작성한 템플릿에 DTO 값 치환
+        File docxFile = null;
+        try {
+            docxFile = wordGeneratorService.generateDocxFromDto(dto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(ErrorCode.DOCX_CREATE_FAILED);
+        }
 
-        // 3. 보호소 이메일 조회
-        //String shelterEmail = findShelterEmail(application.getAnimalId());
+        //3. 보호소 이메일 조회
+        String shelterEmail = findShelterEmail(application.getCareRegNumber());
 
-        // 4. 이메일 전송
-        //sendEmailWithAttachment(shelterEmail, pdf);
+        //4. 이메일 전송
+//        mailService.sendEmailWithPdf(
+//                shelterEmail,
+//                "새 입양 신청서가 도착했습니다",
+//                "<p>새로운 입양 신청서가 접수되었습니다. 첨부된 PDF 파일을 확인하세요.</p>",
+//                docxFile
+//        );
+
+        //5. 저장된 PDF 삭제
     }
 
+    @Operation(summary = "입양신청서 저장", description = "입양신청서의 작성 답변을 DB에 저장합니다.")
     private AdoptionDTO saveApplication(AdoptionDTO dto) {
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_USER));
@@ -76,6 +99,7 @@ public class AdoptionService {
                 .hasAllergy(dto.getHasAllergy())
                 .hasOtherPets(dto.getHasOtherPets())
                 .consentForCheck(dto.getConsentForCheck())
+                .noticeNo(animal.getNoticeNo())
                 .user(user)
                 .shelter(shelter)
                 .animal(animal)
@@ -85,7 +109,7 @@ public class AdoptionService {
 
         return toDto(saved);
     }
-
+    @Operation(summary = "DTO변환", description = "PetApplicationForm Entity를 DTO로 변환하는 메서드입니다.")
     public AdoptionDTO toDto(PetApplicationForm form) {
         return AdoptionDTO.builder()
                 .formId(form.getFormId())
@@ -111,8 +135,20 @@ public class AdoptionService {
                 .desertionNo(form.getAnimal().getDesertionNo())
                 .careRegNumber(form.getShelter().getCareRegNumber())
                 .userId(form.getUser().getId())
+                .noticeNo(form.getNoticeNo())
                 .build();
     }
 
+    @Operation(summary = "보호소이메일조회", description = "이메일 전송에 필요한 보호소 이메일 정보를 조회하는 메서드 입니다.")
+    private String findShelterEmail(String careRegNumber) {
+        Shelter shelter = shelterRepository.findByCareRegNumber(careRegNumber)
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_SHELTER));
+
+        String email = shelter.getCareEmail(); // 실제 필드명에 맞게 변경
+        if (email == null || email.isEmpty()) {
+            throw new CustomException(ErrorCode.SHELTER_EMAIL_NOT_FOUND);
+        }
+        return email;
+    }
 
 }

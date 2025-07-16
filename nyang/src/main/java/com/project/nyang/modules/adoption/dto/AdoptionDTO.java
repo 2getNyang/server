@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
  * 
  */
 @Getter
-@Builder
+@Builder(toBuilder = true)
 public class AdoptionDTO {
 
     @Schema(description = "입양신청서 id")
@@ -82,6 +82,8 @@ public class AdoptionDTO {
 
     @Schema(description = "입양신청 동물 id")
     private String desertionNo;
+    @Schema(description = "입양신청 공고번호")
+    private String noticeNo;
     @Schema(description = "입양신청 동물의 보호소 id")
     private String careRegNumber;
     @Schema(description = "입양신청자 id")

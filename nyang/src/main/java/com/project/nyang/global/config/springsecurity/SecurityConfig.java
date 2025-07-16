@@ -56,7 +56,7 @@ public class SecurityConfig {
                                         "/api/v1/animals/**",
                                         "/api/v1/boards/**",
                                         "/*",
-                                        "api/v1/adoptions"
+                                        "api/v1/adoptions/*"
 
                                 ).permitAll()
 

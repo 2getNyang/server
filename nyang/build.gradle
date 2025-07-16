@@ -58,8 +58,16 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'  // Spring Cloud AWS v2.x
 	implementation 'com.amazonaws:aws-java-sdk-s3'  // AWS SDK for Java v1
 
-	//
-	implementation 'me.paulschwarz:spring-dotenv:2.2.0'
+	//pdf 변환 라이브러리
+	implementation 'org.docx4j:docx4j-core:11.5.3'
+	implementation 'org.docx4j:docx4j-ImportXHTML-core:11.5.3'
+	implementation 'org.docx4j:docx4j-JAXB-ReferenceImpl:11.5.3'
+	implementation 'com.openhtmltopdf:openhtmltopdf-core:1.0.10'
+	implementation 'com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10'
+
+	//mail 전송 라이브러리
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
 }

@@ -37,9 +37,12 @@ public enum ErrorCode {
 
     //입양신청 관련 에러
     INVALID_USER(404,"해당 유저를 찾을 수 없습니다."),
-    INVALID_SHELTER(404, "해당 보호소를 찾을 수 없습니다.")
-
-
+    INVALID_SHELTER(404, "해당 보호소를 찾을 수 없습니다."),
+    DOCX_CREATE_FAILED(500,"Docx 파일 생성에 실패하였습니다."),
+    FONT_PATH_FAILED(500, "폰트 경로 변환 실패"),
+    FONT_FOUND_FAILED(500,"폰트 파일을 찾을 수 없습니다."),
+    SHELTER_EMAIL_NOT_FOUND(404,"보호소 이메일을 찾을 수 없습니다."),
+    INVALID_TEMPLATE(404,"입양신청서 템플릿 파일을 찾을 수 없습니다.")
     ;
 
 

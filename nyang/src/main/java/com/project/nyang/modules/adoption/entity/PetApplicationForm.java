@@ -37,6 +37,9 @@ public class PetApplicationForm {
     @Column(name = "form_id")
     private Long formId;
 
+    @Column(name = "notice_no", nullable = false)
+    private String noticeNo;
+
     @Column(name = "user_name", nullable = false)
     private String userName;
 
@@ -103,8 +106,6 @@ public class PetApplicationForm {
     @Column(name = "consent_for_check", nullable = false, length = 3)
     private YesNo consentForCheck; // YES/NO
 
-
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "desertion_no", referencedColumnName = "desertion_no")
     private Animal animal;
@@ -128,7 +129,7 @@ public class PetApplicationForm {
     public enum HousingType {
         DAGA_GU_JUTAUK,
         DANDOK_JUTAUK,
-        APATEU,
+        APARTMENT,
         ONE_ROOM,
         ETC
     }
