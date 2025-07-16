@@ -54,7 +54,7 @@ public class RegionAndSubregionController {
             @PathVariable String regionName
     ) {
         List<SubRegionDTO> subRegions = regionAndSubregionService.getSubRegionsByRegion(regionName);
-        System.out.println(subRegions);
+//        System.out.println(subRegions);
         return ResponseEntity.ok(subRegions);
     }
 }

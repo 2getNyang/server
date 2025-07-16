@@ -1,6 +1,7 @@
 package com.project.nyang.reference.repository;
 
 import com.project.nyang.reference.dto.SubRegionDTO;
+import com.project.nyang.reference.entity.Region;
 import com.project.nyang.reference.entity.SubRegion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -25,4 +26,9 @@ public interface SubRegionRepository extends JpaRepository<SubRegion, String> {
             "FROM SubRegion sr " +
             "WHERE sr.region.regionName = :regionName")
     List<SubRegionDTO> findSubRegionsByRegion(String regionName);
+
+    Optional<SubRegion> findByRegionAndSubRegionName(Region region, String subRegionName);
+
+    // 수정: 다건 조회
+    List<SubRegion> findAllBySubRegionName(String subRegionName);
 }

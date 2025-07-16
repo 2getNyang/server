@@ -67,4 +67,16 @@ public class Shelter {
         this.region = region;
         this.subRegion = subRegion;
     }
+
+    // shelter 엔티티 -> shelter 엔티티 갱신하는 메서드
+    public void updateFrom(Shelter updated) {
+        this.careName = updated.getCareName();
+        this.careAddress = updated.getCareAddress();
+        this.jibunAddress = updated.getJibunAddress();
+        this.latitude = updated.getLatitude();
+        this.longitude = updated.getLongitude();
+        this.careTel = updated.getCareTel();
+        this.region = updated.getRegion();
+        this.subRegion = updated.getSubRegion();
+    }
 }
