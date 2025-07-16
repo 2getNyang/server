@@ -4,6 +4,9 @@ package com.project.nyang.modules.board.sns.service;
 import com.project.nyang.global.common.S3.S3Service;
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.security.jwt.JwtTokenProvider;
+import com.project.nyang.modules.board.elasticsearch.dto.BoardEsDocument;
+import com.project.nyang.modules.board.elasticsearch.repository.BoardEsRepository;
+import com.project.nyang.modules.board.elasticsearch.service.BoardEsService;
 import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.modules.board.sns.dto.SNSBoardDTO;
 import com.project.nyang.modules.board.sns.dto.SNSBoardUpdateDTO;
@@ -54,6 +57,8 @@ public class SNSBoardService {
     * 카테고리:ID 1:동물공고 / 2:입양후기 / 3: sns홍보 / 4:실종,목격제보
     **/
     private static final Long SNS_CATEGORY_ID = 3L;
+    private final BoardEsRepository boardEsRepository;
+    private final BoardEsService boardEsService;
 
     /* SNS 게시판 글 등록 */
     @Transactional
@@ -106,14 +111,26 @@ public class SNSBoardService {
 
         // DB 반영 강제 flush
         snsBoardRepository.flush();
+        /* elastic search 추가 */
+        BoardEsDocument doc = BoardEsDocument.builder()
+                .id(String.valueOf(board.getId()))
+                .boardTitle(board.getBoardTitle())
+                .boardContent(board.getBoardContent())
+                .categoryId(board.getCategory().getCategoryId())
+                .imageUrl(board.getImages() != null && !board.getImages().isEmpty()
+                        ? board.getImages().stream()
+                        .filter(image -> image.getDeletedAt() == null && image.getThumbnailIs().equals("Y"))
+                        .map(Image::getS3Url)
+                        .findFirst()
+                        .orElse(null)
+                        : null)
+                .viewCount(board.getViewCount())
+                .createdAt(board.getCreatedAt().toString())
+                .nickname(board.getUser().getNickname())
+                .build();
+        boardEsRepository.save(doc);
 
-        // 저장된 게시글 + 이미지 포함 다시 조회
-        Board fullBoard = snsBoardRepository.findById(board.getId())
-                .orElseThrow(() -> new RuntimeException(String.valueOf(BOARD_NOT_FOUND)));
-
-        System.out.println("게시글 생성 완료: 게시글 ID = " + fullBoard.getId());
-
-        return toDto(fullBoard);
+        return toDto(board);
     }
 
 
@@ -181,17 +198,26 @@ public class SNSBoardService {
             board.getImages().addAll(uploadedImages);
         }
 
-        //4. 게시글 정보 수정
-        Board updatedBoard = board.toBuilder()
-                .boardTitle(dto.getBoardTitle() != null ? dto.getBoardTitle() : board.getBoardTitle())
-                .boardContent(dto.getBoardContent() != null ? dto.getBoardContent() : board.getBoardContent())
-                .instagramLink(dto.getInstagramLink() != null ? dto.getInstagramLink() : board.getInstagramLink())
-                .viewCount(dto.getViewCount() != null ? dto.getViewCount() : board.getViewCount())
-                .images(board.getImages())
-                .user(board.getUser())
-                .build();
+        board.updateSNSBoard(dto);
 
-        snsBoardRepository.save(updatedBoard);
+        /* elastic search */
+        BoardEsDocument doc = BoardEsDocument.builder()
+                .id(String.valueOf(board.getId()))
+                .viewCount(board.getViewCount())
+                .categoryId(board.getCategory().getCategoryId())
+                .boardTitle(board.getBoardTitle())
+                .boardContent(board.getBoardContent())
+                .createdAt(board.getCreatedAt().toString())
+                .imageUrl(board.getImages() != null && !board.getImages().isEmpty()
+                        ? board.getImages().stream()
+                        .filter(image -> image.getDeletedAt() == null && image.getThumbnailIs().equals("Y"))
+                        .map(Image::getS3Url)
+                        .findFirst()
+                        .orElse(null)
+                        : null)
+                .nickname(board.getUser().getNickname())
+                        .build();
+        boardEsRepository.save(doc);
     }
 
 
@@ -217,6 +243,7 @@ public class SNSBoardService {
             throw new IllegalArgumentException(String.valueOf(FORBIDDEN));
         }
         board.softDelete();
+        boardEsRepository.deleteById(String.valueOf(boardId));
     }
 
 
@@ -245,6 +272,13 @@ public class SNSBoardService {
                 .collect(Collectors.toList());
         //좋아요 수 조회
         Long likeCount = likeRepository.countByBoardId(boardId);
+        //DB 조회수 증가
+        increaseViewCount(boardId);
+        /* Elastic Search 조회수 증가*/
+        BoardEsDocument esDocument = boardEsRepository.findById(String.valueOf(boardId))
+                .orElseThrow(() -> new IllegalArgumentException("엘라스틱 서치에 게시글이 없어요"+ boardId));
+        increaseViewCount(esDocument.getViewCount());
+        boardEsRepository.save(esDocument);
 
         return SNSBoardDTO.builder()
                 .id(board.getId())

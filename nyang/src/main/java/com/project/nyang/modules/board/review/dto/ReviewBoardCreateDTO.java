@@ -1,4 +1,4 @@
-package com.project.nyang.modules.board.reveiw.dto;
+package com.project.nyang.modules.board.review.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

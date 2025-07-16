@@ -1,0 +1,59 @@
+package com.project.nyang.global.searchlog.kafka;
+
+
+import com.project.nyang.global.searchlog.domain.SearchLogDocument;
+import com.project.nyang.global.searchlog.dto.SearchLogMessage;
+import com.project.nyang.global.searchlog.service.SearchLogEsService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Service;
+
+/**
+ *
+ * 카프카에서 메세지를 꺼내서 엘라스틱서치로 넘기는 클래스
+ * @fileName        : SearchLogConsumer
+ * @author          : 박세정
+ * @since           : 2025-07-16
+ *
+ */
+@Slf4j
+@RequiredArgsConstructor
+@Service
+public class SearchLogConsumer {
+
+    private final SearchLogEsService searchLogEsService;
+
+    @KafkaListener(
+     topics = "search-log", //구독한 토픽이름
+     groupId = "search-log-group", //이 컨슈머가 어떤 컨슈머 그룹에 속하는지
+     containerFactory = "kafkaListenerContainerFactory"   // 사용할 리스너 컨테이너 설정 Bean
+    )
+    public void consume(SearchLogMessage message){
+
+        log.info("카프카에서 메시지 수신 : {}", message);
+
+        //카프카에서 받은 메세지를 엘라스틱 전용 객체로 변환
+        SearchLogDocument doc = SearchLogDocument.builder()
+                .keyword(message.getKeyword())
+                .searchedAt(message.getSearchedAt())
+                .build();
+        //엘라스틱서치에 저장
+        searchLogEsService.save(doc);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}

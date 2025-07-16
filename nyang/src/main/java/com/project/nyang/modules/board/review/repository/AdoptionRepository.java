@@ -1,4 +1,4 @@
-package com.project.nyang.modules.board.reveiw.repository;
+package com.project.nyang.modules.board.review.repository;
 
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
 import org.springframework.data.jpa.repository.JpaRepository;

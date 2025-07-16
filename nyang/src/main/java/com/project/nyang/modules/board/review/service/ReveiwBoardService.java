@@ -1,17 +1,19 @@
-package com.project.nyang.modules.board.reveiw.service;
+package com.project.nyang.modules.board.review.service;
 
 import com.project.nyang.global.common.S3.S3Service;
 import com.project.nyang.global.common.entity.BaseTime;
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
-import com.project.nyang.modules.board.reveiw.dto.ReviewBoardUpdateDTO;
-import com.project.nyang.modules.board.reveiw.repository.AdoptionRepository;
+import com.project.nyang.modules.board.elasticsearch.dto.BoardEsDocument;
+import com.project.nyang.modules.board.elasticsearch.repository.BoardEsRepository;
+import com.project.nyang.modules.board.review.dto.ReviewBoardUpdateDTO;
+import com.project.nyang.modules.board.review.repository.AdoptionRepository;
 import com.project.nyang.modules.board.entity.Board;
-import com.project.nyang.modules.board.reveiw.dto.ReveiwBoardDetailDTO;
-import com.project.nyang.modules.board.reveiw.dto.ReveiwBoardListDTO;
-import com.project.nyang.modules.board.reveiw.dto.ReviewBoardCreateDTO;
-import com.project.nyang.modules.board.reveiw.repository.ReviewBoardRepository;
+import com.project.nyang.modules.board.review.dto.ReveiwBoardDetailDTO;
+import com.project.nyang.modules.board.review.dto.ReveiwBoardListDTO;
+import com.project.nyang.modules.board.review.dto.ReviewBoardCreateDTO;
+import com.project.nyang.modules.board.review.repository.ReviewBoardRepository;
 import com.project.nyang.modules.image.entity.Image;
 import com.project.nyang.modules.like.repository.LikeRepository;
 import com.project.nyang.modules.user.entity.User;
@@ -45,6 +47,7 @@ public class ReveiwBoardService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final AdoptionRepository adoptionRepository;
+    private final BoardEsRepository boardEsRepository;
     private final S3Service s3Service;
     private static final Long CATEGORY_ID = 2L;
     private final LikeRepository likeRepository;
@@ -100,8 +103,24 @@ public class ReveiwBoardService {
                 board.getImages().add(image);
             }
         }
-
         reviewBoardRepository.save(board);
+
+        /** elasticSearch 저장 */
+        BoardEsDocument doc = BoardEsDocument.builder()
+                .id(String.valueOf(board.getId()))
+                .viewCount(board.getViewCount())
+                .categoryId(board.getCategory().getCategoryId())
+                .boardTitle(board.getBoardTitle())
+                .boardContent(board.getBoardContent())
+                .createdAt(board.getCreatedAt().toString())
+                .imageUrl(Optional.ofNullable(board.getImages())
+                        .filter(boardImages -> !boardImages.isEmpty())
+                        .map(boardImages -> boardImages.get(0).getS3Url())
+                        .orElse(null))
+                .nickname(board.getUser().getNickname())
+                .build();
+
+        boardEsRepository.save(doc);
 
     }
 
@@ -181,6 +200,11 @@ public class ReveiwBoardService {
                 .petApplicationDTO(form != null ? ReveiwBoardDetailDTO.PetApplicationDTO.toDTO(form) : null)
                 .build();
 
+        /** elasticSearch 조회수 증가 */
+        BoardEsDocument doc = boardEsRepository.findById(String.valueOf(board.getId())).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+        doc.increaseViewCount();
+        boardEsRepository.save(doc);
+
         return boardDto;
     }
 
@@ -204,6 +228,9 @@ public class ReveiwBoardService {
         board.getComments().forEach(BaseTime::markDeleted);
         likeRepository.deleteAll(board.getLikeList());
         board.getImages().forEach(Image::softDelete);
+
+        /** elasticSearch 삭제 */
+        boardEsRepository.deleteById(String.valueOf(board.getId()));
 
     }
 
@@ -233,7 +260,7 @@ public class ReveiwBoardService {
         // 기존 이미지 중 삭제될 것들 soft delete
         List<Image> currentImages = board.getImages();
         List<Long> remainIds = boardDTO.getRemainImageIds();
-        System.out.println(remainIds.size());
+
         boolean thumbnailDeleted = false;
 
         for (Image image : currentImages) {
@@ -276,6 +303,25 @@ public class ReveiwBoardService {
 
             newThumbnail.ifPresent(Image::markAsThumbnail);
         }
+
+        BoardEsDocument doc = BoardEsDocument.builder()
+                .id(String.valueOf(board.getId()))
+                .viewCount(board.getViewCount())
+                .categoryId(board.getCategory().getCategoryId())
+                .boardTitle(board.getBoardTitle())
+                .boardContent(board.getBoardContent())
+                .createdAt(board.getCreatedAt().toString())
+                .imageUrl(board.getImages() != null && !board.getImages().isEmpty()
+                        ? board.getImages().stream()
+                        .filter(image -> image.getDeletedAt() == null && image.getThumbnailIs().equals("Y"))
+                        .map(Image::getS3Url)
+                        .findFirst()
+                        .orElse(null)
+                        : null)
+                .nickname(board.getUser().getNickname())
+                .build();
+
+        boardEsRepository.save(doc);
 
     }
 }
