@@ -1,15 +1,16 @@
 package com.project.nyang.modules.animal.entity;
 
-import com.project.nyang.global.common.entity.BaseTime;
+import com.project.nyang.modules.comment.entity.Comment;
 import com.project.nyang.modules.shelter.entity.Shelter;
 import com.project.nyang.reference.entity.Kind;
-import com.project.nyang.reference.entity.SubRegion;
 import com.project.nyang.reference.entity.UpKind;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Animal Entitiy입니다.
@@ -43,6 +44,12 @@ public class Animal{
     //동물 종류 전체 이름 ex.[개] 시바
     @Column(name = "kind_full_nm", length = 50)
     private String kindFullNm;
+
+    @Column(name = "up_kind_cd")
+    private String upKindCd;
+
+    @Column(name = "kind_cd")
+    private String kindCd;
 
     //털색, 무늬
     @Column(name = "color_cd", length = 40)
@@ -112,4 +119,33 @@ public class Animal{
     @JoinColumn(name = "kind_cd", insertable = false, updatable = false)
     private Kind kind;
 
+    //일 대 다
+    //동물 상세 정보에는 여러개의 댓글이 달릴 수 있다.
+    @OneToMany(mappedBy = "animal", fetch = FetchType.LAZY, cascade =  CascadeType.ALL)
+    private List<Comment> comment = new ArrayList<>();
+
+    public void updateFrom(Animal updated) {
+        this.shelter = updated.getShelter();
+        this.upKind = updated.getUpKind();
+        this.kind = updated.getKind();
+        this.upKindCd = updated.getUpKindCd();
+        this.kindCd = updated.getKindCd();
+        this.happenDt = updated.getHappenDt();
+        this.noticeSdt = updated.getNoticeSdt();
+        this.noticeEdt = updated.getNoticeEdt();
+        this.happenPlace = updated.getHappenPlace();
+        this.kindFullNm = updated.getKindFullNm();
+        this.colorCd = updated.getColorCd();
+        this.age = updated.getAge();
+        this.weight = updated.getWeight();
+        this.noticeNo = updated.getNoticeNo();
+        this.popfile1 = updated.getPopfile1();
+        this.popfile2 = updated.getPopfile2();
+        this.popfile3 = updated.getPopfile3();
+        this.processState = updated.getProcessState();
+        this.sexCd = updated.getSexCd();
+        this.neuterYn = updated.getNeuterYn();
+        this.specialMark = updated.getSpecialMark();
+        this.updTm = updated.getUpdTm();
+    }
 }

@@ -3,6 +3,8 @@ package com.project.nyang.modules.board.entity;
 import com.project.nyang.global.common.entity.BaseTime;
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
 import com.project.nyang.modules.board.lost.dto.LostUpdateRequestDTO;
+import com.project.nyang.modules.board.review.dto.ReviewBoardUpdateDTO;
+import com.project.nyang.modules.board.sns.dto.SNSBoardUpdateDTO;
 import com.project.nyang.modules.comment.entity.Comment;
 import com.project.nyang.modules.image.entity.Image;
 import com.project.nyang.modules.like.entity.LikeIt;
@@ -119,6 +121,17 @@ public class Board extends BaseTime {
     public void changeImages(List<Image> newImages) {
         this.images.clear();         // 기존 이미지 제거 (orphanRemoval 적용됨)
         this.images.addAll(newImages);
+    }
+
+    public void updateReviewBoard(ReviewBoardUpdateDTO boardDTO, PetApplicationForm form) {
+        boardTitle = boardDTO.getBoardTitle();
+        boardContent = boardDTO.getBoardContent();
+        petApplicationForm = form;
+    }
+    public void updateSNSBoard(SNSBoardUpdateDTO boardDTO) {
+        boardTitle = boardDTO.getBoardTitle();
+        boardContent = boardDTO.getBoardContent();
+        instagramLink = boardDTO.getInstagramLink();
     }
 
     //soft delete용 메서드

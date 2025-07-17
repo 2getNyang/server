@@ -6,6 +6,12 @@ import com.project.nyang.modules.animal.dto.AnimalDTO;
 import com.project.nyang.modules.animal.dto.AnimalListDTO;
 import com.project.nyang.modules.animal.entity.Animal;
 import com.project.nyang.modules.animal.repository.AnimalRepository;
+import com.project.nyang.modules.comment.dto.AnimalCommentDTO;
+import com.project.nyang.modules.comment.entity.Comment;
+import com.project.nyang.modules.comment.repository.CommentRepository;
+import com.project.nyang.modules.like.repository.LikeRepository;
+import com.project.nyang.modules.user.entity.User;
+import com.project.nyang.modules.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * AnimalService입니다
@@ -31,14 +38,18 @@ import java.time.LocalDate;
 public class AnimalService {
 
     private final AnimalRepository animalRepository;
+    private final CommentRepository commentRepository;
+    private final LikeRepository likeRepository;
+    private final UserRepository userRepository;
 
     //페이징 전체 목록
-    public Page<AnimalListDTO> getAnimals(int page, int size) {
-        PageRequest pageable = PageRequest.of(page, size);
+    @Transactional
+    public Page<AnimalListDTO> getAnimals(PageRequest pageable) {
         return animalRepository.findAllAnimals(pageable); //페이저블에 페이징에대한 정보를 담아서 레포지토리에 전달하는 역할
     }
 
     //페이징 동물 필터 검색
+    @Transactional
     public Page<AnimalListDTO> getFilterAnimals(LocalDate startDate, LocalDate endDate,
                                                 String upKindCd, String kindCd,
                                                 String regionCode, String subRegionCode,
@@ -68,15 +79,34 @@ public class AnimalService {
         return animalRepository.getFilterAnimals(startDate, endDate, upKindCd, kindCd, regionCode, subRegionCode, pageable);
     }
 
-    @Transactional
-    public AnimalDTO getAnimalDetail(String desertionNo) {
+    //Animal 상세 조회
+    public AnimalDTO getAnimalDetail(String desertionNo,  Long userId) {
+
         Animal animal = animalRepository.findByDesertionNo(desertionNo)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_ANIMAL));
-        return toDTO(animal);
+
+        // 댓글 조회
+        List<Comment> comments = commentRepository.findByAnimal_DesertionNo(desertionNo);
+        List<AnimalCommentDTO> commentDTOs = comments.stream()//리스트 안의 요소들을 하나씩 치러할수있는 파이프라인을 만듬
+                .map(AnimalCommentDTO::fromEntity)//스트림의 각 요소를 함수로 변환  (Comment 객체를 CommentDTO로 변환)
+                .toList(); //리스트로 수집함  (최종적으로 List<CommentDTO>를 얻음)
+
+        //북마크 여부
+        //userId가 null이면 좋아요 여부는 false
+        boolean bookmarked = false;
+        //userId가 null이 아닐 경우 북마크 조회
+        if (userId != null) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+            bookmarked = likeRepository.existsByUserAndAnimal(user, animal);
+        }
+
+        // DTO 변환 + 댓글 포함 + 좋아요 포함
+        return toDTO(animal, commentDTOs, bookmarked);
     }
 
     // Entity → DTO 변환
-    private AnimalDTO toDTO(Animal animal) {
+    private AnimalDTO toDTO(Animal animal, List<AnimalCommentDTO> comments, boolean bookmarked) {
         return AnimalDTO.builder()
                 .desertionNo(animal.getDesertionNo())
                 .happenDt(animal.getHappenDt())
@@ -95,7 +125,13 @@ public class AnimalService {
                 .sexCd(animal.getSexCd())
                 .neuterYn(animal.getNeuterYn())
                 .specialMark(animal.getSpecialMark())
+                .comments(comments)
+                .bookmarked(bookmarked)   // 여기에 추가
                 .build();
     }
 
+    @Transactional
+    public List<AnimalListDTO> getRecommendAnimals() {
+        return animalRepository.findRecommendAnimals(PageRequest.of(0, 6));
+    }
 }

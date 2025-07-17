@@ -1,5 +1,6 @@
 package com.project.nyang.modules.shelter.controller;
 
+import com.project.nyang.modules.shelter.dto.ShelterDetailDTO;
 import com.project.nyang.modules.shelter.dto.ShelterListDTO;
 import com.project.nyang.modules.shelter.service.ShelterService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,10 +9,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * ShelterController에 대한 클래스입니다.
@@ -60,12 +59,38 @@ public class ShelterController {
     // 보호소 이름 검색 기능도 추가
     @GetMapping("/filter")
     public Page<ShelterListDTO> filterShelters(
+            @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
             @RequestParam(defaultValue = "0") int page,
+
+            @Parameter(description = "페이지당 항목 수", example = "12")
             @RequestParam(defaultValue = "12") int size,
+
+            @Parameter(description = "시/도 이름 (예: 서울특별시)", example = "서울특별시")
             @RequestParam(required = false) String regionName,
+
+            @Parameter(description = "시/군/구 이름 (예: 강남구)", example = "강남구")
             @RequestParam(required = false) String subRegionName,
+
+            @Parameter(description = "보호소 이름 검색 키워드 (예: 행복한동물보호소)", example = "행복한동물보호소")
             @RequestParam(required = false) String careName
     ) {
         return shelterService.filterShelters(page, size, regionName, subRegionName, careName);
+    }
+
+    @Operation(
+            summary = "보호소 상세 정보 조회",
+            description = """
+        등록번호(careRegNumber)를 기준으로 보호소의 상세 정보를 조회합니다.  
+        등록번호는 보호소 리스트에서 제공되는 고유값입니다.
+        """
+    )
+    //보호소 상세 조회 API
+    @GetMapping("/{careRegNumber}")
+    public ResponseEntity<ShelterDetailDTO> getShelterDetail(
+            @Parameter(description = "보호소 등록번호 (고유 식별자)", example = "341386200900001")
+            @PathVariable String careRegNumber
+    ) {
+        ShelterDetailDTO dto = shelterService.getShelterDetail(careRegNumber);
+        return ResponseEntity.ok(dto);
     }
 }

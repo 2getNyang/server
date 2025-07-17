@@ -14,5 +14,8 @@ import java.util.Optional;
  * @since : 2025-07-11
  */
 public interface KindRepository extends JpaRepository<Kind,String> {
+
     Optional<Kind> findByKindNm(String kindNm);
+
+
 }
