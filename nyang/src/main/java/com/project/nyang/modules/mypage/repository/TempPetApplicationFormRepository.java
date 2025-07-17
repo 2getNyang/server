@@ -1,6 +1,8 @@
 package com.project.nyang.modules.mypage.repository;
 
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -11,4 +13,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @since : 2025-07-12
  */
 public interface TempPetApplicationFormRepository extends JpaRepository<PetApplicationForm, Long> {
+    Page<PetApplicationForm> findByUser_Id(Long userId, Pageable pageable);
 }
