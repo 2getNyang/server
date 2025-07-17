@@ -107,6 +107,17 @@ public class SwaggerConfig {
          return GroupedOpenApi.builder()
                  .group("🐱 동물 API")
                  .pathsToMatch("/api/v1/animals/**")
+                 .addOpenApiCustomizer(jwtSecurityCustomizer())
+                 .build();
+     }
+
+     // ✅ 이달의 동물 추천 API 그룹
+     @Bean
+     public GroupedOpenApi animalRecommendationApi() {
+         return GroupedOpenApi.builder()
+                 .group("😽 동물 추천 API")
+                 .pathsToMatch("/api/v1/recommendations/**")
+                 .addOpenApiCustomizer(jwtSecurityCustomizer())
                  .build();
      }
 
@@ -119,6 +130,16 @@ public class SwaggerConfig {
                         .version("v1.0")
                         .description("함께하개냥 API 문서입니다."));
     }
+
+     // ✅ 지역 API 그룹 추가
+     @Bean
+     public GroupedOpenApi regionApi() {
+         return GroupedOpenApi.builder()
+                 .group("🌍 지역 API")
+                 .pathsToMatch("/api/v1/regions/**")
+                 .addOpenApiCustomizer(jwtSecurityCustomizer())
+                 .build();
+     }
 
     // ✅ JWT 보안 설정 커스터마이저
     private OpenApiCustomizer jwtSecurityCustomizer() {

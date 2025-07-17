@@ -26,7 +26,7 @@ public interface ShelterRepository extends JpaRepository<Shelter, String> {
      *
      * - 주의: 이 쿼리는 명시적 JOIN을 사용하므로 N+1 문제가 발생하지 않습니다.
      */
-    @Query("SELECT new com.project.nyang.modules.shelter.dto.ShelterListDTO(s.careName, s.careTel, r.regionName, sr.subRegionName) " +
+    @Query("SELECT new com.project.nyang.modules.shelter.dto.ShelterListDTO(s.careRegNumber, s.careName, s.careTel, r.regionName, sr.subRegionName) " +
             "FROM Shelter s " +
             "JOIN s.region r " +
             "JOIN s.subRegion sr")
@@ -34,7 +34,7 @@ public interface ShelterRepository extends JpaRepository<Shelter, String> {
 
     // 시/도 필터
     @Query("SELECT new com.project.nyang.modules.shelter.dto.ShelterListDTO(" +
-            "s.careName, s.careTel, r.regionName, sr.subRegionName) " +
+            "s.careRegNumber, s.careName, s.careTel, r.regionName, sr.subRegionName) " +
             "FROM Shelter s " +
             "JOIN s.region r " +
             "JOIN s.subRegion sr " +
@@ -43,7 +43,7 @@ public interface ShelterRepository extends JpaRepository<Shelter, String> {
 
     // 시/도 + 시/군/구 필터
     @Query("SELECT new com.project.nyang.modules.shelter.dto.ShelterListDTO(" +
-            "s.careName, s.careTel, r.regionName, sr.subRegionName) " +
+            "s.careRegNumber, s.careName, s.careTel, r.regionName, sr.subRegionName) " +
             "FROM Shelter s " +
             "JOIN s.region r " +
             "JOIN s.subRegion sr " +
@@ -52,7 +52,7 @@ public interface ShelterRepository extends JpaRepository<Shelter, String> {
 
     // 이름으로만 검색 (전체 지역 + 전체 시군구)
     @Query("SELECT new com.project.nyang.modules.shelter.dto.ShelterListDTO(" +
-            "s.careName, s.careTel, r.regionName, sr.subRegionName) " +
+            "s.careRegNumber, s.careName, s.careTel, r.regionName, sr.subRegionName) " +
             "FROM Shelter s " +
             "JOIN s.region r " +
             "JOIN s.subRegion sr " +
@@ -61,7 +61,7 @@ public interface ShelterRepository extends JpaRepository<Shelter, String> {
 
     // 시도 + 이름 검색
     @Query("SELECT new com.project.nyang.modules.shelter.dto.ShelterListDTO(" +
-            "s.careName, s.careTel, r.regionName, sr.subRegionName) " +
+            "s.careRegNumber, s.careName, s.careTel, r.regionName, sr.subRegionName) " +
             "FROM Shelter s " +
             "JOIN s.region r " +
             "JOIN s.subRegion sr " +
@@ -70,7 +70,7 @@ public interface ShelterRepository extends JpaRepository<Shelter, String> {
 
     // 시도 + 시군구 + 이름 검색
     @Query("SELECT new com.project.nyang.modules.shelter.dto.ShelterListDTO(" +
-            "s.careName, s.careTel, r.regionName, sr.subRegionName) " +
+            "s.careRegNumber, s.careName, s.careTel, r.regionName, sr.subRegionName) " +
             "FROM Shelter s " +
             "JOIN s.region r " +
             "JOIN s.subRegion sr " +
@@ -79,6 +79,18 @@ public interface ShelterRepository extends JpaRepository<Shelter, String> {
     Page<ShelterListDTO> findByRegionAndSubRegionAndCareName(
             String regionName, String subRegionName, String careName, Pageable pageable);
 
+    // 등록번호로 상세정보 조회(보호소 상세정보 페이지에 필요한 필드들 내용 select 할 수 있는 JPQL 구문)
+    @Query("SELECT new com.project.nyang.modules.shelter.dto.ShelterDetailDTO(" +
+            "s.careName, s.careTel, " +
+            "s.careAddress, s.latitude, s.longitude, " +
+            "r.regionName, sr.subRegionName) " +
+            "FROM Shelter s " +
+            "JOIN s.region r " +
+            "JOIN s.subRegion sr " +
+            "WHERE s.careRegNumber = :careRegNumber")
+    Optional<ShelterDetailDTO> findDetailByCareRegNumber(String careRegNumber);
 
+    //동물 api에서 보호소 번호 찾아오기
     Optional<Shelter> findByCareRegNumber(String careRegNumber);
+
 }
