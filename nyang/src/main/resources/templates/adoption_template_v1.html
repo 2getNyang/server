@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>반려동물 입양 신청서</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 15mm 20mm 25mm 20mm;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        body {
+            font-family: 'MaruBuri', sans-serif;
+            font-size: 14px;
+            padding: 0;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh;
+        }
+        h1 {
+            text-align: center;
+            font-size: 22px;
+            margin: 0 0 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            page-break-inside: avoid;
+        }
+        td {
+            border: 1px solid #aaa;
+            padding: 8px;
+            vertical-align: top;
+            word-wrap: break-word;
+        }
+        tr td:first-child,
+        tr td:nth-child(3) {
+            font-weight: bold;
+            background-color: #ffd428;
+        }
+        .footer {
+            bottom: 25mm;
+            left: 20mm;
+            font-size: 12px;
+            text-align: left;
+            margin-top: 40px;
+        }
+        .footer-second {
+            margin-top: 30px;
+            margin-left: 0; /* 왼쪽 정렬 유지 */
+        }
+        .contract-page {
+            page-break-before: always;
+            font-size: 15px;
+            line-height: 1.9;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh;
+            padding-top: 15mm;
+        }
+        .contract-page h3 {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 18px;
+        }
+        .signature {
+            margin-top: 50px;
+        }
+        .signature p:first-child {
+            text-align: center;
+        }
+        .signature p:nth-child(2),
+        .signature p:nth-child(3) {
+            text-align: right;
+        }
+        .form-page {
+            padding-top: 5mm; /* 상단 여백 줄임 */
+        }
+    </style>
+</head>
+<body>
+<div class="form-page">
+    <h1>반려동물 입양 신청서</h1>
+    <table>
+        <tr><td>공고 번호</td><td colspan="3" th:text="${noticeNo}">공고 번호</td></tr>
+        <tr><td>신청자 이름</td><td th:text="${userName}">이름</td><td>신청자 생년월일</td><td th:text="${userBirth}">생년월일</td></tr>
+        <tr><td>신청자 성별</td><td th:text="${userGender}">성별</td><td>신청자 휴대폰 번호</td><td th:text="${userPhone}">휴대폰</td></tr>
+        <tr><td>신청자 외 보호자 번호</td><td th:text="${familyPhone}">보호자 번호</td><td>보호자와의 관계</td><td th:text="${family}">관계</td></tr>
+        <tr><td>주소</td><td colspan="3" th:text="${address}">주소</td></tr>
+        <tr><td>상세주소</td><td colspan="3" th:text="${detailAddress}">상세주소</td></tr>
+        <tr><td>현재 거주 형태</td><td th:text="${housingType}">거주 형태</td><td>직업</td><td th:text="${job}">직업</td></tr>
+        <tr><td>이전 동물 양육 경험 여부</td><td colspan="3" th:text="${experience}">경험</td></tr>
+        <tr><td>현재 다른 반려동물 존재 여부</td><td colspan="3" th:text="${hasOtherPets}">반려동물 여부</td></tr>
+        <tr><td>동거인 성인 수</td><td th:text="${adultCount}">성인 수</td><td>동거인 자녀 수</td><td th:text="${childrenCount}">자녀 수</td></tr>
+        <tr><td>동거인 동의 여부</td><td colspan="3" th:text="${allConsent}">동의 여부</td></tr>
+        <tr><td>동거인 포함 알러지 여부</td><td colspan="3" th:text="${hasAllergy}">알러지</td></tr>
+        <tr><td>입양 동물의 현재 상태 확인 사진 제공 동의 여부</td><td colspan="3" th:text="${consentForCheck}">사진 제공 동의</td></tr>
+        <tr><td>입양 신청 이유</td><td colspan="3" th:text="${applicationReason}" style="height: 100px;">신청 이유</td></tr>
+    </table>
+    <div class="footer">함께하게냥</div>
+</div>
+
+<div class="contract-page">
+    <div>
+        <h3>입양 계약서</h3>
+        <p>• 본인은 입양한 반려동물이 무지개다리를 건너는 순간까지 양질의 사료와 신선한 물을 공급하며, 쾌적하고 안전한 환경에서 반려동물을 보살필 것입니다.</p>
+        <p>• 본인은 연락처 변경, 이사 등의 정보 변동 시 반드시 보호단체에 이를 전달할 것입니다.</p>
+        <p>• 본인은 보호단체와 약속된 방식으로 입양한 반려동물의 소식을 정기적으로 전달할 것입니다.</p>
+        <p>• 본인은 입양 후 보호단체의 모니터링 및 연락에 협조할 것입니다.</p>
+        <p>• 본인은 개인 사정으로 입양 받은 반려동물을 파양할 경우 반드시 보호단체에 반환할 것입니다.</p>
+        <p>• 본인은 반려동물이 실종되거나 사망한 경우 즉시 보호단체에 이를 알릴 것입니다.</p>
+        <p>• 본인은 보호단체가 반려 상황을 모니터링하여 적합하지 않다고 판단할 경우, 요구 시 반려동물을 반환할 것입니다.</p>
+        <p>• 본인은 중성화 수술이 되지 않은 반려동물을 입양한 경우, 수술 가능 시 반드시 중성화할 것입니다.</p>
+        <p>• 본인은 정기 예방접종 및 건강검진 등 건강 관리를 성실히 이행할 것입니다.</p>
+        <p>• 본인은 어떠한 경우에도 책임 후원비 반환을 요구하지 않을 것입니다.</p>
+        <p style="margin-top: 30px;">
+            위의 모든 입양 조건에 동의하며, 이를 위반할 경우 반려동물의 소유권이 보호단체에 귀속됨을 약속합니다.
+        </p>
+        <div class="signature">
+            <p>년 &#160;&#160;&#160;&#160; 월 &#160;&#160;&#160;&#160; 일</p>
+            <p>원 보호자: ___________________ (인)</p>
+            <p>입양 신청자: ___________________ (인)</p>
+        </div>
+    </div>
+    <div class="footer footer-second">함께하게냥</div>
+</div>
+</body>
+</html>

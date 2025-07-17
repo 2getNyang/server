@@ -79,7 +79,7 @@ public interface ShelterRepository extends JpaRepository<Shelter, String> {
             "AND s.careName LIKE %:careName%")
     Page<ShelterListDTO> findByRegionAndSubRegionAndCareName(
             String regionName, String subRegionName, String careName, Pageable pageable);
-    
+
     // 등록번호로 상세정보 조회(보호소 상세정보 페이지에 필요한 필드들 내용 select 할 수 있는 JPQL 구문)
     @Query("SELECT new com.project.nyang.modules.shelter.dto.ShelterDetailDTO(" +
             "s.careName, s.careTel, " +
@@ -90,7 +90,6 @@ public interface ShelterRepository extends JpaRepository<Shelter, String> {
             "JOIN s.subRegion sr " +
             "WHERE s.careRegNumber = :careRegNumber")
     Optional<ShelterDetailDTO> findDetailByCareRegNumber(String careRegNumber);
-
 
     //동물 api에서 보호소 번호 찾아오기
     Optional<Shelter> findByCareRegNumber(String careRegNumber);

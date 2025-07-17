@@ -74,7 +74,7 @@ public class ReveiwBoardDetailDTO {
 
         public static PetApplicationDTO toDTO(PetApplicationForm form) {
             return PetApplicationDTO.builder()
-                    .formId(form.getId())
+                    .formId(form.getFormId())
                     .kindFullNm(form.getAnimal().getKindFullNm())
                     .age(form.getAnimal().getAge())
                     .sexCd(form.getAnimal().getSexCd())

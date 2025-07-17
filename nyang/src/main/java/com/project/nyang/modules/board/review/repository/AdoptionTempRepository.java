@@ -10,5 +10,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @fileName : AdoptionRepository
  * @since : 2025-07-10
  */
-public interface AdoptionRepository extends JpaRepository<PetApplicationForm, Long> {
+public interface AdoptionTempRepository extends JpaRepository<PetApplicationForm, Long> {
 }
