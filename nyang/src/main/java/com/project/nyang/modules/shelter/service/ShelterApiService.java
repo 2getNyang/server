@@ -39,6 +39,18 @@ public class ShelterApiService {
     private final SubRegionRepository subRegionRepository;
     private final DateTimeFormatter dataStdDtFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+
+    @Transactional
+    public void initializeIfEmpty() {
+        long count = shelterRepository.count();
+        if (count == 0) {
+            log.warn(" 보호소 데이터가 없어 초기 수집을 진행합니다.");
+            fetchAndUpdateShelters();
+        } else {
+            log.info(" 보호소 데이터가 이미 존재하므로 초기 수집을 생략합니다.");
+        }
+    }
+
     @Transactional
     public void fetchAndUpdateShelters() {
         log.info("📥 보호소 API 수집 시작");

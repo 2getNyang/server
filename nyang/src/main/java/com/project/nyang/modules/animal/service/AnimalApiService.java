@@ -55,7 +55,7 @@ public class AnimalApiService {
     }
 
     //최초 16일치 데이터 가져오기
-    @PostConstruct
+    @Transactional
     public void initialize() {
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = endDate.minusDays(15);
