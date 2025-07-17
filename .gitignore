@@ -37,9 +37,15 @@ out/
 .vscode/
 
 ### env ###
-nyang/.env
+.env
 .env.*
 **/volumes/**/
 
 ### application.yaml ###
 application*.yaml
+
+### log ###
+logs/*
+
+### Pdf ###
+Pdf

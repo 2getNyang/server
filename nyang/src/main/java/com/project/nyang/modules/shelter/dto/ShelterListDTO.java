@@ -15,6 +15,9 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ShelterListDTO {
+    @Schema(description = "보호소 등록 번호", example = "서울 동물보호소")
+    private String careRegNumber;
+
     @Schema(description = "보호소 이름", example = "서울 동물보호소")
     private String careName;
 

@@ -36,14 +36,14 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
 	//Spring Boot Actuator   매트릭/모니터링
-	//implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	//프로메테우스
-	//implementation 'io.micrometer:micrometer-registry-prometheus'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
 	//엘라스틱서치
-	//implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
-	//implementation 'co.elastic.clients:elasticsearch-java:8.12.2'
+	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+	implementation 'co.elastic.clients:elasticsearch-java:8.12.2'
 	//kafka
-	//implementation 'org.springframework.kafka:spring-kafka'
+	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -58,8 +58,14 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'  // Spring Cloud AWS v2.x
 	implementation 'com.amazonaws:aws-java-sdk-s3'  // AWS SDK for Java v1
 
-	//
-	implementation 'me.paulschwarz:spring-dotenv:2.2.0'
+	//pdf 변환을 위한 라이브러리
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'com.openhtmltopdf:openhtmltopdf-core:1.0.10'
+	implementation 'com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10'
+
+	//mail 전송 라이브러리
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
