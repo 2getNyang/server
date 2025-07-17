@@ -1,11 +1,11 @@
 package com.project.nyang.global.security.oauth2.docs;
 
+import com.project.nyang.global.security.oauth2.OAuth2WithdrawNaverService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 소셜 로그인 관련 설명 Swagger 문서 클래스입니다.
@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "🌐 소셜 로그인 API", description = "카카오 로그인 설명용 API 문서입니다.")
 @RestController
 @RequestMapping("/oauth2/docs")
+@RequiredArgsConstructor
 public class OAuth2DocController {
+
+    private final OAuth2WithdrawNaverService oauth2WithdrawNaverService;
 
     @Operation(summary = "카카오 로그인", description = """
             카카오 로그인은 아래 URL로 이동하여 OAuth2 인증을 시작합니다.  
@@ -70,5 +73,19 @@ public class OAuth2DocController {
     public ResponseEntity<Void> googleLoginDoc() {
         return ResponseEntity.ok().build();
     }
+
+
+    @Operation(summary = "네이버 회원탈퇴", description = """
+            URL 로 이동시 회원탈퇴됩니다. cookie 에다가 sns access token 넣어주셔야 됩니다 !
+            `http://localhost:8080/oauth2/docs/withdraw/naver`
+            """)
+    @GetMapping("/withdraw/naver")
+    public ResponseEntity<Void> naverWithdrawDoc(
+            @CookieValue("sns_access_token") String snsAccessToken
+    ) {
+        oauth2WithdrawNaverService.unlinkNaver(snsAccessToken);
+        return ResponseEntity.ok().build();
+    }
+
 
 }

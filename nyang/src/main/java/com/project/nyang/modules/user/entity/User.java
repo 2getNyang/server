@@ -47,5 +47,12 @@ public class User extends BaseTime {
         this.email = email;
     }
 
+    public void deleteUsers() {
+        String timestamp = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        this.loginId = "deleted_user_" + this.id + "_" + timestamp;
+        this.email = "deleted_email_" + this.id + "_" + timestamp;
+    }
+
+
 
 }

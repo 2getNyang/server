@@ -59,4 +59,8 @@ public class Auth {
     public void updateRefreshToken(String newRefreshToken) {
         this.refreshToken = newRefreshToken;
     }
+    // 소셜로그인 accesstoken
+    public void updateSnsAccessToken(String newSnsAccessToken) {
+        this.snsAccessToken = newSnsAccessToken;
+    }
 }
