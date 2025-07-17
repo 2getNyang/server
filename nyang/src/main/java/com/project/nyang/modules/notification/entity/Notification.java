@@ -2,10 +2,7 @@ package com.project.nyang.modules.notification.entity;
 
 import com.project.nyang.modules.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -31,25 +28,25 @@ public class Notification{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "noty_id")
-    private Long id;
+    private Long notyId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "noty_type")
     private NotificationType type;
 
     @Column(name = "noty_content", columnDefinition = "TEXT")
-    private String content;
+    private String notyContent;
 
     @Column(name = "noty_link")
-    private String link;
+    private String notyLink;
 
     @Column(name = "noty_isread")
     private Boolean isRead = false;
 
     @CreatedDate
-    @Column(name = "form_created_at", columnDefinition = "TIMESTAMP",
+    @Column(name = "noty_created_at", columnDefinition = "TIMESTAMP",
             updatable = false, nullable = false)
-    private LocalDateTime formCreatedAt;
+    private LocalDateTime notyCreatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -64,23 +61,22 @@ public class Notification{
     }
 
 
-    //전에 builder 패턴 사용하기로 했어서 임시 추가
-    // @Builder
-    // public Notification(
-    //     NotificationType type,
-    //     String content,
-    //     String link,
-    //     Boolean isRead,
-    //     LocalDateTime createdAt,
-    //     User user,
-    //     ChatRoom chatRoom
-    // ) {
-    //     this.type = type;
-    //     this.content = content;
-    //     this.link = link;
-    //     this.isRead = isRead;
-    //     this.createdAt = createdAt;
-    //     this.user = user;
-    //     this.chatRoom = chatRoom;
-    // }
+     @Builder
+     public Notification(
+             NotificationType type,
+             String notyContent,
+             String notyLink,
+             Boolean isRead,
+             User user
+     ) {
+         this.type = type;
+         this.notyContent = notyContent;
+         this.notyLink = notyLink;
+         this.isRead = isRead;
+         this.user = user;
+     }
+
+    public void markAsRead() {
+        this.isRead = true;
+    }
 }

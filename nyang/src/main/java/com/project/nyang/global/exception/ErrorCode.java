@@ -49,7 +49,12 @@ public enum ErrorCode {
     FONT_FOUND_FAILED(500,"폰트 파일을 찾을 수 없습니다."),
     SHELTER_EMAIL_NOT_FOUND(404,"보호소 이메일을 찾을 수 없습니다."),
     INVALID_TEMPLATE(404,"입양신청서 템플릿 파일을 찾을 수 없습니다."),
-    MAIL_SEND_FAIL(500,"메일 전송에 실패하였습니다.")
+    MAIL_SEND_FAIL(500,"메일 전송에 실패하였습니다."),
+
+    //알림 관련 에러
+    NOTIFICATION_NOT_FOUND(404,"관련 알림을 찾을 수 없습니다."),
+
+
     ;
 
 

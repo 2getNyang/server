@@ -9,6 +9,7 @@ import com.project.nyang.modules.adoption.pdf.PdfGenerator;
 import com.project.nyang.modules.adoption.repository.AdoptionRepository;
 import com.project.nyang.modules.animal.entity.Animal;
 import com.project.nyang.modules.animal.repository.AnimalRepository;
+import com.project.nyang.modules.notification.service.NotificationService;
 import com.project.nyang.modules.shelter.entity.Shelter;
 import com.project.nyang.modules.shelter.repository.ShelterRepository;
 import com.project.nyang.modules.user.entity.User;
@@ -36,9 +37,10 @@ public class AdoptionService {
     private final AnimalRepository animalRepository;
     private final ShelterRepository shelterRepository;
     private final AdoptionRepository adoptionRepository;
-    private final PdfGenerator pdfGenerator;
 
+    private final PdfGenerator pdfGenerator;
     private final MailService mailService;
+    private final NotificationService notificationService;
 
     @Operation(summary = "입양신청중복확인", description = "입양신청시 중복 신청인지 확인하는 메서드 입니다")
     public boolean hasAlreadyApplied(Long userId, String desertionNo) {
@@ -48,7 +50,8 @@ public class AdoptionService {
     @Operation(summary = "입양신청처리", description = "입양신청 데이터 처리 프로세스 메서드 입니다")
     public void processAdoptionApplication(AdoptionDTO dto) {
 
-        //0.이미 신청했는지 확인하는 로직 추가, 신청하지 않았으면 아래 주석 번호 순대로 로직 실행
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // 1. DB 저장
        AdoptionDTO application = saveApplication(dto);
@@ -78,6 +81,9 @@ public class AdoptionService {
                 log.warn("⚠️ 임시 PDF 파일 삭제 실패: {}", pdfFile.getAbsolutePath());
             }
         }
+
+        //6. 알림 생성 및 전송
+        notificationService.mailSentNotification(user);
     }
 
     @Operation(summary = "입양신청서 저장", description = "입양신청서의 작성 답변을 DB에 저장합니다.")
