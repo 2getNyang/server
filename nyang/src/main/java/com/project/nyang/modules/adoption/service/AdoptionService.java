@@ -5,7 +5,7 @@ import com.project.nyang.global.exception.ErrorCode;
 import com.project.nyang.modules.adoption.dto.AdoptionDTO;
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
 import com.project.nyang.modules.adoption.mail.service.MailService;
-import com.project.nyang.modules.adoption.pdf.WordGeneratorService;
+import com.project.nyang.modules.adoption.pdf.PdfGenerator;
 import com.project.nyang.modules.adoption.repository.AdoptionRepository;
 import com.project.nyang.modules.animal.entity.Animal;
 import com.project.nyang.modules.animal.repository.AnimalRepository;
@@ -36,37 +36,48 @@ public class AdoptionService {
     private final AnimalRepository animalRepository;
     private final ShelterRepository shelterRepository;
     private final AdoptionRepository adoptionRepository;
-    private final WordGeneratorService wordGeneratorService;
+    private final PdfGenerator pdfGenerator;
 
     private final MailService mailService;
 
+    @Operation(summary = "입양신청중복확인", description = "입양신청시 중복 신청인지 확인하는 메서드 입니다")
+    public boolean hasAlreadyApplied(Long userId, String desertionNo) {
+        return adoptionRepository.existsByUserIdAndAnimal_DesertionNo(userId, desertionNo);
+    }
+
     @Operation(summary = "입양신청처리", description = "입양신청 데이터 처리 프로세스 메서드 입니다")
     public void processAdoptionApplication(AdoptionDTO dto) {
+
+        //0.이미 신청했는지 확인하는 로직 추가, 신청하지 않았으면 아래 주석 번호 순대로 로직 실행
+
         // 1. DB 저장
        AdoptionDTO application = saveApplication(dto);
        System.out.println("입양신청서의 DB 저장이 완료되었습니다.");
 
         //2. 워드로 작성한 템플릿에 DTO 값 치환
-        File docxFile = null;
-        try {
-            docxFile = wordGeneratorService.generateDocxFromDto(dto);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new CustomException(ErrorCode.DOCX_CREATE_FAILED);
-        }
+        File pdfFile = pdfGenerator.htmlToPdf(application);
 
         //3. 보호소 이메일 조회
         String shelterEmail = findShelterEmail(application.getCareRegNumber());
+        log.info("보호소 이메일 조회가 완료되었습니다: ",shelterEmail);
 
         //4. 이메일 전송
-//        mailService.sendEmailWithPdf(
-//                shelterEmail,
-//                "새 입양 신청서가 도착했습니다",
-//                "<p>새로운 입양 신청서가 접수되었습니다. 첨부된 PDF 파일을 확인하세요.</p>",
-//                docxFile
-//        );
+        mailService.sendEmailWithPdf(
+                shelterEmail,
+                "새 입양 신청서가 도착했습니다",
+                "<p>새로운 입양 신청서가 접수되었습니다. 첨부된 PDF 파일을 확인하세요.</p>",
+                pdfFile
+        );
 
         //5. 저장된 PDF 삭제
+        if (pdfFile.exists()) {
+            boolean deleted = pdfFile.delete();
+            if (deleted) {
+                log.info("✅ 임시 PDF 파일 삭제 완료: {}", pdfFile.getAbsolutePath());
+            } else {
+                log.warn("⚠️ 임시 PDF 파일 삭제 실패: {}", pdfFile.getAbsolutePath());
+            }
+        }
     }
 
     @Operation(summary = "입양신청서 저장", description = "입양신청서의 작성 답변을 DB에 저장합니다.")

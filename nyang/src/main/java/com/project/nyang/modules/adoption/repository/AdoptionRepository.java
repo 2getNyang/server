@@ -11,4 +11,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @since : 25. 7. 14.
  */
 public interface AdoptionRepository extends JpaRepository<PetApplicationForm, Long> {
+    boolean existsByUserIdAndAnimal_DesertionNo(Long userId, String desertionNo);
 }

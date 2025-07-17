@@ -45,6 +45,9 @@ spring:
       max-request-size: 10MB
       enabled: true
 
+  thymeleaf:
+    cache: false
+
   mail:
     host: smtp.gmail.com
     port: 587

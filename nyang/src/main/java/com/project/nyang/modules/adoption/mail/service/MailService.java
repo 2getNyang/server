@@ -1,5 +1,7 @@
 package com.project.nyang.modules.adoption.mail.service;
 
+import com.project.nyang.global.exception.CustomException;
+import com.project.nyang.global.exception.ErrorCode;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +56,7 @@ public class MailService {
 
         } catch (MessagingException e) {
 
-            throw new RuntimeException("이메일 전송 실패", e);
+            throw new CustomException(ErrorCode.MAIL_SEND_FAIL);
         }
     }
 }

@@ -7,6 +7,7 @@ import com.project.nyang.modules.adoption.service.AdoptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,16 @@ public class AdoptionController {
     @Operation(summary = "Form에서 받아온 정보 처리", description = "사용자가 작성한 입양신청를 처리합니다.")
     @PostMapping("/{desertionNo}")
     ResponseEntity<ApiResponse<String>> applyForAdoption(@PathVariable String desertionNo, @RequestBody AdoptionDTO request) {
+
+        // 사용자 정보 포함한 desertionNo로 중복 신청 여부 확인
+        boolean alreadyApplied = adoptionService.hasAlreadyApplied(request.getUserId(), desertionNo);
+        if (alreadyApplied) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(ApiSuccessResponse.error(40901, "이미 해당 공고에 입양 신청하셨습니다."));
+        }
+
+        //신청 진행
         //desertionNo를 DTO에 세팅
         AdoptionDTO updatedRequest = request.toBuilder()
                 .desertionNo(desertionNo)
