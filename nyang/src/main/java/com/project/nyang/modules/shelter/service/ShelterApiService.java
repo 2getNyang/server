@@ -123,7 +123,7 @@ public class ShelterApiService {
         Region region = regionRepository.findByRegionName(sido)
                 .orElseThrow(() -> new IllegalArgumentException("❌ 시/도 정보 없음: " + sido));
 
-        List<SubRegion> subRegions = subRegionRepository.findAllBySubRegionName(sigungu);
+        List<SubRegion> subRegions = subRegionRepository.findWithRegionBySubRegionName(sigungu);
 
         // 일치하는 시/도 소속 subRegion이 없으면 대체 코드 사용
         SubRegion subRegion = subRegions.stream()

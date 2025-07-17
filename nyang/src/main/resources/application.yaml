@@ -8,6 +8,7 @@ spring:
           batch_size: 100
         order_inserts: true
         order_updates: true
+#    show-sql: true
 
   jackson:
     serialization:
@@ -125,4 +126,7 @@ management:
 #logging:
 #  pattern:
 #    console: %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight([%-3level]) %cyan(%logger{5}) - %msg%n
-
+#logging:
+#  level:
+#    org.hibernate.sql: debug
+#    org.hibernate.orm.jdbc.bind: trace
