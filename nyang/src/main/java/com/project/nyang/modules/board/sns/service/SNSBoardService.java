@@ -2,11 +2,9 @@ package com.project.nyang.modules.board.sns.service;
 
 
 import com.project.nyang.global.common.S3.S3Service;
-import com.project.nyang.global.exception.CustomException;
-import com.project.nyang.global.security.jwt.JwtTokenProvider;
-import com.project.nyang.modules.board.elasticsearch.dto.BoardEsDocument;
-import com.project.nyang.modules.board.elasticsearch.repository.BoardEsRepository;
-import com.project.nyang.modules.board.elasticsearch.service.BoardEsService;
+import com.project.nyang.global.elasticsearch.board.dto.BoardEsDocument;
+import com.project.nyang.global.elasticsearch.board.repository.BoardEsRepository;
+import com.project.nyang.global.elasticsearch.board.service.BoardEsService;
 import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.modules.board.sns.dto.SNSBoardDTO;
 import com.project.nyang.modules.board.sns.dto.SNSBoardUpdateDTO;
