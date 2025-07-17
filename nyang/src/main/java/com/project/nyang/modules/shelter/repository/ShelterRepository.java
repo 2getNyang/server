@@ -1,5 +1,6 @@
 package com.project.nyang.modules.shelter.repository;
 
+import com.project.nyang.modules.shelter.dto.ShelterDetailDTO;
 import com.project.nyang.modules.shelter.dto.ShelterListDTO;
 import com.project.nyang.modules.shelter.entity.Shelter;
 import org.springframework.data.domain.Page;

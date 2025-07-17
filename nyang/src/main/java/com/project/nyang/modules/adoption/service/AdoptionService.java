@@ -86,7 +86,7 @@ public class AdoptionService {
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_USER));
 
         Shelter shelter = shelterRepository.findByCareRegNumber(dto.getCareRegNumber())
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_SHELTER));
+                .orElseThrow(() -> new CustomException(ErrorCode.SHELTER_NOT_FOUND));
 
         Animal animal = animalRepository.findByDesertionNo(dto.getDesertionNo())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_ANIMAL));
@@ -153,7 +153,7 @@ public class AdoptionService {
     @Operation(summary = "보호소이메일조회", description = "이메일 전송에 필요한 보호소 이메일 정보를 조회하는 메서드 입니다.")
     private String findShelterEmail(String careRegNumber) {
         Shelter shelter = shelterRepository.findByCareRegNumber(careRegNumber)
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_SHELTER));
+                .orElseThrow(() -> new CustomException(ErrorCode.SHELTER_EMAIL_NOT_FOUND));
 
         String email = shelter.getCareEmail(); // 실제 필드명에 맞게 변경
         if (email == null || email.isEmpty()) {

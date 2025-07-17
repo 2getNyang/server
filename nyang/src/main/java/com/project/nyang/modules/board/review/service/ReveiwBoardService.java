@@ -8,11 +8,11 @@ import com.project.nyang.modules.adoption.entity.PetApplicationForm;
 import com.project.nyang.modules.board.elasticsearch.dto.BoardEsDocument;
 import com.project.nyang.modules.board.elasticsearch.repository.BoardEsRepository;
 import com.project.nyang.modules.board.review.dto.ReviewBoardUpdateDTO;
-import com.project.nyang.modules.board.review.repository.AdoptionRepository;
 import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.modules.board.review.dto.ReveiwBoardDetailDTO;
 import com.project.nyang.modules.board.review.dto.ReveiwBoardListDTO;
 import com.project.nyang.modules.board.review.dto.ReviewBoardCreateDTO;
+import com.project.nyang.modules.board.review.repository.AdoptionTempRepository;
 import com.project.nyang.modules.board.review.repository.ReviewBoardRepository;
 import com.project.nyang.modules.image.entity.Image;
 import com.project.nyang.modules.like.repository.LikeRepository;
@@ -46,7 +46,7 @@ public class ReveiwBoardService {
     private final ReviewBoardRepository reviewBoardRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
-    private final AdoptionRepository adoptionRepository;
+    private final AdoptionTempRepository adoptionRepository;
     private final BoardEsRepository boardEsRepository;
     private final S3Service s3Service;
     private static final Long CATEGORY_ID = 2L;
@@ -182,7 +182,7 @@ public class ReveiwBoardService {
 
         PetApplicationForm form = null;
         if (board.getPetApplicationForm() != null) {
-            form = adoptionRepository.findById(board.getPetApplicationForm().getId()).orElseThrow(() -> new CustomException(ErrorCode.APPLICATION_NOT_FOUND));
+            form = adoptionRepository.findById(board.getPetApplicationForm().getFormId()).orElseThrow(() -> new CustomException(ErrorCode.APPLICATION_NOT_FOUND));
         }
 
         // 2. 입양 후기 게시글 상세 정보 담기
