@@ -3,7 +3,12 @@ package com.project.nyang.modules.auth.controller;
 import com.project.nyang.global.common.api.ApiSuccessResponse;
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
+import com.project.nyang.global.security.jwt.JwtTokenProvider;
+import com.project.nyang.global.security.oauth2.OAuth2WithdrawNaverService;
 import com.project.nyang.modules.auth.service.AuthService;
+import com.project.nyang.modules.user.entity.User;
+import com.project.nyang.modules.user.repository.UserRepository;
+import com.project.nyang.modules.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,10 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +40,10 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthService authService;
-//    private final OAuth2UnlinkService oAuth2UnlinkService;
+    private final OAuth2WithdrawNaverService oauth2WithdrawNaverService;
+    private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+
     /**
      * 토큰갱신 API
      **/
@@ -82,26 +87,6 @@ public class AuthController {
 
         return ResponseEntity.ok(ApiSuccessResponse.success(res, "토큰이 성공적으로 갱신되었습니다."));
     }
-//    @Operation(
-//            summary = "네이버 연동 해제 (토큰 폐기)",
-//            description = """
-//                    네이버 소셜 로그인 연동 해제(토큰 폐기)를 수행합니다.
-//                    연동 해제 후 사용자는 동일 네이버 계정으로 재로그인 시 신규 회원으로 가입 처리됩니다.
-//                    """,
-//            responses = {
-//                    @ApiResponse(responseCode = "200", description = "연동 해제(토큰 폐기) 성공"),
-//                    @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-//                    @ApiResponse(responseCode = "500", description = "서버 오류")
-//            }
-//    )
-//    @PostMapping("/unlink")
-//    public ResponseEntity<?> unlinkNaver(
-//            @RequestParam String accessToken
-//    ){
-//        oAuth2UnlinkService.unlinkNaver(accessToken);
-//        return ResponseEntity.ok().build();
-//    }
-
 
 //    @Operation(
 //            summary = "구글 연동 해제 (토큰 폐기)",
@@ -130,5 +115,39 @@ public class AuthController {
 //        }
 //
 //    }
+
+    @Operation(
+            summary = "회원탈퇴 (소셜 연동 해제 포함)",
+            description = """
+        소셜 로그인 연동 해제(토큰 폐기)를 수행합니다.
+        연동 해제 후 사용자는 동일 계정으로 재로그인 시 신규 회원으로 가입 처리됩니다.
+        `http://localhost:8080/api/auth/withdraw`
+        """,
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "연동 해제(토큰 폐기) 성공"),
+                    @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+                    @ApiResponse(responseCode = "500", description = "서버 오류")
+            }
+    )
+    @PostMapping("/withdraw")
+    public ResponseEntity<?> withdraw(
+            @CookieValue("accessToken") String accessToken,
+            @CookieValue("sns_access_token") String snsAccessToken
+    ) {
+        // user 확인
+        Long userId = jwtTokenProvider.getUserIdFromToken(accessToken);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        switch (user.getLoginType()) {
+            case "naver" -> oauth2WithdrawNaverService.unlinkNaver(snsAccessToken);
+//            case "google" -> oauth2WithdrawGoogleService.revokeGoogle(snsAccessToken);
+//            case "kakao" -> oauth2WithdrawKakaoService.unlinkKakao(snsAccessToken);
+            default -> throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+
+
+        return ResponseEntity.ok(ApiSuccessResponse.success(null, "회원 탈퇴가 완료되었습니다."));
+    }
+
 
 }
