@@ -1,8 +1,12 @@
 package com.project.nyang.reference.repository;
 
+import com.project.nyang.reference.dto.SubRegionDTO;
+import com.project.nyang.reference.entity.Region;
 import com.project.nyang.reference.entity.SubRegion;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -14,4 +18,17 @@ import java.util.Optional;
  */
 public interface SubRegionRepository extends JpaRepository<SubRegion, String> {
     Optional<SubRegion> findBySubRegionName(String subRegionName);
+
+    /**
+     * 선택된 시도에 해당하는 시군구 목록 조회
+     */
+    @Query("SELECT new com.project.nyang.reference.dto.SubRegionDTO(sr.subRegionName) " +
+            "FROM SubRegion sr " +
+            "WHERE sr.region.regionName = :regionName")
+    List<SubRegionDTO> findSubRegionsByRegion(String regionName);
+
+    Optional<SubRegion> findByRegionAndSubRegionName(Region region, String subRegionName);
+
+    // 수정: 다건 조회
+    List<SubRegion> findAllBySubRegionName(String subRegionName);
 }

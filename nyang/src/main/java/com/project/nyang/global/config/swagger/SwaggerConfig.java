@@ -141,6 +141,16 @@ public class SwaggerConfig {
                         .description("함께하개냥 API 문서입니다."));
     }
 
+     // ✅ 지역 API 그룹 추가
+     @Bean
+     public GroupedOpenApi regionApi() {
+         return GroupedOpenApi.builder()
+                 .group("🌍 지역 API")
+                 .pathsToMatch("/api/v1/regions/**")
+                 .addOpenApiCustomizer(jwtSecurityCustomizer())
+                 .build();
+     }
+
     // ✅ JWT 보안 설정 커스터마이저
     private OpenApiCustomizer jwtSecurityCustomizer() {
         return openApi -> openApi.addSecurityItem(new SecurityRequirement().addList("jwt token"))
