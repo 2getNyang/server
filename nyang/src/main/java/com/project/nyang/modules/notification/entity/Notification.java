@@ -1,5 +1,6 @@
 package com.project.nyang.modules.notification.entity;
 
+import com.project.nyang.modules.chat.entity.ChatRoom;
 import com.project.nyang.modules.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -52,9 +53,9 @@ public class Notification{
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "chat_room_id", nullable = false)
-//    private ChatRoom chatRoom;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_room_id")
+    private ChatRoom chatRoom;
 
     public enum NotificationType {
         CHAT_REPLY, FORM_SENT//, ETC 알림메세지 기타로 처리할게 있을까..?
@@ -67,12 +68,14 @@ public class Notification{
              String notyContent,
              String notyLink,
              Boolean isRead,
+             ChatRoom chatRoom,
              User user
      ) {
          this.type = type;
          this.notyContent = notyContent;
          this.notyLink = notyLink;
          this.isRead = isRead;
+         this.chatRoom = chatRoom;
          this.user = user;
      }
 

@@ -2,6 +2,7 @@ package com.project.nyang.modules.notification.service;
 
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
+import com.project.nyang.modules.chat.entity.ChatRoom;
 import com.project.nyang.modules.notification.dto.NotificationDTO;
 import com.project.nyang.modules.notification.entity.Notification;
 import com.project.nyang.modules.notification.repository.NotificationRepository;
@@ -32,17 +33,17 @@ public class NotificationService {
     private final SimpMessagingTemplate messagingTemplate;
 
     @Operation(summary = "안읽은 메세지 알림", description = "사용자가 읽지 않은 알람이 있을 경우 알림이 옵니다.")
-    public void notifyUnreadChatMessage(User receiver, String content, String link) {
+    public void notifyUnreadChatMessage(User receiver, String content, String link, ChatRoom chatRoom) {
         Notification notification = Notification.builder()
                 .type(Notification.NotificationType.CHAT_REPLY)
                 .notyContent("💬 " + content)
                 .notyLink(link)
                 .isRead(false)
                 .user(receiver)
+                .chatRoom(chatRoom)
                 .build();
 
         notificationRepository.save(notification);
-
     }
 
     @Operation(summary = "입양신청완료 후 이메일발송 완료 알림", description = "입양신청이 완료 알림 전송 메서드 입니다.")
