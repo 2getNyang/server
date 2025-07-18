@@ -1,5 +1,8 @@
 package com.project.nyang.modules.notification.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
 import com.project.nyang.modules.chat.entity.ChatRoom;
@@ -29,6 +32,7 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final ObjectMapper objectMapper;
 
     @Operation(summary = "안읽은 메세지 알림", description = "사용자가 읽지 않은 알람이 있을 경우 알림이 옵니다.")
     public void notifyUnreadChatMessage(User receiver, String content, String link, ChatRoom chatRoom) {
@@ -43,10 +47,21 @@ public class NotificationService {
 
         Notification savedNotification = notificationRepository.save(notification);
 
-        messagingTemplate.convertAndSend(
-                "/topic/notifications/" + receiver.getId(),
-                new NotificationDTO(savedNotification)
-        );
+        String destination = "/sub/notifications/" + receiver.getId();
+        NotificationDTO dto = new NotificationDTO(savedNotification);
+        try {
+            // ✅ JSON 문자열로 직렬화
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            String json = objectMapper.writeValueAsString(dto);
+
+            // ✅ STOMP 전송
+            messagingTemplate.convertAndSend(destination, json);
+            log.info("📤 알림 STOMP 전송 → destination: {}, message: {}", destination, json);
+
+        } catch (JsonProcessingException e) {
+            log.error("❌ 알림 메시지 직렬화 실패 → userId: {}, error: {}", receiver.getId(), e.getMessage(), e);
+        }
     }
 
     @Operation(summary = "입양신청완료 후 이메일발송 완료 알림", description = "입양신청이 완료 알림 전송 메서드 입니다.")
@@ -64,10 +79,13 @@ public class NotificationService {
         Notification saved = notificationRepository.save(notification);
 
         // 3. STOMP 구독 주소로 전송
-        messagingTemplate.convertAndSend(
-                "/sub/notifications/" + user.getId(),
-                new NotificationDTO(saved) // DTO 형태로 보냄
-        );
+        String destination = "/sub/notifications/" + user.getId();
+        NotificationDTO dto = new NotificationDTO(saved);
+
+        messagingTemplate.convertAndSend(destination, dto);
+
+        // 4. 로그 출력
+        log.info("📤 입양 신청 알림 STOMP 전송 → destination: {}, message: {}", destination, dto);
     }
 
 

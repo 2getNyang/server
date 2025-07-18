@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.List;
  * @fileName : NotificationController
  * @since : 25. 7. 17.
  */
-@RestController
+@Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/notifications/")
 @Tag(name="🔔 채팅 알림 기능", description = "예상으로 임시 구현해서 수정 필요, 사용 X")
