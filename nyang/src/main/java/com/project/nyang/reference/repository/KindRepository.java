@@ -4,6 +4,7 @@ import com.project.nyang.reference.entity.Kind;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.swing.*;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -14,8 +15,8 @@ import java.util.Optional;
  * @since : 2025-07-11
  */
 public interface KindRepository extends JpaRepository<Kind,String> {
-
     Optional<Kind> findByKindNm(String kindNm);
+    Optional<Kind> findByKindCd(String kindCd);
 
-
+    List<Kind> findByUpKindCd_UpKindCd(String upKindCd);
 }

@@ -8,6 +8,7 @@ spring:
           batch_size: 100
         order_inserts: true
         order_updates: true
+#    show-sql: true
 
   jackson:
     serialization:
@@ -67,7 +68,7 @@ spring:
             user-name-attribute: response
           google:
             #prompt=select_account 파라미터를 추가하면 계정 선택 화면을 띄울 수 있다.
-            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth?prompt=select_account
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
             token-uri: https://oauth2.googleapis.com/token
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
             user-name-attribute: sub
@@ -79,6 +80,20 @@ spring:
       max-request-size: 10MB  # multipart/form-data 요청의 최대 허용 크기. 기본 10MB
       enabled: true
 
+  thymeleaf:
+    cache: false
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${SPRING_MAIL_USERNAME}
+    password: ${SPRING_MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
+          starttls.required: true
 
 cloud:
   aws:
@@ -86,12 +101,11 @@ cloud:
       access-key: ${AWS_ACCESS_KEY}
       secret-key: ${AWS_SECRET_KEY}
     region:
-      static: ${AWS_REGION}  # 버킷의 리전
+      static: ${AWS_REGION}
     s3:
-      bucket: ${AWS_BUCKET}     # 버킷 이름
+      bucket: ${AWS_BUCKET}
     stack:
       auto: false
-
 
 
 jwt:
@@ -125,4 +139,7 @@ management:
 #logging:
 #  pattern:
 #    console: %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight([%-3level]) %cyan(%logger{5}) - %msg%n
-
+#logging:
+#  level:
+#    org.hibernate.sql: debug
+#    org.hibernate.orm.jdbc.bind: trace

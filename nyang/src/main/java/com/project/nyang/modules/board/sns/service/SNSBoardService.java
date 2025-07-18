@@ -51,9 +51,9 @@ public class SNSBoardService {
 
 
     /**
-    * 카테고리 타입: sns게시판
-    * 카테고리:ID 1:동물공고 / 2:입양후기 / 3: sns홍보 / 4:실종,목격제보
-    **/
+     * 카테고리 타입: sns게시판
+     * 카테고리:ID 1:동물공고 / 2:입양후기 / 3: sns홍보 / 4:실종,목격제보
+     **/
     private static final Long SNS_CATEGORY_ID = 3L;
     private final BoardEsRepository boardEsRepository;
     private final BoardEsService boardEsService;
@@ -214,7 +214,7 @@ public class SNSBoardService {
                         .orElse(null)
                         : null)
                 .nickname(board.getUser().getNickname())
-                        .build();
+                .build();
         boardEsRepository.save(doc);
     }
 
@@ -275,7 +275,7 @@ public class SNSBoardService {
         /* Elastic Search 조회수 증가*/
         BoardEsDocument esDocument = boardEsRepository.findById(String.valueOf(boardId))
                 .orElseThrow(() -> new IllegalArgumentException("엘라스틱 서치에 게시글이 없어요"+ boardId));
-        increaseViewCount(esDocument.getViewCount());
+        esDocument.increaseViewCount();
         boardEsRepository.save(esDocument);
 
         return SNSBoardDTO.builder()

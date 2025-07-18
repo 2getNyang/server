@@ -1,14 +1,15 @@
-package com.project.nyang.modules.board.review.repository;
+package com.project.nyang.modules.adoption.repository;
 
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * 임시 AdoptionRepository
+ * AdoptionRepository 입니다
  *
- * @author : 박세정
+ * @author : 이지은
  * @fileName : AdoptionRepository
- * @since : 2025-07-10
+ * @since : 25. 7. 14.
  */
 public interface AdoptionRepository extends JpaRepository<PetApplicationForm, Long> {
+    boolean existsByUserIdAndAnimal_DesertionNo(Long userId, String desertionNo);
 }
