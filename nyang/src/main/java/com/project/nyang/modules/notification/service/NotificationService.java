@@ -41,7 +41,12 @@ public class NotificationService {
                 .chatRoom(chatRoom)
                 .build();
 
-        notificationRepository.save(notification);
+        Notification savedNotification = notificationRepository.save(notification);
+
+        messagingTemplate.convertAndSend(
+                "/topic/notifications/" + receiver.getId(),
+                new NotificationDTO(savedNotification)
+        );
     }
 
     @Operation(summary = "입양신청완료 후 이메일발송 완료 알림", description = "입양신청이 완료 알림 전송 메서드 입니다.")

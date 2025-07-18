@@ -59,7 +59,7 @@ public class RedisSubscriber implements MessageListener {
             ChatRoom room = chatRoomRepository.findById(dto.getRoomId())
                     .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
 
-            // 4. 수신자 계산
+            // 4. 수신자 확인
             Long receiverId = room.getUser1Id().equals(dto.getSenderId())
                     ? room.getUser2Id() : room.getUser1Id();
 
