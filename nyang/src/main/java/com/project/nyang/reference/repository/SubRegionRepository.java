@@ -37,4 +37,7 @@ public interface SubRegionRepository extends JpaRepository<SubRegion, String> {
             """)
     List<SubRegion> findWithRegionBySubRegionName(@Param("subRegionName") String subRegionName);
 
+    Optional<SubRegion> findBySubRegionCode(String subRegionCode);
+    List<SubRegion> findByRegion_RegionCode(String regionCode);
+
 }
