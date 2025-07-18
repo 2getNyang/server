@@ -26,6 +26,8 @@ public class AdoptionController {
 
     private final AdoptionService adoptionService;
 
+
+
     @Operation(summary = "Form에서 받아온 정보 처리", description = "사용자가 작성한 입양신청를 처리합니다.")
     @PostMapping("/{desertionNo}")
     ResponseEntity<ApiResponse<String>> applyForAdoption(@PathVariable String desertionNo, @RequestBody AdoptionDTO request) {
