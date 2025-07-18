@@ -9,8 +9,9 @@ import org.springframework.context.annotation.Configuration;
  import io.swagger.v3.oas.models.security.SecurityScheme;
  import org.springdoc.core.customizers.OpenApiCustomizer;
  import org.springdoc.core.models.GroupedOpenApi;
+import org.springframework.web.bind.annotation.BindParam;
 
- /**
+/**
  * Swagger관련 설정파일 입니다.
   * http://localhost:8080/swagger-ui/index.html
  *
@@ -121,6 +122,36 @@ public class SwaggerConfig {
                  .build();
      }
 
+    // ✅ 입양 신청 API 그룹
+    @Bean
+    public GroupedOpenApi  AdoptionApi() {
+        return GroupedOpenApi .builder()
+                .group("📝 입양신청 API")
+                .pathsToMatch("/api/v1/adoptions/**")
+                .addOpenApiCustomizer(jwtSecurityCustomizer())
+                .build();
+    }
+
+     // ✅ 알림 테스트 API 그룹
+     @Bean
+     public GroupedOpenApi  notipicationTestOpenApi(){
+         return GroupedOpenApi .builder()
+                 .group("🔔 알림 백엔드 테스트 API")
+                 .pathsToMatch("/api/v1/notifications/test/**")
+                 .addOpenApiCustomizer(jwtSecurityCustomizer())
+                 .build();
+     }
+
+    // ✅ 알림  API 그룹
+    @Bean
+    public GroupedOpenApi  notipicationOpenApi(){
+        return GroupedOpenApi .builder()
+                .group("🔔 알림 API, 프론트 연동 아직 X")
+                .pathsToMatch("/api/v1/notifications/**")
+                .addOpenApiCustomizer(jwtSecurityCustomizer())
+                .build();
+    }
+
     // ✅ API 메타정보
     @Bean
     public OpenAPI openAPI() {
@@ -140,6 +171,7 @@ public class SwaggerConfig {
                  .addOpenApiCustomizer(jwtSecurityCustomizer())
                  .build();
      }
+
 
     // ✅ JWT 보안 설정 커스터마이저
     private OpenApiCustomizer jwtSecurityCustomizer() {

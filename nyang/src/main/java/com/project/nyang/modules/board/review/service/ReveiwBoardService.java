@@ -187,6 +187,7 @@ public class ReveiwBoardService {
 
         // 2. 입양 후기 게시글 상세 정보 담기
         ReveiwBoardDetailDTO boardDto = ReveiwBoardDetailDTO.builder()
+                .id(board.getId())
                 .nickname(board.getUser().getNickname())
                 .userId(board.getUser().getId())
                 .boardTitle(board.getBoardTitle())

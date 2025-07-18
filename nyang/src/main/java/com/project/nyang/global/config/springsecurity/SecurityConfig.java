@@ -55,8 +55,13 @@ public class SecurityConfig {
                                         "/api/test/**", // ✅ 이 줄 추가: 공통 응답 테스트 컨트롤러 허용
                                         "/api/v1/animals/**",
                                         "/api/v1/boards/**",
+                                        "/*",
+                                        "/api/v1/adoptions/*",//입양신청
                                         "/api/v1/recommendations/**",
                                         "/api/v1/shelters/**",
+                                        "/api/v1/regions/**",
+                                        "/api/v1/public/**",
+                                        "api/v1/notifications/**",//알림기능 테스트 때문에 추가
                                         "/ws-stomp/**",         //채팅관련
                                         "/chat/**", "/sub/**", "/pub/**",
                                         "/api/v1/chat/**",
