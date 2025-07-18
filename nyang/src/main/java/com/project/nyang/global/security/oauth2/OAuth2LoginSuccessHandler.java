@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -52,25 +53,34 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         //토큰 전달방식
         // 또는, 보안을 강화하려면 아래처럼 HttpOnly 쿠키로 전달해도 됨
-        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setPath("/");
-        //  accessTokenCookie.setMaxAge(60 * 3); // 3분짜리 임시쿠키
-        response.addCookie(accessTokenCookie);
+        // accessToken
+        ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
+                .httpOnly(true)
+                .secure(false) // ✅ 로컬에서는 false
+                .sameSite("Lax") // ✅ Lax 또는 Strict로 변경
+                .path("/")
+                .build();
+        response.addHeader("Set-Cookie", accessTokenCookie.toString());
 
-        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setPath("/");
-        // refreshTokenCookie.setMaxAge(60 * 60 * 24); // 1일짜리
-        response.addCookie(refreshTokenCookie);
-        response.sendRedirect("http://localhost:8081/oauth2/redirect?token=" + accessToken);
+// refreshToken
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(false) // ✅ 로컬에서는 false
+                .sameSite("Lax") // ✅
+                .path("/")
+                .build();
+        response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
         /** SNS AccessToken */
-        Cookie snsAccessTokenCookie = new Cookie("sns_access_token", snsAccessToken);
-        snsAccessTokenCookie.setPath("/");
-//        snsAccessTokenCookie.setMaxAge(60 * 60 * 24); // 1일
-        snsAccessTokenCookie.setHttpOnly(false); // JS에서 접근 가능하게 (프론트도 쿠키 접근 가능)
-        response.addCookie(snsAccessTokenCookie);
+        ResponseCookie snsAccessTokenCookie = ResponseCookie.from("sns_access_token", snsAccessToken)
+                .httpOnly(false)         // JS에서 읽을 수 있게 유지
+                .secure(false)           // ✅ 로컬에서는 false
+                .sameSite("Lax")         // ✅ 'None' 대신 'Lax' 사용 (이러면 secure 요구 안 함)
+                .path("/")
+                .build();
+        response.addHeader("Set-Cookie", snsAccessTokenCookie.toString());
+
+        response.sendRedirect("http://localhost:8081/oauth2/redirect?token=" + accessToken);
 
     }
 }
