@@ -156,4 +156,7 @@ public interface AnimalRepository extends JpaRepository<Animal, String> {
         WHERE a.desertionNo IN :desertionNos
     """)
     List<Animal> findByDesertionNoInWithRegionAndSubRegion(@Param("desertionNos") Set<String> desertionNos);
+
+    @Query("SELECT a FROM Animal a JOIN FETCH a.shelter WHERE a.desertionNo = :desertionNo")
+    Optional<Animal> findByDesertionNoWithShelter(@Param("desertionNo") String desertionNo);
 }
