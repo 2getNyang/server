@@ -122,15 +122,35 @@ public class SwaggerConfig {
                  .build();
      }
 
-     // ✅ 알림 API 그룹
+    // ✅ 입양 신청 API 그룹
+    @Bean
+    public GroupedOpenApi  AdoptionApi() {
+        return GroupedOpenApi .builder()
+                .group("📝 입양신청 API")
+                .pathsToMatch("/api/v1/adoptions/**")
+                .addOpenApiCustomizer(jwtSecurityCustomizer())
+                .build();
+    }
+
+     // ✅ 알림 테스트 API 그룹
      @Bean
-     public GroupedOpenApi  notipicationOpenApi(){
+     public GroupedOpenApi  notipicationTestOpenApi(){
          return GroupedOpenApi .builder()
                  .group("🔔 알림 백엔드 테스트 API")
-                 .pathsToMatch("/api/v1/notifications/**")
+                 .pathsToMatch("/api/v1/notifications/test/**")
                  .addOpenApiCustomizer(jwtSecurityCustomizer())
                  .build();
      }
+
+    // ✅ 알림  API 그룹
+    @Bean
+    public GroupedOpenApi  notipicationOpenApi(){
+        return GroupedOpenApi .builder()
+                .group("🔔 알림 API, 프론트 연동 아직 X")
+                .pathsToMatch("/api/v1/notifications/**")
+                .addOpenApiCustomizer(jwtSecurityCustomizer())
+                .build();
+    }
 
     // ✅ API 메타정보
     @Bean

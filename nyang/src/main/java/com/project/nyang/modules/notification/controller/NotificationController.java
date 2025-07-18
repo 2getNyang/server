@@ -28,21 +28,21 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
-    @Operation(summary = "모든 알림 조회",description = "테스트 X")
+    @Operation(summary = "모든 알림 조회",description = "모든 알림을 최신순으로 조회합니다")
     @GetMapping
     public ResponseEntity<List<NotificationDTO>> getAllNotifications(@AuthenticationPrincipal CustomUserDetails userDetails) {
         List<Notification> notifications = notificationService.getNotifications(userDetails.getUser());
         return ResponseEntity.ok(notifications.stream().map(NotificationDTO::new).toList());
     }
 
-    @Operation(summary = "미확인 알림 읽음 수정",description = "테스트 X")
+    @Operation(summary = "미확인 알림 읽음 수정",description = "알람 확인시 isread 값을 1로 변경합니다.")
     @PatchMapping("/{id}/read")
     public ResponseEntity<Void> markAsRead(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
         notificationService.markAsRead(id, userDetails.getUser());
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "안읽은 알림 조회", description = "테스트 X")
+    @Operation(summary = "안읽은 알림 조회", description = "isread 값이 0인 알림들을 조회합니다.")
     @GetMapping("/unread/count")
     public ResponseEntity<Long> getUnreadCount(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(notificationService.countUnreadNotifications(userDetails.getUser()));

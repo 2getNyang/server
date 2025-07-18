@@ -8,13 +8,11 @@ import com.project.nyang.modules.notification.entity.Notification;
 import com.project.nyang.modules.notification.repository.NotificationRepository;
 import com.project.nyang.modules.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
