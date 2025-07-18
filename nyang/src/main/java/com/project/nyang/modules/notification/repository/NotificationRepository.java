@@ -22,7 +22,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     List<Notification> findByUserAndTypeOrderByNotyCreatedAtDesc(User user, Notification.NotificationType type);
 
-    Optional<Notification> findByIdAndUser(Long id, User user); // 잘못된 파라미터 및 리턴 타입 수정
+    Optional<Notification> findByNotyIdAndUser(Long notyId, User user); // 잘못된 파라미터 및 리턴 타입 수정
 
     long countByUserAndIsReadFalse(User user);
 }

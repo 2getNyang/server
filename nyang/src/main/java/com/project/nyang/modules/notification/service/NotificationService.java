@@ -84,7 +84,7 @@ public class NotificationService {
 
     @Operation(summary = "알림 읽음 처리", description = "알림을 읽음 상태로 변경합니다.")
     public void markAsRead(Long notyId, User user) {
-        Notification notification = notificationRepository.findByIdAndUser(notyId, user)
+        Notification notification = notificationRepository.findByNotyIdAndUser(notyId, user)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOTIFICATION_NOT_FOUND));
 
         notification.markAsRead();
