@@ -66,46 +66,25 @@ public class AnimalEsService {
             }
             // 검색어가 있을 때
             else {
-                query = BoolQuery.of(b -> {
-
-                    // 접두어 글자 검색
-                    // 공고번호 (부분 일치)
-                    b.should(PrefixQuery.of(p -> p.field("noticeNo").value(keyword))._toQuery());
-                    // 특이사항 (부분 일치)
-                    b.should(PrefixQuery.of(p -> p.field("specialMark").value(keyword))._toQuery());
-                    // 품종명
-                    b.should(PrefixQuery.of(p -> p.field("kindNm").value(keyword))._toQuery());
-                    // 털색/무늬
-                    b.should(PrefixQuery.of(p -> p.field("colorCd").value(keyword))._toQuery());
-                    // 보호소명
-                    b.should(PrefixQuery.of(p -> p.field("careName").value(keyword))._toQuery());
-
-                    // 중간 문자 검색 (match만 가능)
-                    // 공고번호 (부분 일치)
-                    b.should(MatchQuery.of(m -> m.field("noticeNo.ngram").query(keyword))._toQuery());
-                    // 특이사항 (부분 일치)
-                    b.should(MatchQuery.of(m -> m.field("specialMark.ngram").query(keyword))._toQuery());
-                    // 품종명
-                    b.should(MatchQuery.of(m -> m.field("kindNm.ngram").query(keyword))._toQuery());
-                    // 털색/무늬
-                    b.should(MatchQuery.of(m -> m.field("colorCd.ngram").query(keyword))._toQuery());
-                    // 보호소명
-                    b.should(MatchQuery.of(m -> m.field("careName.ngram").query(keyword))._toQuery());
-
-                    //유사어 검색
-                    if (keyword.length() >= 3) {
-                        // 특이사항
-                        b.should(MatchQuery.of(m -> m.field("specialMark").query(keyword).fuzziness("AUTO"))._toQuery());
-                        // 품종명
-                        b.should(MatchQuery.of(m -> m.field("kindNm").query(keyword).fuzziness("AUTO"))._toQuery());
-                        // 털색/무늬
-                        b.should(MatchQuery.of(m -> m.field("colorCd").query(keyword).fuzziness("AUTO"))._toQuery());
-                        //보호소명
-                        b.should(MatchQuery.of(m -> m.field("careName").query(keyword).fuzziness("AUTO"))._toQuery());
-                    }
-
-                    return b;
-                })._toQuery();
+                query = BoolQuery.of(b -> b
+                        .should(TermQuery.of(t -> t
+                                .field("noticeNo.keyword")
+                                .value(keyword)
+                        )._toQuery())
+                        .should(MultiMatchQuery.of(m -> m
+                                .query(keyword)
+                                .fields(
+                                        "specialMark",      //특이사항
+                                        "happenPlace",    //발견 장소
+                                        "kindFullNm",            //축종 품종 풀네임
+                                        "colorCd",               //털 색깔
+                                        "careName",              //보호소 이름
+                                        "regionName",            //시/도
+                                        "subRegionName"         //시/군/구
+                                )
+                                .fuzziness("AUTO")  // 오타나도 유의어 검색해줌
+                        )._toQuery())
+                )._toQuery();
             }
 
             SearchRequest request = SearchRequest.of(s -> s
@@ -113,13 +92,6 @@ public class AnimalEsService {
                     .from(from)
                     .size(size)
                     .query(query)
-
-                    .sort(sort -> sort
-                            .field(f -> f
-                                    .field("happenDt")
-                                    .order(SortOrder.Desc)
-                            )
-                    )
             );
 
             // SearchResponse는 엘라스틱서치의 검색 결과를 담고 있는 응답 객체
