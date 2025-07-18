@@ -19,11 +19,11 @@ public class OAuth2LogoutSuccessHandler implements LogoutSuccessHandler {
     // 로그아웃을 커스텀으로 구현하고싶을때 사용하는 인터페이스
 
     // 카카오 REST API 키 (환경변수나 properties에서 가져오세요)
-            private final String kakaoClientId = "${KAKAO_ID}";
+    private final String kakaoClientId = "${KAKAO_ID}";
     private final String kakaoLogoutRedirectUri = "http://localhost:8080"; // 앱 환경에 맞게 변경
     private final String  naverLogoutRedirectUri = "http://localhost:8080/login.html";
     private final String naverLogoutUrl = "https://nid.naver.com/nidlogin.logout?returl=" + naverLogoutRedirectUri;
-
+    private final String googleLogoutUrl = "https://accounts.google.com/Logout";
 
 
     // 로그아웃 성공시 호출되는 메서드
@@ -57,6 +57,12 @@ public class OAuth2LogoutSuccessHandler implements LogoutSuccessHandler {
 
                 redirectUrl = "https://kauth.kakao.com/oauth/logout?client_id=" + kakaoClientId
                         + "&logout_redirect_uri=" + kakaoLogoutRedirectUri;
+            }
+
+            // 구글 로그아웃
+            else if (email != null && email.toString().endsWith("@gmail.com")) {
+                System.out.println("구글 로그아웃입니다.");
+                redirectUrl = "https://localhost:8080/login";
             }
 
         }
