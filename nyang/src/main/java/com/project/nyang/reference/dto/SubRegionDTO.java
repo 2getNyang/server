@@ -21,6 +21,10 @@ public class SubRegionDTO {
     private String subRegionName;  // 시군구 이름만 포함
     private String subRegionCode;
 
+    public SubRegionDTO(String subRegionName) {
+        this.subRegionName = subRegionName;
+    }
+
     public static SubRegionDTO from(SubRegion subRegion) {
         return SubRegionDTO.builder()
                 .subRegionCode(subRegion.getSubRegionCode())

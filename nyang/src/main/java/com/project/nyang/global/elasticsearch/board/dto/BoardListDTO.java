@@ -1,4 +1,4 @@
-package com.project.nyang.modules.board.elasticsearch.dto;
+package com.project.nyang.global.elasticsearch.board.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

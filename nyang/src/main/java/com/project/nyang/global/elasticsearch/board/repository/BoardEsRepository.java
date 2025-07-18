@@ -1,6 +1,6 @@
-package com.project.nyang.modules.board.elasticsearch.repository;
+package com.project.nyang.global.elasticsearch.board.repository;
 
-import com.project.nyang.modules.board.elasticsearch.dto.BoardEsDocument;
+import com.project.nyang.global.elasticsearch.board.dto.BoardEsDocument;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 
