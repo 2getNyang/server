@@ -5,6 +5,7 @@ import com.project.nyang.reference.entity.Region;
 import com.project.nyang.reference.entity.SubRegion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,11 +28,13 @@ public interface SubRegionRepository extends JpaRepository<SubRegion, String> {
             "WHERE sr.region.regionName = :regionName")
     List<SubRegionDTO> findSubRegionsByRegion(String regionName);
 
-    Optional<SubRegion> findByRegionAndSubRegionName(Region region, String subRegionName);
 
-    Optional<SubRegion> findBySubRegionCode(String subRegionCode);
-    List<SubRegion> findByRegion_RegionCode(String regionCode);
+    // N + 1 문제 해결하기 위해 fetch join 이용
+    @Query("""
+            SELECT sr FROM SubRegion sr
+            JOIN FETCH sr.region
+            WHERE sr.subRegionName = :subRegionName
+            """)
+    List<SubRegion> findWithRegionBySubRegionName(@Param("subRegionName") String subRegionName);
 
-    // 수정: 다건 조회
-    List<SubRegion> findAllBySubRegionName(String subRegionName);
 }
