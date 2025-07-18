@@ -114,7 +114,7 @@ public class LostService {
                 .filter(comment -> comment.getDeletedAt() == null)
                 .map(LostDetailResponseDTO.CommentDTO::toDTO)
                 .collect(Collectors.toList());
-        
+
         //조회수 증가
         board.increaseViewCount();
 
