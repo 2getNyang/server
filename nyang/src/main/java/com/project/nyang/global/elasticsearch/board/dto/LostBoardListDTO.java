@@ -34,7 +34,9 @@ public class LostBoardListDTO extends BoardListDTO{
 
     @Schema(description = "실종/목격 날짜", example = "2025-07-12")
     private String missingDate;
-
+    
+    @Schema(description = "특징")
+    private String distinctFeatures;
 
     public LostBoardListDTO(
             String id,
@@ -50,7 +52,8 @@ public class LostBoardListDTO extends BoardListDTO{
             Integer age,
             String furColor,
             String missingLocation,
-            String missingDate
+            String missingDate,
+            String distinctFeatures
     ) {
         super(id, viewCount, categoryId, "",boardContent, createdAt, imageUrl, nickname);
         this.lostType = lostType;
@@ -60,5 +63,6 @@ public class LostBoardListDTO extends BoardListDTO{
         this.furColor = furColor;
         this.missingLocation = missingLocation;
         this.missingDate = missingDate;
+        this.distinctFeatures = distinctFeatures;
     }
 }
