@@ -56,24 +56,28 @@ public class SecurityConfig {
                                         "/api/v1/animals/**",
                                         "/api/v1/boards/**",
                                         "/*",
-                                        "api/v1/adoptions/*",//입양신청
+                                        "/api/v1/adoptions/*",//입양신청
                                         "/api/v1/recommendations/**",
                                         "/api/v1/shelters/**",
                                         "/api/v1/regions/**",
                                         "/api/v1/public/**",
                                         "api/v1/notifications/**",//알림기능 테스트 때문에 추가
+                                        "/ws-stomp/**",         //채팅관련
+                                        "/chat/**", "/sub/**", "/pub/**",
+                                        "/api/v1/chat/**",
+                                        "/api/v1/user/**",
                                         "/*"
 
                                 ).permitAll()
 
                                 .requestMatchers(
                                         "/api/user/**", // 사용자 정보 관련 API
-                                        "/api/v1/shelters/**",
                                         "/api/v1/comments/**",
                                         "/api/v1/bookmark/**",
                                         "/api/v1/like/**",
                                         "/api/v1/user/**",
-                                        "/api/v1/boards/review/**"
+                                        "/api/v1/boards/review/**",
+                                        "/api/v1/auth/me"
                                         ).authenticated() //인증이 필요한 경로
 
 

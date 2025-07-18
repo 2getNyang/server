@@ -20,6 +20,8 @@ import java.util.List;
  */
 @Getter
 public class ReveiwBoardDetailDTO {
+    @Schema(description = "게시글 아이디")
+    private Long id;
     @Schema(description = "사용자 닉네임")
     private String nickname;
     @Schema(description = "사용자 아이디")
@@ -46,6 +48,8 @@ public class ReveiwBoardDetailDTO {
     @Getter
     public static class PetApplicationDTO {
         // =========== 신청서 내용 ===========
+        @Schema(description = "유기 동물 번호")
+        private String desertionNo;
         @Schema(description = "신청 번호")
         private Long formId;
         @Schema(description = "동물 전체 이름")
@@ -62,7 +66,8 @@ public class ReveiwBoardDetailDTO {
         private String careName;
 
         @Builder
-        public PetApplicationDTO(Long formId, String kindFullNm, String age, String sexCd, LocalDate happenDt, String subRegionName, String careName) {
+        public PetApplicationDTO(String desertionNo, Long formId, String kindFullNm, String age, String sexCd, LocalDate happenDt, String subRegionName, String careName) {
+            this.desertionNo = desertionNo;
             this.formId = formId;
             this.kindFullNm = kindFullNm;
             this.age = age;
@@ -74,6 +79,7 @@ public class ReveiwBoardDetailDTO {
 
         public static PetApplicationDTO toDTO(PetApplicationForm form) {
             return PetApplicationDTO.builder()
+                    .desertionNo(form.getAnimal().getDesertionNo())
                     .formId(form.getFormId())
                     .kindFullNm(form.getAnimal().getKindFullNm())
                     .age(form.getAnimal().getAge())
@@ -98,7 +104,7 @@ public class ReveiwBoardDetailDTO {
             this.originFileName = originFileName;
         }
 
-        public static ImageDTO toDTO(Image  image) {
+        public static ImageDTO toDTO(Image image) {
             return ImageDTO.builder()
                     .thumbnailIs(image.getThumbnailIs())
                     .s3Url(image.getS3Url())
@@ -141,7 +147,8 @@ public class ReveiwBoardDetailDTO {
     }
 
     @Builder(toBuilder = true)
-    public ReveiwBoardDetailDTO(String nickname, Long userId, String boardTitle, String boardContent, LocalDateTime createdAt, Long boardViewCount, int likeItCount, Boolean isLiked, PetApplicationDTO petApplicationDTO, List<CommentDTO> comments, List<ImageDTO> images) {
+    public ReveiwBoardDetailDTO(Long id, String nickname, Long userId, String boardTitle, String boardContent, LocalDateTime createdAt, Long boardViewCount, int likeItCount, Boolean isLiked, PetApplicationDTO petApplicationDTO, List<CommentDTO> comments, List<ImageDTO> images) {
+        this.id = id;
         this.nickname = nickname;
         this.userId = userId;
         this.boardTitle = boardTitle;

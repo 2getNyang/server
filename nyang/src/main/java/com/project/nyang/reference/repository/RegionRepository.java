@@ -21,4 +21,5 @@ public interface RegionRepository extends JpaRepository<Region, String> {
      */
     @Query("SELECT r.regionName FROM Region r")
     List<String> findAllRegions();
+    Optional<Region> findByRegionCode(String regionCode);
 }
