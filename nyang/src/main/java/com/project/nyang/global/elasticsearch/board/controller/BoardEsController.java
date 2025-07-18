@@ -1,9 +1,9 @@
-package com.project.nyang.modules.board.elasticsearch.controller;
+package com.project.nyang.global.elasticsearch.board.controller;
 
 import com.project.nyang.global.common.api.ApiResponse;
 import com.project.nyang.global.common.api.ApiSuccessResponse;
-import com.project.nyang.modules.board.elasticsearch.dto.BoardListDTO;
-import com.project.nyang.modules.board.elasticsearch.service.BoardEsService;
+import com.project.nyang.global.elasticsearch.board.dto.BoardListDTO;
+import com.project.nyang.global.elasticsearch.board.service.BoardEsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

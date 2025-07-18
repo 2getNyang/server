@@ -1,17 +1,11 @@
-package com.project.nyang.modules.board.elasticsearch.dto;
+package com.project.nyang.global.elasticsearch.board.dto;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.elasticsearch.annotations.Document;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * Elasticsearch에 저장되는 게시글 정보 모델

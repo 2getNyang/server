@@ -48,6 +48,8 @@ public class ReveiwBoardDetailDTO {
     @Getter
     public static class PetApplicationDTO {
         // =========== 신청서 내용 ===========
+        @Schema(description = "유기 동물 번호")
+        private String desertionNo;
         @Schema(description = "신청 번호")
         private Long formId;
         @Schema(description = "동물 전체 이름")
@@ -64,7 +66,8 @@ public class ReveiwBoardDetailDTO {
         private String careName;
 
         @Builder
-        public PetApplicationDTO(Long formId, String kindFullNm, String age, String sexCd, LocalDate happenDt, String subRegionName, String careName) {
+        public PetApplicationDTO(String desertionNo, Long formId, String kindFullNm, String age, String sexCd, LocalDate happenDt, String subRegionName, String careName) {
+            this.desertionNo = desertionNo;
             this.formId = formId;
             this.kindFullNm = kindFullNm;
             this.age = age;
@@ -76,6 +79,7 @@ public class ReveiwBoardDetailDTO {
 
         public static PetApplicationDTO toDTO(PetApplicationForm form) {
             return PetApplicationDTO.builder()
+                    .desertionNo(form.getAnimal().getDesertionNo())
                     .formId(form.getFormId())
                     .kindFullNm(form.getAnimal().getKindFullNm())
                     .age(form.getAnimal().getAge())
@@ -100,7 +104,7 @@ public class ReveiwBoardDetailDTO {
             this.originFileName = originFileName;
         }
 
-        public static ImageDTO toDTO(Image  image) {
+        public static ImageDTO toDTO(Image image) {
             return ImageDTO.builder()
                     .thumbnailIs(image.getThumbnailIs())
                     .s3Url(image.getS3Url())
