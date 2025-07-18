@@ -37,10 +37,6 @@ public class Auth {
     @Column(name = "sns_access_token")
     private String snsAccessToken;
 
-    @Column(name="sns_id")
-    private String snsId;
-
-
 
     //테이블과 테이블을 연결      (1대1 관계에서는 연관관계 주인쪽만 패치 전략이 적용됨)
     @OneToOne(fetch = FetchType.LAZY) //지연로딩 적용 -> Auth 엔티티 조회할 때 user 객체는 불러오지 않음

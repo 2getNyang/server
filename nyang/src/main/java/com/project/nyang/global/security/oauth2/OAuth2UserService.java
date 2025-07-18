@@ -58,7 +58,6 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         Map<String, Object> attributes = oAuth2User.getAttributes();
         String loginId, name, email;
         String snsAccessToken = null;
-        String snsRefreshToken = null;
 
 
         // provider 별로 파싱 방식이 다름
@@ -166,6 +165,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
             Auth auth = optionalAuth.get();
             auth.updateAccessToken(accessToken);
             auth.updateSnsAccessToken(snsAccessToken);
+            auth.updateRefreshToken(refreshToken);
             authRepository.save(auth); // 반드시 저장!
         } else {
             Auth auth = Auth.builder()
@@ -178,9 +178,6 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
             authRepository.save(auth);
         }
-
-
-
 
 
         // 최종적으로 Spring Security에 전달할 OAuth2User 반환
