@@ -10,6 +10,7 @@ import com.project.nyang.modules.comment.dto.AnimalCommentDTO;
 import com.project.nyang.modules.comment.entity.Comment;
 import com.project.nyang.modules.comment.repository.CommentRepository;
 import com.project.nyang.modules.like.repository.LikeRepository;
+import com.project.nyang.modules.shelter.entity.Shelter;
 import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.modules.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -82,7 +83,7 @@ public class AnimalService {
     //Animal 상세 조회
     public AnimalDTO getAnimalDetail(String desertionNo,  Long userId) {
 
-        Animal animal = animalRepository.findByDesertionNo(desertionNo)
+        Animal animal = animalRepository.findByDesertionNoWithShelter(desertionNo)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_ANIMAL));
 
         // 댓글 조회
@@ -107,6 +108,7 @@ public class AnimalService {
 
     // Entity → DTO 변환
     private AnimalDTO toDTO(Animal animal, List<AnimalCommentDTO> comments, boolean bookmarked) {
+        Shelter shelter = animal.getShelter();
         return AnimalDTO.builder()
                 .desertionNo(animal.getDesertionNo())
                 .happenDt(animal.getHappenDt())
@@ -127,6 +129,9 @@ public class AnimalService {
                 .specialMark(animal.getSpecialMark())
                 .comments(comments)
                 .bookmarked(bookmarked)   // 여기에 추가
+                .shelterName(shelter.getCareName())
+                .shelterAddress(shelter.getCareAddress())
+                .shelterTel(shelter.getCareTel())
                 .build();
     }
 

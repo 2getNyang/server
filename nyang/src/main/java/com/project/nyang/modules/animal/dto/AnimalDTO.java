@@ -74,9 +74,6 @@ public class AnimalDTO {
     @Schema(description = "API 수정 시각")
     private LocalDateTime updTm;
 
-    @Schema(description = "보호소 번호", example = "")
-    private String careRegNumber;
-
     @Schema(description = "동물 종류 전체 이름", example = "[고양이] 샴")
     private String kindFullNm;
 
@@ -97,5 +94,15 @@ public class AnimalDTO {
     
     @Schema(description = "북마크 체크")
     private boolean bookmarked;
+
+    //보호소 정보 추가
+    @Schema(description = "보호소 이름", example = "성동구 유기동물보호소")
+    private String shelterName;
+
+    @Schema(description = "보호소 주소", example = "서울특별시 성동구 행당로 17")
+    private String shelterAddress;
+
+    @Schema(description = "보호소 전화번호", example = "02-1234-5678")
+    private String shelterTel;
 
 }
