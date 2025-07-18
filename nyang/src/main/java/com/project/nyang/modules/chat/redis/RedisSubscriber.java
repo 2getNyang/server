@@ -17,7 +17,6 @@ import java.nio.charset.StandardCharsets;
  * @fileName : RedisSubscriber
  * @since : 2025-07-14
  */
-// RedisSubscriber.java (수정)
 @Component
 @RequiredArgsConstructor
 @Slf4j

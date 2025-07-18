@@ -1,10 +1,8 @@
 package com.project.nyang.reference.dto;
 
+import com.project.nyang.reference.entity.Region;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * 시/도 이름 정보 dto 입니다.
@@ -15,9 +13,21 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegionDTO {
-    @Schema(description = "시도 이름", example = "서울특별시")
-    private String regionName;  // 시도 이름만 포함
+    private String regionCode;
+    private String regionName;
+
+    public RegionDTO(String regionName) {
+        this.regionName = regionName;
+    }
+
+    public static RegionDTO from(Region region) {
+        return RegionDTO.builder()
+                .regionCode(region.getRegionCode())
+                .regionName(region.getRegionName())
+                .build();
+    }
 }

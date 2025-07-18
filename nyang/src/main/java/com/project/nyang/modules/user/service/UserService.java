@@ -2,6 +2,8 @@ package com.project.nyang.modules.user.service;
 
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
+import com.project.nyang.modules.user.dto.ChatUserInfoDTO;
+import com.project.nyang.modules.user.dto.AuthInfoDTO;
 import com.project.nyang.modules.user.dto.UpdateUserInfoDTO;
 import com.project.nyang.modules.user.dto.UserInfoDTO;
 import com.project.nyang.modules.user.entity.User;
@@ -23,6 +25,29 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository  userRepository;
+
+    //채팅방에서 상대방 정보 가져오는 메서드
+    public ChatUserInfoDTO getChatUserInfo(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
+
+        return new ChatUserInfoDTO(
+                user.getId(),
+                user.getNickname()
+        );
+    }
+
+    public AuthInfoDTO getAuthInfo(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST));
+
+        return AuthInfoDTO.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .loginType(user.getLoginType())
+                .build();
+    }
 
     public UserInfoDTO getUserInfo(Long userId) {
         User user = userRepository.findById(userId)

@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 채팅 관련 서비스입니다.
@@ -35,6 +37,7 @@ public class ChatMessageService {
 
     public void saveMessage(ChatMessageDTO dto) {
 
+
         ChatRoom room = chatRoomRepository.findById(dto.getRoomId())
                 .orElseThrow(() -> new EntityNotFoundException("채팅방이 존재하지 않습니다."));
 
@@ -42,15 +45,27 @@ public class ChatMessageService {
         chatMessageRepository.save(message);
     }
 
+    //안읽은 메시지 수 조회
+    @Transactional(readOnly = true)
     public Long countUnreadMessages(Long roomId, Long userId) {
         return chatMessageRepository.countUnreadMessages(roomId, userId);
     }
+
+    public List<ChatMessageDTO> getMessagesByRoomId(Long roomId) {
+        List<ChatMessage> messages = chatMessageRepository.findByRoomIdOrderByCreatedAtAsc(roomId);
+        return messages.stream()
+                .map(ChatMessageDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
 
     @Transactional
     public void markAllAsRead(Long roomId, Long userId) {
         chatMessageRepository.markMessagesAsRead(roomId, userId);
     }
-}
+    
+    }
+
 
 
 

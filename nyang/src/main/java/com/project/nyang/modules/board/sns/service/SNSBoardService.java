@@ -3,6 +3,7 @@ package com.project.nyang.modules.board.sns.service;
 
 import com.project.nyang.global.common.S3.S3Service;
 import com.project.nyang.global.exception.CustomException;
+import com.project.nyang.global.exception.ErrorCode;
 import com.project.nyang.global.security.jwt.JwtTokenProvider;
 import com.project.nyang.modules.board.elasticsearch.dto.BoardEsDocument;
 import com.project.nyang.modules.board.elasticsearch.repository.BoardEsRepository;
@@ -274,11 +275,13 @@ public class SNSBoardService {
         Long likeCount = likeRepository.countByBoardId(boardId);
         //DB 조회수 증가
         increaseViewCount(boardId);
-        /* Elastic Search 조회수 증가*/
-        BoardEsDocument esDocument = boardEsRepository.findById(String.valueOf(boardId))
-                .orElseThrow(() -> new IllegalArgumentException("엘라스틱 서치에 게시글이 없어요"+ boardId));
-        increaseViewCount(esDocument.getViewCount());
-        boardEsRepository.save(esDocument);
+        //DB 조회수 증가
+        board.increaseViewCount();
+
+        /** elasticSearch 조회수 증가 */
+        BoardEsDocument doc = boardEsRepository.findById(String.valueOf(board.getId())).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+        doc.increaseViewCount();
+        boardEsRepository.save(doc);
 
         return SNSBoardDTO.builder()
                 .id(board.getId())

@@ -59,7 +59,8 @@ public class SecurityConfig {
                                         "/api/v1/shelters/**",
                                         "/ws-stomp/**",         //채팅관련
                                         "/chat/**", "/sub/**", "/pub/**",
-                                        "/chat-room/**",
+                                        "/api/v1/chat/**",
+                                        "/api/v1/user/**",
                                         "/*"
 
                                 ).permitAll()
@@ -70,7 +71,8 @@ public class SecurityConfig {
                                         "/api/v1/bookmark/**",
                                         "/api/v1/like/**",
                                         "/api/v1/user/**",
-                                        "/api/v1/boards/review/**"
+                                        "/api/v1/boards/review/**",
+                                        "/api/v1/auth/me"
                                         ).authenticated() //인증이 필요한 경로
 
 
