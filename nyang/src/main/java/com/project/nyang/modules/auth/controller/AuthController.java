@@ -8,7 +8,6 @@ import com.project.nyang.global.security.oauth2.OAuth2WithdrawNaverService;
 import com.project.nyang.modules.auth.service.AuthService;
 import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.modules.user.repository.UserRepository;
-import com.project.nyang.modules.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,8 +15,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -132,7 +133,8 @@ public class AuthController {
     @PostMapping("/withdraw")
     public ResponseEntity<?> withdraw(
             @CookieValue("accessToken") String accessToken,
-            @CookieValue("sns_access_token") String snsAccessToken
+            @CookieValue("sns_access_token") String snsAccessToken,
+            HttpServletResponse response
     ) {
         // user 확인
         Long userId = jwtTokenProvider.getUserIdFromToken(accessToken);
@@ -144,6 +146,23 @@ public class AuthController {
 //            case "kakao" -> oauth2WithdrawService.(snsAccessToken);
             default -> throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
+        // 쿠키 삭제 응답
+        ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
 
 
         return ResponseEntity.ok(ApiSuccessResponse.success(null, "회원 탈퇴가 완료되었습니다."));
