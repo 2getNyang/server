@@ -1,4 +1,4 @@
-package com.project.nyang.modules.board.elasticsearch.service;
+package com.project.nyang.global.elasticsearch.board.service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.SortOrder;
@@ -7,12 +7,9 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.project.nyang.global.searchlog.dto.SearchLogMessage;
-import com.project.nyang.modules.board.elasticsearch.dto.BoardEsDocument;
-import com.project.nyang.modules.board.elasticsearch.dto.BoardListDTO;
-import com.project.nyang.modules.board.elasticsearch.dto.LostBoardListDTO;
-import com.project.nyang.modules.board.elasticsearch.repository.BoardEsRepository;
-import org.springframework.util.concurrent.ListenableFuture;
-import org.springframework.util.concurrent.ListenableFutureCallback;
+import com.project.nyang.global.elasticsearch.board.dto.BoardEsDocument;
+import com.project.nyang.global.elasticsearch.board.dto.BoardListDTO;
+import com.project.nyang.global.elasticsearch.board.dto.LostBoardListDTO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +24,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 /**
  * ElasticSearch 관련 Service

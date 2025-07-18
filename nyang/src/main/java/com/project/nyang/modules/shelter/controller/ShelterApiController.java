@@ -1,9 +1,13 @@
 package com.project.nyang.modules.shelter.controller;
 import com.project.nyang.modules.shelter.service.ShelterApiService;
+import com.project.nyang.reference.entity.SubRegion;
+import com.project.nyang.reference.repository.SubRegionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 /**
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ShelterApiController {
     private final ShelterApiService shelterApiService;
+    private final SubRegionRepository subRegionRepository;
 
     /**
      * 보호소 정보 갱신 트리거 (테스트용)
@@ -30,4 +35,14 @@ public class ShelterApiController {
         shelterApiService.fetchAndUpdateShelters();
         return ResponseEntity.ok("보호소 공공데이터 수집 및 갱신이 완료되었습니다.");
     }
+    
+    // N + 1 테스트 컨트롤러
+//    @GetMapping("/test")
+//    public void test() {
+//        List<SubRegion> subRegions = subRegionRepository.findWithRegionBySubRegionName("남구");
+//        for (SubRegion sr : subRegions) {
+//            log.info("🚨 region 확인: {}", sr.getRegion().getRegionName());
+//        }
+//    }
+
 }

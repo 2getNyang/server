@@ -29,7 +29,7 @@ public class LostDetailResponseDTO {
     @Schema(description = "유저 ID", example = "1")
     private Long userId;
     @Schema(description = "유저닉네임", example = "고양이 대장")
-    private String nickName;
+    private String nickname;
 
     @Schema(description = "게시글 타입. (MS:실종 / WT:목격)", example = "MS")
     private String lostType;    //MS : 실종 or WT : 목격

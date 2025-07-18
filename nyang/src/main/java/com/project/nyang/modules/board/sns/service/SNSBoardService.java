@@ -2,12 +2,9 @@ package com.project.nyang.modules.board.sns.service;
 
 
 import com.project.nyang.global.common.S3.S3Service;
-import com.project.nyang.global.exception.CustomException;
-import com.project.nyang.global.exception.ErrorCode;
-import com.project.nyang.global.security.jwt.JwtTokenProvider;
-import com.project.nyang.modules.board.elasticsearch.dto.BoardEsDocument;
-import com.project.nyang.modules.board.elasticsearch.repository.BoardEsRepository;
-import com.project.nyang.modules.board.elasticsearch.service.BoardEsService;
+import com.project.nyang.global.elasticsearch.board.dto.BoardEsDocument;
+import com.project.nyang.global.elasticsearch.board.repository.BoardEsRepository;
+import com.project.nyang.global.elasticsearch.board.service.BoardEsService;
 import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.modules.board.sns.dto.SNSBoardDTO;
 import com.project.nyang.modules.board.sns.dto.SNSBoardUpdateDTO;
@@ -54,9 +51,9 @@ public class SNSBoardService {
 
 
     /**
-    * 카테고리 타입: sns게시판
-    * 카테고리:ID 1:동물공고 / 2:입양후기 / 3: sns홍보 / 4:실종,목격제보
-    **/
+     * 카테고리 타입: sns게시판
+     * 카테고리:ID 1:동물공고 / 2:입양후기 / 3: sns홍보 / 4:실종,목격제보
+     **/
     private static final Long SNS_CATEGORY_ID = 3L;
     private final BoardEsRepository boardEsRepository;
     private final BoardEsService boardEsService;
@@ -217,7 +214,7 @@ public class SNSBoardService {
                         .orElse(null)
                         : null)
                 .nickname(board.getUser().getNickname())
-                        .build();
+                .build();
         boardEsRepository.save(doc);
     }
 
@@ -274,12 +271,12 @@ public class SNSBoardService {
         //좋아요 수 조회
         Long likeCount = likeRepository.countByBoardId(boardId);
         //DB 조회수 증가
-        board.increaseViewCount();
-
-        /** elasticSearch 조회수 증가 */
-        BoardEsDocument doc = boardEsRepository.findById(String.valueOf(board.getId())).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
-        doc.increaseViewCount();
-        boardEsRepository.save(doc);
+        increaseViewCount(boardId);
+        /* Elastic Search 조회수 증가*/
+        BoardEsDocument esDocument = boardEsRepository.findById(String.valueOf(boardId))
+                .orElseThrow(() -> new IllegalArgumentException("엘라스틱 서치에 게시글이 없어요"+ boardId));
+        esDocument.increaseViewCount();
+        boardEsRepository.save(esDocument);
 
         return SNSBoardDTO.builder()
                 .id(board.getId())
@@ -345,6 +342,13 @@ public class SNSBoardService {
                         .map(Image::getS3Url) // getUrl()은 이미지 엔티티의 S3 URL 반환 메서드
                         .toList())
                 .build();
+    }
+
+    @Transactional
+    public void increaseViewCount(Long boardId) {
+        Board board = snsBoardRepository.findById(boardId)
+                .orElseThrow();
+        board.increaseViewCount();
     }
 
 

@@ -5,14 +5,14 @@ import com.project.nyang.global.common.entity.BaseTime;
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
-import com.project.nyang.modules.board.elasticsearch.dto.BoardEsDocument;
-import com.project.nyang.modules.board.elasticsearch.repository.BoardEsRepository;
+import com.project.nyang.global.elasticsearch.board.dto.BoardEsDocument;
+import com.project.nyang.global.elasticsearch.board.repository.BoardEsRepository;
+import com.project.nyang.modules.adoption.repository.AdoptionRepository;
 import com.project.nyang.modules.board.review.dto.ReviewBoardUpdateDTO;
 import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.modules.board.review.dto.ReveiwBoardDetailDTO;
 import com.project.nyang.modules.board.review.dto.ReveiwBoardListDTO;
 import com.project.nyang.modules.board.review.dto.ReviewBoardCreateDTO;
-import com.project.nyang.modules.board.review.repository.AdoptionTempRepository;
 import com.project.nyang.modules.board.review.repository.ReviewBoardRepository;
 import com.project.nyang.modules.image.entity.Image;
 import com.project.nyang.modules.like.repository.LikeRepository;
@@ -46,7 +46,7 @@ public class ReveiwBoardService {
     private final ReviewBoardRepository reviewBoardRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
-    private final AdoptionTempRepository adoptionRepository;
+    private final AdoptionRepository adoptionRepository;
     private final BoardEsRepository boardEsRepository;
     private final S3Service s3Service;
     private static final Long CATEGORY_ID = 2L;
@@ -62,7 +62,7 @@ public class ReveiwBoardService {
     public void createReviewBoard(Long userId, ReviewBoardCreateDTO boardDTO, List<MultipartFile> images) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED)
-);
+                );
 
         Category category = categoryRepository.findById(CATEGORY_ID).orElseThrow(() -> new IllegalArgumentException("카테고리 번호가 잘못되었습니다 :" + CATEGORY_ID));
 
@@ -231,7 +231,6 @@ public class ReveiwBoardService {
 
         /** elasticSearch 삭제 */
         boardEsRepository.deleteById(String.valueOf(board.getId()));
-
     }
 
     /**

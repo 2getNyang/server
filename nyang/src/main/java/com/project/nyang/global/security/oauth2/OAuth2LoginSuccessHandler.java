@@ -63,6 +63,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         refreshTokenCookie.setPath("/");
         // refreshTokenCookie.setMaxAge(60 * 60 * 24); // 1일짜리
         response.addCookie(refreshTokenCookie);
+        response.sendRedirect("http://localhost:8081/oauth2/redirect?token=" + accessToken);
 
         /** SNS AccessToken */
         Cookie snsAccessTokenCookie = new Cookie("sns_access_token", snsAccessToken);
