@@ -45,7 +45,7 @@ public class PdfGenerator {
             String html = templateEngine.process("adoption_template_v1", context); // .html 없이 템플릿 이름만
 
             // 3. 저장 경로 (OS 독립적)
-            Path baseDir = Paths.get("C:", "Users", "likelion", "2getNyang", "server", "Pdf");
+            Path baseDir = Paths.get(System.getProperty("user.dir"), "Pdf");
             File directory = baseDir.toFile();
             if (!directory.exists()) directory.mkdirs();
 
