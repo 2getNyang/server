@@ -32,16 +32,25 @@ public class LostUpdateResponseDTO {
     private LocalDate missingDate;
     @Schema(description = "실종/목격 장소", example = "부천역 3번 출구 근처")
     private String missingLocation;
+
     @Schema(description = "시/도 이름", example = "경기도")
     private String regionName;
+    @Schema(description = "시/도 코드", example = "00333")
+    private String regionCode;
     @Schema(description = "시/군/구 이름", example = "부천시")
     private String subRegionName;
+    @Schema(description = "시/군/구 코드", example = "부천시")
+    private String subRegionCode;
     @Schema(description = "작성자 연락처", example = "010-2222-3333")
     private String phone;
     @Schema(description = "축종", example = "고양이")
     private String upKindName;      //축종
+    @Schema(description = "축종 코드", example = "고양이")
+    private String upKindCd;      //축종
     @Schema(description = "품종", example = "레그돌")
     private String kindName;        //품종
+    @Schema(description = "품종 코드", example = "레그돌")
+    private String kindCd;        //품종
     @Schema(description = "성별(M:수컷 / F:암컷 / Q:모름)", example = "F")
     private String gender;
     @Schema(description = "나이", example = "3")

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>1:1 채팅 테스트</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+<h2>💬 1:1 채팅 : 6번 유저</h2>
+
+<label for="userId">👤 사용자 ID:</label>
+<input type="number" id="userId" value="6"><br><br>
+
+<label for="roomId">💬 채팅방 ID:</label>
+<input type="number" id="roomId" value="1"><br><br>
+
+<input type="text" id="message" placeholder="메시지를 입력하세요">
+<button onclick="sendMessage()">전송</button>
+<button onclick="markAsRead()">읽음 처리</button>
+
+<hr>
+<div id="chatBox" style="border:1px solid gray; height:300px; overflow-y:auto; padding:10px;"></div>
+
+<script>
+    let stompClient = null;
+
+    function connect() {
+        const socket = new SockJS("http://localhost:8080/ws-stomp");
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, () => {
+            const roomId = document.getElementById("roomId").value;
+            stompClient.subscribe("/sub/chat/" + roomId, (message) => {
+                const msg = JSON.parse(message.body);
+                const chatBox = document.getElementById("chatBox");
+                chatBox.innerHTML += `<div><b>${msg.senderId}:</b> ${msg.content}</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        });
+    }
+
+    function sendMessage() {
+        const roomId = document.getElementById("roomId").value;
+        const senderId = document.getElementById("userId").value;
+        const content = document.getElementById("message").value;
+
+        stompClient.send("/pub/chat/message", {}, JSON.stringify({
+            roomId: roomId,
+            senderId: senderId,
+            content: content,
+            isRead: false
+        }));
+        document.getElementById("message").value = '';
+    }
+
+    function markAsRead() {
+        const roomId = document.getElementById("roomId").value;
+        const userId = document.getElementById("userId").value;
+
+        stompClient.send("/pub/chat/read/" + roomId, {
+            userId: userId  // 👉 헤더에 추가
+        });
+
+        alert("✅ 읽음 처리 요청 보냄");
+    }
+
+    connect();
+</script>
+</body>
+</html>

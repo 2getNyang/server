@@ -4,9 +4,8 @@ import com.project.nyang.global.common.S3.S3Service;
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
 import com.project.nyang.global.security.core.CustomUserDetails;
-import com.project.nyang.modules.board.elasticsearch.dto.BoardEsDocument;
-import com.project.nyang.modules.board.elasticsearch.repository.BoardEsRepository;
-import com.project.nyang.modules.board.elasticsearch.service.BoardEsService;
+import com.project.nyang.global.elasticsearch.board.dto.BoardEsDocument;
+import com.project.nyang.global.elasticsearch.board.repository.BoardEsRepository;
 import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.modules.board.lost.dto.*;
 import com.project.nyang.modules.board.lost.repository.LostRepository;
@@ -15,10 +14,13 @@ import com.project.nyang.modules.image.entity.Image;
 import com.project.nyang.modules.like.repository.LikeRepository;
 import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.modules.user.repository.UserRepository;
+import com.project.nyang.reference.dto.RegionDTO;
+import com.project.nyang.reference.dto.UpKindDTO;
 import com.project.nyang.reference.entity.*;
 import com.project.nyang.reference.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -27,13 +29,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static com.project.nyang.global.exception.ErrorCode.*;
+import java.util.stream.IntStream;
 
 /**
  * 실종/목격 게시판 서비스입니다.
@@ -45,6 +45,7 @@ import static com.project.nyang.global.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LostService {
 
     private final LostRepository lostRepository;
@@ -60,7 +61,6 @@ public class LostService {
     private final S3Service s3Service;
     private final Long CATEGORY_ID = 4L;
     private final BoardEsRepository boardEsRepository;
-    private final BoardEsService boardEsService;
 
     //실종/목격 게시판의 모든 글 가져오는 메서드(페이징 처리완료)
     public Page<LostListResponseDTO> getLostBoard(Long categoryId, Pageable pageable) {
@@ -114,14 +114,13 @@ public class LostService {
                 .filter(comment -> comment.getDeletedAt() == null)
                 .map(LostDetailResponseDTO.CommentDTO::toDTO)
                 .collect(Collectors.toList());
-        
+
         //조회수 증가
         board.increaseViewCount();
 
         //좋아요 수 조회
         Long likeCount = likeRepository.countByBoardId(boardId);
 
-        //elastic search 조회수 증가
         /** elasticSearch 조회수 증가 */
         BoardEsDocument doc = boardEsRepository.findById(String.valueOf(board.getId())).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
         doc.increaseViewCount();
@@ -130,7 +129,7 @@ public class LostService {
         return LostDetailResponseDTO.builder()
                 .boardId(board.getId())
                 .userId(board.getUser().getId())
-                .nickName(board.getUser().getNickname())
+                .nickname(board.getUser().getNickname())
                 .lostType(
                         "MS".equalsIgnoreCase(board.getLostType()) ? "실종" :
                                 "WT".equalsIgnoreCase(board.getLostType()) ? "목격" : null
@@ -158,31 +157,51 @@ public class LostService {
                 .build();
     }
 
+    //실종/목격 게시판 글작성 폼
+    public LostCreateFormDTO getLostFormInfo() {
+        return LostCreateFormDTO.builder()
+                .upKinds(upkindRepository.findAll().stream()
+                        .map(UpKindDTO::from)
+                        .toList())
+                .regions(regionRepository.findAll().stream()
+                        .map(RegionDTO::from)
+                        .toList())
+                .genders(List.of("M", "F", "Q"))
+                .lostTypes(List.of("MS", "WT"))
+                .ages(IntStream.rangeClosed(1, 20).boxed().toList())
+                .build();
+    }
+
     //실종/목격게시판 글작성 + 이미지 db저장 + s3 이미지 업로드
     @Transactional
-    public Long createLostBoard(LostCreateRequestDto dto, List<MultipartFile> images) {
+    public Long createLostBoard(LostCreateRequestDTO dto, List<MultipartFile> images) {
 
         // 인증된 사용자 가져오기
         Long userId = SecurityUtil.getCurrentUserId();
 
+        // 프론트에서 넘어온 축종 코드 확인
+        log.info("프론트에서 받은 축종 코드: {}", dto.getKindCd());
+
+        upkindRepository.findByUpKindCd(dto.getKindCd());
+
         //1. 연관 엔티티 유효성 검사
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(String.valueOf(BAD_REQUEST)));
+                .orElseThrow(() -> new EntityNotFoundException("사용자 정보를 찾을 수 없습니다."));
+
 
         Category category = categoryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> new IllegalArgumentException(String.valueOf(CATEGORY_NOT_FOUND)));
+                .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
 
-        Region region = regionRepository.findByRegionName(dto.getRegionName())
-                .orElse(null);
+        UpKind upKind = upkindRepository.findByUpKindCd(dto.getUpKindCd())
+                .orElseThrow(() -> new IllegalArgumentException("해당 축종이 존재하지 않습니다."));
+        Kind kind = kindRepository.findByKindCd(dto.getKindCd())
+                .orElseThrow(() -> new IllegalArgumentException("해당 품종이 존재하지 않습니다."));
 
-        SubRegion subRegion = subRegionRepository.findBySubRegionName(dto.getSubRegionName())
-                .orElse(null);
+        Region region = regionRepository.findByRegionCode(dto.getRegionCode())
+                .orElseThrow(() -> new IllegalArgumentException("해당 시도를 찾을 수 없습니다."));
 
-        UpKind upKind = upkindRepository.findByUpKindNm(dto.getUpKindName())
-                .orElse(null);
-
-        Kind kind = kindRepository.findByKindNm(dto.getKindName())
-                .orElse(null);
+        SubRegion subRegion = subRegionRepository.findBySubRegionCode(dto.getSubRegionCode())
+                .orElseThrow(() -> new IllegalArgumentException("해당 시군구를 찾을 수 없습니다."));
 
         //2. 게시글 먼저 저장(이미지는 일단 빈리스트로 넘김)
         Board board = dto.toEntity(user, category, new ArrayList<>(), region, subRegion, upKind, kind);
@@ -211,6 +230,8 @@ public class LostService {
                 board.getImages().add(image);
             }
         }
+
+        /** elasticSearch 저장 */
         BoardEsDocument doc = BoardEsDocument.builder()
                 .id(String.valueOf(board.getId()))
                 .viewCount(board.getViewCount())
@@ -230,6 +251,8 @@ public class LostService {
                         .orElse(null)
                         : null)
                 .nickname(board.getUser().getNickname())
+                .boardContent(board.getBoardContent())
+                .distinctFeatures(board.getDistinctFeatures())
                 .build();
         boardEsRepository.save(doc);
 
@@ -313,11 +336,15 @@ public class LostService {
                 .lostType(board.getLostType())
                 .missingDate(board.getMissingDate())
                 .missingLocation(board.getMissingLocation())
+                .regionCode(board.getRegion().getRegionCode())
                 .regionName(board.getRegion().getRegionName())
+                .subRegionCode(board.getSubRegion().getSubRegionCode())
                 .subRegionName(board.getSubRegion().getSubRegionName())
                 .phone(board.getPhone())
                 .upKindName(board.getUpKind().getUpKindNm())
+                .upKindCd(board.getUpKind().getUpKindCd())
                 .kindName(board.getKind().getKindNm())
+                .kindCd(board.getKind().getKindCd())
                 .gender(board.getGender())
                 .age(board.getAge())
                 .furColor(board.getFurColor())
@@ -417,6 +444,8 @@ public class LostService {
                         .orElse(null)
                         : null)
                 .nickname(board.getUser().getNickname())
+                .boardContent(board.getBoardContent())
+                .distinctFeatures(board.getDistinctFeatures())
                 .build();
         boardEsRepository.save(doc);
 

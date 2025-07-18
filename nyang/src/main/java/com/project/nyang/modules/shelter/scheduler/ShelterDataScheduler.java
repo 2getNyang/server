@@ -1,6 +1,7 @@
 package com.project.nyang.modules.shelter.scheduler;
 
 import com.project.nyang.modules.shelter.service.ShelterApiService;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 public class ShelterDataScheduler {
 
     private final ShelterApiService shelterApiService;
+
 
     /**
      * 매월 1일 새벽 2시에 실행

@@ -57,6 +57,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         // 소셜 사용자 정보 추출
         Map<String, Object> attributes = oAuth2User.getAttributes();
         String loginId, name, email;
+        String snsAccessToken = null;
 
 
         // provider 별로 파싱 방식이 다름
@@ -67,18 +68,26 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
             email = (String) kakaoAccount.get("email");
             Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
             name = (String) profile.get("nickname");
+            // kakao access token
+            snsAccessToken = userRequest.getAccessToken().getTokenValue();
 
         }else if("naver".equals(provider)){
 
             Map<String, Object> response = (Map<String, Object>) attributes.get("response");
             loginId = response.get("id").toString() + "@naver"; // 고유 id + 구분자
             email = (String) response.get("email");
-            //여기서 나타내는 name 이 닉네임 맞겠죠?
             name = (String) response.get("nickname");
+            // 네이버 access token
+            snsAccessToken = userRequest.getAccessToken().getTokenValue();
+
+
+            System.out.println("네이버 access token: " + snsAccessToken);
         } else if("google".equals(provider)){
             loginId = attributes.get("sub").toString() + "@google";     // 고유 id + 구분자
             email = (String) attributes.get("email");
             name = (String) attributes.get("name");
+            // google accesstoken
+            snsAccessToken = userRequest.getAccessToken().getTokenValue();
             // 구글 연동해제에 필요한 구글 액세스 토큰. jwt 액세스 토큰과 다름
 //            String googleAccessToken = userRequest.getAccessToken().getTokenValue();
 //            System.out.println("구글 access token: " + googleAccessToken);
@@ -146,6 +155,8 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         customAttributes.put("refreshToken", refreshToken);
         customAttributes.put("name", name);
         customAttributes.put("id", user.getId()); // ← PK(id) 추가
+        customAttributes.put("snsAccessToken", snsAccessToken);
+
 
         // Auth 엔티티에 토큰 저장 (User와 1:1 매핑)
         // 카카오, 구글에서 제공받은 토큰을 authRepository를 통해 저장
@@ -153,6 +164,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         if (optionalAuth.isPresent()) {
             Auth auth = optionalAuth.get();
             auth.updateAccessToken(accessToken);
+            auth.updateSnsAccessToken(snsAccessToken);
             auth.updateRefreshToken(refreshToken);
             authRepository.save(auth); // 반드시 저장!
         } else {
@@ -161,10 +173,12 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
                     .tokenType("Bearer")
+                    .snsAccessToken(snsAccessToken)
                     .build();
 
             authRepository.save(auth);
         }
+
 
         // 최종적으로 Spring Security에 전달할 OAuth2User 반환
         return new DefaultOAuth2User(

@@ -58,6 +58,7 @@ public class ReviewBoardController {
     @Operation(summary = "입양 후기 게시글 상세 조회")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ReveiwBoardDetailDTO>> getReviewBoardDetail(@Parameter(description = "게시물 ID", example = "1") @PathVariable Long id) {
+
         return ResponseEntity.ok(ApiSuccessResponse.success(reveiwBoardService.getReviewBoardDetail(id), "입양 후기 게시글 상세 조회 성공"));
     }
 

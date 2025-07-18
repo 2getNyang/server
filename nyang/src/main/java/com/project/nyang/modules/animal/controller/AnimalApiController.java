@@ -41,13 +41,6 @@ public class AnimalApiController {
         return ResponseEntity.ok("공공데이터 API의 동물 정보를 성공적으로 조회하고 저장하였습니다.");
     }
 
-    //가장 오래된 날짜의 데이터 삭제
-    @GetMapping("/delete")
-    public ResponseEntity<String> deleteOldestAnimals() {
-        animalApiService.deleteOldestAnimals();
-        return ResponseEntity.ok("가장 오래된 날짜의 동물을 성공적으로 삭제했습니다.");
-    }
-
     //업데이트 된 api 불러와서 db에 저장
     @GetMapping("/update")
     public ResponseEntity<String> getUpdateAnimals(@RequestParam String startDate, @RequestParam String endDate) {

@@ -8,6 +8,7 @@ spring:
           batch_size: 100
         order_inserts: true
         order_updates: true
+      show-sql: true
 
   jackson:
     serialization:
@@ -79,6 +80,20 @@ spring:
       max-request-size: 10MB  # multipart/form-data 요청의 최대 허용 크기. 기본 10MB
       enabled: true
 
+  thymeleaf:
+    cache: false
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${SPRING_MAIL_USERNAME}
+    password: ${SPRING_MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
+          starttls.required: true
 
 cloud:
   aws:
@@ -91,7 +106,6 @@ cloud:
       bucket: ${AWS_BUCKET}     # 버킷 이름
     stack:
       auto: false
-
 
 
 jwt:
@@ -125,4 +139,7 @@ management:
 #logging:
 #  pattern:
 #    console: %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight([%-3level]) %cyan(%logger{5}) - %msg%n
-
+#logging:
+#  level:
+#    org.hibernate.sql: debug
+#    org.hibernate.orm.jdbc.bind: trace
