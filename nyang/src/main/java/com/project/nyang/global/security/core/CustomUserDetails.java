@@ -50,6 +50,9 @@ public class CustomUserDetails implements UserDetails {
         return user.getLoginId(); //(중복 안되는 값으로 해야함!)
     }
 
+
+    public User getUser() { return this.user; } //알림기능 구현에서 추가
+
     /** 아래는 현재 계정 상태를 판단하는 메서드 **/
     @Override //현재 계정 상태가 활성화인지
     public boolean isEnabled() {
