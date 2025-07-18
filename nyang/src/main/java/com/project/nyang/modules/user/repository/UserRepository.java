@@ -20,4 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByNickname(String nickname);
 
     Optional<User> findByEmail(String email);
+    //loginid 로 loginType 을 가져옵니다
+    Optional<User> findByLoginTypeAndLoginId(String loginType, String loginId);
+
 }

@@ -21,10 +21,6 @@ public class OAuth2LogoutSuccessHandler implements LogoutSuccessHandler {
     // 카카오 REST API 키 (환경변수나 properties에서 가져오세요)
             private final String kakaoClientId = "${KAKAO_ID}";
     private final String kakaoLogoutRedirectUri = "http://localhost:8080"; // 앱 환경에 맞게 변경
-    private final String  naverLogoutRedirectUri = "http://localhost:8080/login.html";
-    private final String naverLogoutUrl = "https://nid.naver.com/nidlogin.logout?returl=" + naverLogoutRedirectUri;
-
-
 
     // 로그아웃 성공시 호출되는 메서드
     @Override
@@ -48,7 +44,7 @@ public class OAuth2LogoutSuccessHandler implements LogoutSuccessHandler {
 
                 System.out.println("네이버 로그아웃입니다.");
 
-                redirectUrl = "https://nid.naver.com/nidlogin.logout?returl=" + naverLogoutUrl;
+                redirectUrl = "/";
             }
 
             // 카카오 로그인 사용자인 경우 (attributes에 'id' 키가 있음)
@@ -64,6 +60,7 @@ public class OAuth2LogoutSuccessHandler implements LogoutSuccessHandler {
 
         deleteCookie(response, "accessToken");
         deleteCookie(response, "refreshToken");
+        deleteCookie(response, "sns_access_token");
 
         // 최종적으로 redirectUrl로 리디렉트
         response.sendRedirect(redirectUrl);

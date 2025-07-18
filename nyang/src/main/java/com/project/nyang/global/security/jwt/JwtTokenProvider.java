@@ -1,6 +1,8 @@
 package com.project.nyang.global.security.jwt;
 
 import com.project.nyang.global.security.core.CustomUserDetails;
+import com.project.nyang.modules.user.dto.UserInfoDTO;
+import com.project.nyang.modules.user.entity.User;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -21,14 +23,16 @@ import java.util.Date;
 @Component
 @RequiredArgsConstructor //
 public class JwtTokenProvider {
-    /** JWT 토큰 생성 및 추출 검증하는 클래스 **/
+    /**
+     * JWT 토큰 생성 및 추출 검증하는 클래스
+     **/
 
     private final SecretKey secretKey;
-    
-    
+
+
     //현재 인증된 사용자 정보를 기반으로 access, refresh token 발급
     public String generateToken(Authentication authentication, Long expirationMillis) {
-        
+
         //현재 로그인한 사용자의 정보를 꺼냄
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Date expiryDate = new Date(new Date().getTime() + expirationMillis); //토큰 만료시간 생성 (밀리초 단위까지)
@@ -56,32 +60,27 @@ public class JwtTokenProvider {
                 .getBody() //파싱한 토큰의 payload 부분을 꺼내서
                 .get("userId", Long.class); //userId 를 반환
     }
-    
+
     public Boolean validateToken(String token) {
-        try{
+        try {
             Jwts.parserBuilder()
                     .setSigningKey(secretKey)
                     .build()
                     .parseClaimsJws(token);
             return true;
-        } 
-        catch (MalformedJwtException e) {
+        } catch (MalformedJwtException e) {
             //토큰 형식이 잘못되었을 떄
             return false;
-        }
-        catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtException e) {
             //토큰이 만료되었을 때
             return false;
-        }
-        catch (UnsupportedJwtException e) {
+        } catch (UnsupportedJwtException e) {
             //지원하지 않는 토큰일 때
             return false;
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             //토큰 문자열이 비어있거나 이상할 때
             return false;
-        }
-        catch (JwtException e){
+        } catch (JwtException e) {
             //기타 예외
             return false;
         }

@@ -34,7 +34,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
-
+        String snsAccessToken = (String) attributes.get("snsAccessToken");
         String accessToken = (String) attributes.get("accessToken");
         String refreshToken = (String) attributes.get("refreshToken");
         String name = (String) attributes.get("name");
@@ -55,15 +55,22 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
         accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setPath("/");
-      //  accessTokenCookie.setMaxAge(60 * 3); // 3분짜리 임시쿠키
+        //  accessTokenCookie.setMaxAge(60 * 3); // 3분짜리 임시쿠키
         response.addCookie(accessTokenCookie);
 
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setPath("/");
-       // refreshTokenCookie.setMaxAge(60 * 60 * 24); // 1일짜리
+        // refreshTokenCookie.setMaxAge(60 * 60 * 24); // 1일짜리
         response.addCookie(refreshTokenCookie);
         response.sendRedirect("http://localhost:8081/oauth2/redirect?token=" + accessToken);
+
+        /** SNS AccessToken */
+        Cookie snsAccessTokenCookie = new Cookie("sns_access_token", snsAccessToken);
+        snsAccessTokenCookie.setPath("/");
+//        snsAccessTokenCookie.setMaxAge(60 * 60 * 24); // 1일
+        snsAccessTokenCookie.setHttpOnly(false); // JS에서 접근 가능하게 (프론트도 쿠키 접근 가능)
+        response.addCookie(snsAccessTokenCookie);
 
     }
 }
