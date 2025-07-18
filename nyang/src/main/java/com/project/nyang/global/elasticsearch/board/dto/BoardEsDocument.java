@@ -40,9 +40,10 @@ public class BoardEsDocument {
     private String furColor;
     private String missingLocation;
     private String missingDate;
+    private String distinctFeatures;
 
     @Builder
-    public BoardEsDocument(String id, Long viewCount, Long categoryId, String boardTitle, String boardContent, String createdAt, String lostType, String kindName, String gender, Integer age, String furColor, String missingLocation, String missingDate, String imageUrl, String nickname) {
+    public BoardEsDocument(String id, Long viewCount, Long categoryId, String boardTitle, String boardContent, String createdAt, String lostType, String kindName, String gender, Integer age, String furColor, String missingLocation, String missingDate, String imageUrl, String nickname, String distinctFeatures) {
         this.id = id;
         this.viewCount = viewCount;
         this.categoryId = categoryId;
@@ -58,6 +59,7 @@ public class BoardEsDocument {
         this.missingDate = missingDate;
         this.imageUrl = imageUrl;
         this.nickname = nickname;
+        this.distinctFeatures = distinctFeatures;
     }
 
     public static BoardListDTO toBoardDTO(BoardEsDocument document) {
@@ -87,6 +89,8 @@ public class BoardEsDocument {
                 .missingDate(document.getMissingDate())
                 .imageUrl(document.getImageUrl())
                 .nickname(document.getNickname())
+                .boardContent(document.boardContent)
+                .distinctFeatures(document.getDistinctFeatures())
                 .build();
     }
 

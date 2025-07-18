@@ -4,6 +4,8 @@ import com.project.nyang.global.common.S3.S3Service;
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
 import com.project.nyang.global.security.core.CustomUserDetails;
+import com.project.nyang.global.elasticsearch.board.dto.BoardEsDocument;
+import com.project.nyang.global.elasticsearch.board.repository.BoardEsRepository;
 import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.modules.board.lost.dto.*;
 import com.project.nyang.modules.board.lost.repository.LostRepository;
@@ -58,6 +60,7 @@ public class LostService {
 
     private final S3Service s3Service;
     private final Long CATEGORY_ID = 4L;
+    private final BoardEsRepository boardEsRepository;
 
     //실종/목격 게시판의 모든 글 가져오는 메서드(페이징 처리완료)
     public Page<LostListResponseDTO> getLostBoard(Long categoryId, Pageable pageable) {
@@ -117,6 +120,11 @@ public class LostService {
 
         //좋아요 수 조회
         Long likeCount = likeRepository.countByBoardId(boardId);
+
+        /** elasticSearch 조회수 증가 */
+        BoardEsDocument doc = boardEsRepository.findById(String.valueOf(board.getId())).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+        doc.increaseViewCount();
+        boardEsRepository.save(doc);
 
         return LostDetailResponseDTO.builder()
                 .boardId(board.getId())
@@ -223,6 +231,31 @@ public class LostService {
             }
         }
 
+        /** elasticSearch 저장 */
+        BoardEsDocument doc = BoardEsDocument.builder()
+                .id(String.valueOf(board.getId()))
+                .viewCount(board.getViewCount())
+                .categoryId(board.getCategory().getCategoryId())
+                .lostType(board.getLostType())
+                .kindName(board.getKind().getKindNm())
+                .gender(board.getGender())
+                .age(board.getAge())
+                .furColor(board.getFurColor())
+                .missingLocation(board.getMissingLocation())
+                .missingDate(String.valueOf(board.getMissingDate()))
+                .imageUrl(board.getImages() != null && !board.getImages().isEmpty()
+                        ? board.getImages().stream()
+                        .filter(image -> image.getDeletedAt() == null && image.getThumbnailIs().equals("Y"))
+                        .map(Image::getS3Url)
+                        .findFirst()
+                        .orElse(null)
+                        : null)
+                .nickname(board.getUser().getNickname())
+                .boardContent(board.getBoardContent())
+                .distinctFeatures(board.getDistinctFeatures())
+                .build();
+        boardEsRepository.save(doc);
+
         return board.getId();
     }
 
@@ -268,7 +301,8 @@ public class LostService {
         }
         // 게시글과 이미지 soft delete 수행(deleteAt에 타임스탬프)
         board.softDelete();
-
+        // 하지만 elastic search 에는 걍 삭제합니다
+        boardEsRepository.deleteById(String.valueOf(boardId));
         return new LostDeleteResponseDTO(board.getId(), board.getDeletedAt());
     }
 
@@ -390,6 +424,31 @@ public class LostService {
 
             newThumbnail.ifPresent(Image::markAsThumbnail);
         }
+        /** elastic search 반영 **/
+        BoardEsDocument doc = BoardEsDocument.builder()
+                .id(String.valueOf(board.getId()))
+                .viewCount(board.getViewCount())
+                .categoryId(board.getCategory().getCategoryId())
+                .lostType(board.getLostType())
+                .kindName(board.getKind().getKindNm())
+                .gender(board.getGender())
+                .age(board.getAge())
+                .furColor(board.getFurColor())
+                .missingLocation(board.getMissingLocation())
+                .missingDate(String.valueOf(board.getMissingDate()))
+                .imageUrl(board.getImages() != null && !board.getImages().isEmpty()
+                        ? board.getImages().stream()
+                        .filter(image -> image.getDeletedAt() == null && image.getThumbnailIs().equals("Y"))
+                        .map(Image::getS3Url)
+                        .findFirst()
+                        .orElse(null)
+                        : null)
+                .nickname(board.getUser().getNickname())
+                .boardContent(board.getBoardContent())
+                .distinctFeatures(board.getDistinctFeatures())
+                .build();
+        boardEsRepository.save(doc);
+
     }
 
     //s3 이미지 경로에서 앞의 접두사를 빼고 온전히 이미지의 이름+확장자만 가져오게 하는 메서드

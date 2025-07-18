@@ -56,7 +56,7 @@ public class BoardEsController {
             @Parameter(description = "페이지 번호", example = "0")@RequestParam(defaultValue = "0") int page,
             @Parameter(description = "한 페이지에 보여줄 게시물 개수", example = "12") @RequestParam(defaultValue = "12") int size) {
 
-        return ResponseEntity.ok(ApiSuccessResponse.success(boardEsService.searchBoard(LOST_CATEGORY_ID, keyword, page, size), "검색 성공"));
+        return ResponseEntity.ok(ApiSuccessResponse.success(boardEsService.searchLostBoard(LOST_CATEGORY_ID, keyword, page, size), "검색 성공"));
     }
 
 }
