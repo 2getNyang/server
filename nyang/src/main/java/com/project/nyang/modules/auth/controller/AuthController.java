@@ -140,8 +140,8 @@ public class AuthController {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         switch (user.getLoginType()) {
             case "naver" -> oauth2WithdrawNaverService.unlinkNaver(snsAccessToken);
-//            case "google" -> oauth2WithdrawGoogleService.revokeGoogle(snsAccessToken);
-//            case "kakao" -> oauth2WithdrawKakaoService.unlinkKakao(snsAccessToken);
+//            case "google" -> oauth2WithdrawService.revokeGoogle(snsAccessToken);
+//            case "kakao" -> oauth2WithdrawService.(snsAccessToken);
             default -> throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
 
