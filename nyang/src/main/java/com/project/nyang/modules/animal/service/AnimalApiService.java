@@ -69,7 +69,7 @@ public class AnimalApiService {
         fetchAndSaveAnimals(startDateStr, endDateStr);
     }
 
-    //불러와서 animal에 저장
+    //API 불러와서 animal에 저장
     @Transactional
     public void fetchAndSaveAnimals(String startDate, String endDate) {
         int pageNo = 1;
@@ -110,7 +110,6 @@ public class AnimalApiService {
                 Animal existingAnimal = existingAnimalsMap.get(apiResponse.getDesertionNo());
 
                 if (existingAnimal != null) {
-                    // 🔥 이미 fetch join된 상태이므로 Lazy 로딩 없이 그대로 ES에 사용 가능
                     Animal updated = convertToAnimalEntity(apiResponse, shelterMap, upKindMap, kindMap);
                     if (updated == null) continue;
                     existingAnimal.updateFrom(updated);
@@ -124,13 +123,14 @@ public class AnimalApiService {
             if (!animalsToSave.isEmpty()) {
                 //mysql 저장
                 animalRepository.saveAll(animalsToSave);
-                log.info("저장 및 수정 {} animals to DB on page {}", animalsToSave.size(), pageNo);
+                log.info("DB에 저장 완료: {} animals on page {}", animalsToSave.size(), pageNo);
 
                 // 바로 Elasticsearch 저장 (fetchJoin된 상태이므로 Lazy 예외 발생하지 않음)
                 List<AnimalEsDocument> esDocs = animalsToSave.stream()
                         .map(this::convertToEsDocument)
                         .toList();
                 animalEsRepository.saveAll(esDocs);
+                log.info("Elasticsearch에 저장 완료: {} animals on page {}", esDocs.size(), pageNo);
             }
 
             if (apiResponses.size() < numOfRows) {
@@ -142,18 +142,12 @@ public class AnimalApiService {
 
     }
 
-    //업데이트
+    //동물 정보 업데이트
     @Transactional
     public void updateAnimals(String startDate, String endDate) {
         int pageNo = 1;
         int numOfRows = 1000;
         boolean hasMoreData = true;
-
-        //db에서 가장 오래된 발견일 날짜 조회
-        LocalDate oldestDate = animalRepository.findOldestHappenDt();
-        if (oldestDate == null) {
-            oldestDate = LocalDate.MIN; // DB에 아무 데이터가 없는 경우
-        }
 
         // Shelter, UpKind, Kind 캐싱
         Map<String, Shelter> shelterMap = shelterRepository.findAll().stream()
@@ -183,38 +177,31 @@ public class AnimalApiService {
                     .stream()
                     .collect(Collectors.toMap(Animal::getDesertionNo, Function.identity()));
 
-            List<Animal> animalsToSave = new ArrayList<>();
+            List<Animal> animalsToUpdate = new ArrayList<>();
 
             for (AnimalApiResponse apiResponse : apiResponses) {
-                String happenDtStr = apiResponse.getHappenDt();
-                LocalDate happenDt = LocalDate.parse(happenDtStr, dateTimeFormatter);
-                if (happenDt.isBefore(oldestDate)) {
-                    continue; // 과거 데이터면 skip
-                }
-
                 Animal newAnimal = convertToAnimalEntity(apiResponse, shelterMap, upKindMap, kindMap);
                 if (newAnimal == null) continue;
 
                 Animal existingAnimal = existingAnimalsMap.get(apiResponse.getDesertionNo());
                 if (existingAnimal != null) {
-                    existingAnimal.updateFrom(newAnimal); // 수정
-                    animalsToSave.add(existingAnimal);
-                } else {
-                    animalsToSave.add(newAnimal); // updTm 기준 신규
+                    existingAnimal.updateFrom(newAnimal);
+                    animalsToUpdate.add(existingAnimal);
                 }
+                // 존재하지 않는 경우는 무시 (신규 추가 X)
             }
 
-            if (!animalsToSave.isEmpty()) {
-                animalRepository.saveAll(animalsToSave);
-                log.info("업데이트 {} animals to DB on page {}", animalsToSave.size(), pageNo);
+            if (!animalsToUpdate.isEmpty()) {
+                animalRepository.saveAll(animalsToUpdate);
+                log.info("DB에 수정 완료: {} animals on page {}", animalsToUpdate.size(), pageNo);
 
-//                // Elasticsearch 수정
-//                List<AnimalEsDocument> esDocuments = animalsToSave.stream()
-//                        .map(this::convertToEsDocument)
-//                        .toList();
-//
-//                animalEsRepository.saveAll(esDocuments);
-//                log.info("Elasticsearch에 수정 완료: {} animals on page {}", esDocuments.size(), pageNo);
+                // Elasticsearch 수정
+                List<AnimalEsDocument> esDocuments = animalsToUpdate.stream()
+                        .map(this::convertToEsDocument)
+                        .toList();
+
+                animalEsRepository.saveAll(esDocuments);
+                log.info("Elasticsearch에 수정 완료: {} animals on page {}", esDocuments.size(), pageNo);
             }
 
             if (apiResponses.size() < numOfRows) {
@@ -304,25 +291,5 @@ public class AnimalApiService {
                 .careName(animal.getShelter().getCareName())
                 .build();
     }
-
-    //오래된 동물 정보 삭제
-    @Transactional
-    public void deleteOldestAnimals() {
-        // 가장 오래된 happenDt 조회
-        LocalDate oldestDate = animalRepository.findOldestHappenDt();
-        if (oldestDate == null) {
-            log.info("삭제할 오래된 데이터가 없습니다.");
-            return;
-        }
-
-        // 해당 happenDt를 가진 Animal 모두 조회
-        List<Animal> oldestAnimals = animalRepository.findAllByHappenDt(oldestDate);
-
-        // 삭제
-        animalRepository.deleteAll(oldestAnimals);
-        log.info("Deleted {} animals with happenDt: {}", oldestAnimals.size(), oldestDate);
-    }
-
-
 
 }
