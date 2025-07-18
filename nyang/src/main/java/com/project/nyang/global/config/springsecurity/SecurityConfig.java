@@ -55,24 +55,24 @@ public class SecurityConfig {
                                         "/api/test/**", // ✅ 이 줄 추가: 공통 응답 테스트 컨트롤러 허용
                                         "/api/v1/animals/**",
                                         "/api/v1/boards/**",
-                                        "/*",
-                                        "api/v1/adoptions/*",
                                         "/api/v1/recommendations/**",
                                         "/api/v1/shelters/**",
-                                        "/api/v1/regions/**",
-                                        "/api/v1/public/**",
+                                        "/ws-stomp/**",         //채팅관련
+                                        "/chat/**", "/sub/**", "/pub/**",
+                                        "/api/v1/chat/**",
+                                        "/api/v1/user/**",
                                         "/*"
 
                                 ).permitAll()
 
                                 .requestMatchers(
                                         "/api/user/**", // 사용자 정보 관련 API
-                                        "/api/v1/shelters/**",
                                         "/api/v1/comments/**",
                                         "/api/v1/bookmark/**",
                                         "/api/v1/like/**",
                                         "/api/v1/user/**",
-                                        "/api/v1/boards/review/**"
+                                        "/api/v1/boards/review/**",
+                                        "/api/v1/auth/me"
                                         ).authenticated() //인증이 필요한 경로
 
 

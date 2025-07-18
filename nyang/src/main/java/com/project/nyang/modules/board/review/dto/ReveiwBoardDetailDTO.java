@@ -20,6 +20,8 @@ import java.util.List;
  */
 @Getter
 public class ReveiwBoardDetailDTO {
+    @Schema(description = "게시글 아이디")
+    private Long id;
     @Schema(description = "사용자 닉네임")
     private String nickname;
     @Schema(description = "사용자 아이디")
@@ -141,7 +143,8 @@ public class ReveiwBoardDetailDTO {
     }
 
     @Builder(toBuilder = true)
-    public ReveiwBoardDetailDTO(String nickname, Long userId, String boardTitle, String boardContent, LocalDateTime createdAt, Long boardViewCount, int likeItCount, Boolean isLiked, PetApplicationDTO petApplicationDTO, List<CommentDTO> comments, List<ImageDTO> images) {
+    public ReveiwBoardDetailDTO(Long id, String nickname, Long userId, String boardTitle, String boardContent, LocalDateTime createdAt, Long boardViewCount, int likeItCount, Boolean isLiked, PetApplicationDTO petApplicationDTO, List<CommentDTO> comments, List<ImageDTO> images) {
+        this.id = id;
         this.nickname = nickname;
         this.userId = userId;
         this.boardTitle = boardTitle;

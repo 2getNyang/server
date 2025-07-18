@@ -29,7 +29,6 @@ public interface SubRegionRepository extends JpaRepository<SubRegion, String> {
     List<SubRegionDTO> findSubRegionsByRegion(String regionName);
 
 
-
     // N + 1 문제 해결하기 위해 fetch join 이용
     @Query("""
             SELECT sr FROM SubRegion sr
@@ -37,4 +36,5 @@ public interface SubRegionRepository extends JpaRepository<SubRegion, String> {
             WHERE sr.subRegionName = :subRegionName
             """)
     List<SubRegion> findWithRegionBySubRegionName(@Param("subRegionName") String subRegionName);
+
 }

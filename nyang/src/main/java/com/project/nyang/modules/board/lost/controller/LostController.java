@@ -4,6 +4,10 @@ import com.project.nyang.global.common.api.ApiResponse;
 import com.project.nyang.global.common.api.ApiSuccessResponse;
 import com.project.nyang.modules.board.lost.dto.*;
 import com.project.nyang.modules.board.lost.service.LostService;
+import com.project.nyang.reference.dto.KindDTO;
+import com.project.nyang.reference.dto.SubRegionDTO;
+import com.project.nyang.reference.repository.KindRepository;
+import com.project.nyang.reference.repository.SubRegionRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,7 +21,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.http.MediaType;
 
 import java.util.List;
 
@@ -35,6 +38,8 @@ import java.util.List;
 public class LostController {
 
     private final LostService lostService;
+    private final KindRepository kindRepository;
+    private final SubRegionRepository subRegionRepository;
     private final Long categoryId =  4L;
 
     @Operation(summary = "실종/목격 게시글 전체 조회", description = """
@@ -62,13 +67,44 @@ public class LostController {
         LostDetailResponseDTO responseDTO = lostService.getLostDetail(boardId);
         return ResponseEntity.ok(ApiSuccessResponse.success(responseDTO));
     }
+
+    //게시글 저장폼 관련
+    @Operation(summary = "작성 폼 select 데이터 조회")
+    @GetMapping("/form-info")
+    public ResponseEntity<ApiResponse<LostCreateFormDTO>> getFormInfo() {
+        LostCreateFormDTO formInfo = lostService.getLostFormInfo();
+        return ResponseEntity.ok(ApiSuccessResponse.success(formInfo));
+    }
+
+    //축종 조회
+    @Operation(summary = "축종별 품종 조회")
+    @GetMapping("/upkind/{upKindCd}/kinds")
+    public ResponseEntity<List<KindDTO>> getKindsByUpKind(@PathVariable String upKindCd) {
+        List<KindDTO> kinds = kindRepository.findByUpKindCd_UpKindCd(upKindCd).stream()
+                .map(KindDTO::from)
+                .toList();
+        return ResponseEntity.ok(kinds);
+    }
+
+    //시도
+    @Operation(summary = "시도별 시군구 조회")
+    @GetMapping("/regions/{regionCode}/sub-regions")
+    public ResponseEntity<List<SubRegionDTO>> getSubRegions(@PathVariable String regionCode) {
+        List<SubRegionDTO> subRegions = subRegionRepository.findByRegion_RegionCode(regionCode).stream()
+                .map(SubRegionDTO::from)
+                .toList();
+        return ResponseEntity.ok(subRegions);
+    }
+
+
+
     //게시글 저장
     @Operation(summary = "실종/목격 게시글 저장", description = """
             실종/목격 게시판에 글을 저장합니다. 인증된 사용자여야하며, 최대 5개까지 이미지 첨부가 가능합니다.
             """)
     @PostMapping (consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ApiResponse<Long>> createLostBoard(
-            @RequestPart("dto") LostCreateRequestDto dto,
+            @RequestPart("dto") LostCreateRequestDTO dto,
             @RequestPart(value = "images", required = false) List<MultipartFile> images
     ) {
 

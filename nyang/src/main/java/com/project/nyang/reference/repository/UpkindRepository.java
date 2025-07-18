@@ -14,7 +14,5 @@ import java.util.Optional;
  */
 public interface UpkindRepository extends JpaRepository<UpKind,String> {
     Optional<UpKind> findByUpKindNm(String upKindNm);
-
     Optional<UpKind> findByUpKindCd(String upKindCd);
-
 }
