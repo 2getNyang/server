@@ -291,6 +291,7 @@ public class SNSBoardService {
                 .likeCount(likeCount)
                 .createdAt(board.getCreatedAt())
                 .modifiedAt(board.getModifiedAt())
+                .nickname(board.getUser().getNickname())
                 .build();
     }
 
