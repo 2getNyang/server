@@ -62,22 +62,22 @@ public class Notification{
     }
 
 
-     @Builder
-     public Notification(
-             NotificationType type,
-             String notyContent,
-             String notyLink,
-             Boolean isRead,
-             ChatRoom chatRoom,
-             User user
-     ) {
-         this.type = type;
-         this.notyContent = notyContent;
-         this.notyLink = notyLink;
-         this.isRead = isRead;
-         this.chatRoom = chatRoom;
-         this.user = user;
-     }
+    @Builder
+    public Notification(
+            NotificationType type,
+            String notyContent,
+            String notyLink,
+            Boolean isRead,
+            ChatRoom chatRoom,
+            User user
+    ) {
+        this.type = type;
+        this.notyContent = notyContent;
+        this.notyLink = notyLink;
+        this.isRead = isRead;
+        this.chatRoom = chatRoom;
+        this.user = user;
+    }
 
     public void markAsRead() {
         this.isRead = true;

@@ -45,10 +45,10 @@ public class Animal{
     @Column(name = "kind_full_nm", length = 50)
     private String kindFullNm;
 
-    @Column(name = "up_kind_cd")
+    @Column(name = "up_kind_cd",nullable = false)
     private String upKindCd;
 
-    @Column(name = "kind_cd")
+    @Column(name = "kind_cd",nullable = false)
     private String kindCd;
 
     //털색, 무늬
