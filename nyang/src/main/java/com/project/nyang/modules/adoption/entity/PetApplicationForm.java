@@ -86,6 +86,9 @@ public class PetApplicationForm {
     @Column(name = "children_count", nullable = false)
     private int childrenCount;
 
+    @Column(name = "resent_at", columnDefinition = "TIMESTAMP")
+    private LocalDateTime resentAt;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "all_consent", nullable = false, length = 3)
     private YesNo allConsent;  // YES/NO
@@ -132,6 +135,11 @@ public class PetApplicationForm {
         APARTMENT,
         ONE_ROOM,
         ETC
+    }
+
+    // 재전송 처리 메서드
+    public void markResent() {
+        this.resentAt = LocalDateTime.now();
     }
 
 }

@@ -42,6 +42,16 @@ public class SwaggerConfig {
                  .build();
      }
 
+     // ✅ 마이페이지 API 그룹
+     @Bean
+     public GroupedOpenApi myPageApi() {
+         return GroupedOpenApi.builder()
+                 .group("👤 마이페이지 API")
+                 .pathsToMatch("/api/v1/my/**")
+                 .addOpenApiCustomizer(jwtSecurityCustomizer())
+                 .build();
+     }
+
      // ✅ 보호소 API 그룹
      @Bean
      public GroupedOpenApi shelterApi() {
