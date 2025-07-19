@@ -61,7 +61,6 @@ public class OAuth2LogoutSuccessHandler implements LogoutSuccessHandler {
 
         deleteCookie(response, "accessToken");
         deleteCookie(response, "refreshToken");
-        deleteCookie(response, "sns_access_token");
 
         // 최종적으로 redirectUrl로 리디렉트
         response.sendRedirect(redirectUrl);

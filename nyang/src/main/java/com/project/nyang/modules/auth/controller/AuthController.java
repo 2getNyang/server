@@ -5,6 +5,8 @@ import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
 import com.project.nyang.global.security.jwt.JwtTokenProvider;
 import com.project.nyang.global.security.oauth2.OAuth2WithdrawNaverService;
+import com.project.nyang.modules.auth.entity.Auth;
+import com.project.nyang.modules.auth.repository.AuthRepository;
 import com.project.nyang.modules.auth.service.AuthService;
 import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.modules.user.repository.UserRepository;
@@ -43,6 +45,7 @@ public class AuthController {
     private final AuthService authService;
     private final OAuth2WithdrawNaverService oauth2WithdrawNaverService;
     private final UserRepository userRepository;
+    private final AuthRepository authRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
     /**
@@ -133,15 +136,19 @@ public class AuthController {
     @PostMapping("/withdraw")
     public ResponseEntity<?> withdraw(
             @CookieValue("accessToken") String accessToken,
-            @CookieValue("sns_access_token") String snsAccessToken,
             HttpServletResponse response
     ) {
         // user 확인
         Long userId = jwtTokenProvider.getUserIdFromToken(accessToken);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        // auth 테이블에서 sns_access_token 을가져옴
+        Auth auth = authRepository.findByUser(user)
+                .orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED));
+        String sns_access_token = auth.getSnsAccessToken();
+
         switch (user.getLoginType()) {
-            case "naver" -> oauth2WithdrawNaverService.unlinkNaver(snsAccessToken);
+            case "naver" -> oauth2WithdrawNaverService.unlinkNaver(sns_access_token);
 //            case "google" -> oauth2WithdrawService.revokeGoogle(snsAccessToken);
 //            case "kakao" -> oauth2WithdrawService.(snsAccessToken);
             default -> throw new CustomException(ErrorCode.UNAUTHORIZED);

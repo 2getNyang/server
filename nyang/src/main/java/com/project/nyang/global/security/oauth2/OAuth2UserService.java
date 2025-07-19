@@ -155,7 +155,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         customAttributes.put("refreshToken", refreshToken);
         customAttributes.put("name", name);
         customAttributes.put("id", user.getId()); // ← PK(id) 추가
-        customAttributes.put("snsAccessToken", snsAccessToken);
+
 
 
         // Auth 엔티티에 토큰 저장 (User와 1:1 매핑)
