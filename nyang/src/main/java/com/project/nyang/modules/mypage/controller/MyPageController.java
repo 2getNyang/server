@@ -13,10 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 마이페이지 controller
@@ -76,6 +73,13 @@ public class MyPageController {
     public ResponseEntity<ApiResponse<Page<MyPetApplicationFormDTO>>> getPetApplicationForms(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "12") int size) {
         Long userId = userDetails.getId();
         return ResponseEntity.ok(ApiSuccessResponse.success(myPageService.getPetApplicationForms(userId, page, size), "입양 신청 내역 조회 성공"));
+    }
+
+    @Operation(summary = "사용자의 입양 신청 상세 조회")
+    @GetMapping("/adoption/{formId}")
+    public ResponseEntity<ApiResponse<MyPetApplicationDetailDTO>> getPetApplicationDetail(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long formId) {
+        Long userId = userDetails.getId();
+        return ResponseEntity.ok(ApiSuccessResponse.success(myPageService.getPetApplicationDetail(userId, formId)));
     }
 
 

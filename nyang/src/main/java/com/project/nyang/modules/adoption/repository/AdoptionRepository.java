@@ -1,6 +1,8 @@
 package com.project.nyang.modules.adoption.repository;
 
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -12,4 +14,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface AdoptionRepository extends JpaRepository<PetApplicationForm, Long> {
     boolean existsByUserIdAndAnimal_DesertionNo(Long userId, String desertionNo);
+
+    Page<PetApplicationForm> findByUser_Id(Long userId, Pageable pageable);
+
 }

@@ -1,4 +1,4 @@
-package com.project.nyang.modules.adoption.dto;
+package com.project.nyang.modules.mypage.dto;
 
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,19 +9,20 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
+ * 입양신청 내역 상세 조회 DTO
  *
- * AdoptionDTO 
- * @fileName        : AdoptionDTO
- * @author          : 이지은
- * @since           : 25. 7. 14.
- * 
+ * @author : 박세정
+ * @fileName : MyPetApplicationDetailDTO
+ * @since : 2025-07-18
  */
 @Getter
-@Builder(toBuilder = true)
-public class AdoptionDTO {
+public class MyPetApplicationDetailDTO {
 
-    @Schema(description = "입양신청서 id")
+    @Schema(description = "입양 신청 내역 ID")
     private Long formId;
+
+    @Schema(description = "공고 번호")
+    private String noticeNo;
 
     @Schema(description = "신청자 이름")
     private String userName;
@@ -80,18 +81,39 @@ public class AdoptionDTO {
     @Schema(description = "입양신청서 작성 시간")
     private LocalDateTime formCreatedAt;
 
-    @Schema(description = "입양신청 동물 id")
-    private String desertionNo;
-    @Schema(description = "입양신청 공고번호")
-    private String noticeNo;
-    @Schema(description = "입양신청 동물의 보호소 id")
-    private String careRegNumber;
-    @Schema(description = "입양신청자 id")
-    private Long userId;
+    @Schema(description = "입양신청서 재전송 시간")
+    private LocalDateTime resentAt;
 
-    public static AdoptionDTO toDTO(PetApplicationForm form) {
-        return AdoptionDTO.builder()
+    @Builder
+    public MyPetApplicationDetailDTO(Long formId, LocalDateTime resentAt, LocalDateTime formCreatedAt, String noticeNo, String userName, LocalDate userBirth, PetApplicationForm.Gender userGender, String userPhone, String familyPhone, String family, String address, String detailAddress, PetApplicationForm.HousingType housingType, String job, PetApplicationForm.YesNo experience, PetApplicationForm.YesNo hasOtherPets, int adultCount, int childrenCount, PetApplicationForm.YesNo allConsent, PetApplicationForm.YesNo hasAllergy, PetApplicationForm.YesNo consentForCheck, String applicationReason) {
+        this.formId = formId;
+        this.noticeNo = noticeNo;
+        this.userName = userName;
+        this.userBirth = userBirth;
+        this.userGender = userGender;
+        this.userPhone = userPhone;
+        this.familyPhone = familyPhone;
+        this.family = family;
+        this.address = address;
+        this.detailAddress = detailAddress;
+        this.housingType = housingType;
+        this.job = job;
+        this.experience = experience;
+        this.hasOtherPets = hasOtherPets;
+        this.adultCount = adultCount;
+        this.childrenCount = childrenCount;
+        this.allConsent = allConsent;
+        this.hasAllergy = hasAllergy;
+        this.consentForCheck = consentForCheck;
+        this.applicationReason = applicationReason;
+        this.formCreatedAt = formCreatedAt;
+        this.resentAt = resentAt;
+    }
+
+    public static MyPetApplicationDetailDTO toDTO(PetApplicationForm form) {
+        return MyPetApplicationDetailDTO.builder()
                 .formId(form.getFormId())
+                .noticeNo(form.getNoticeNo())
                 .userName(form.getUserName())
                 .userBirth(form.getUserBirth())
                 .userGender(form.getUserGender())
@@ -106,15 +128,11 @@ public class AdoptionDTO {
                 .hasOtherPets(form.getHasOtherPets())
                 .adultCount(form.getAdultCount())
                 .childrenCount(form.getChildrenCount())
-                .allConsent(form.getAllConsent())
+                .allConsent(form.getHasAllergy())
                 .hasAllergy(form.getHasAllergy())
                 .consentForCheck(form.getConsentForCheck())
                 .applicationReason(form.getApplicationReason())
                 .formCreatedAt(form.getFormCreatedAt())
-                .desertionNo(form.getAnimal().getDesertionNo())
-                .noticeNo(form.getAnimal().getNoticeNo())
-                .careRegNumber(form.getAnimal().getShelter().getCareRegNumber())
-                .userId(form.getUser().getId())
                 .build();
     }
 }

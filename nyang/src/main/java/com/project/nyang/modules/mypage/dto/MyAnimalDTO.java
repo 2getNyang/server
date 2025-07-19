@@ -1,6 +1,7 @@
 package com.project.nyang.modules.mypage.dto;
 
 import com.project.nyang.modules.animal.entity.Animal;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -16,13 +17,21 @@ import java.time.LocalDate;
  */
 @Getter
 public class MyAnimalDTO {
+    @Schema(description = "입양공고 ID")
     private String desertionNo;
+    @Schema(description = "입양신청 상태")
     private String processState;
+    @Schema(description = "성별")
     private String sexCd;
+    @Schema(description = "동물 이름")
     private String kindFullNm;
+    @Schema(description = "공고 번호")
     private String noticeNo;
+    @Schema(description = "발생일자")
     private LocalDate happenDt;
+    @Schema(description = "실종장소")
     private String happenPlace;
+    @Schema(description = "사진")
     private String popfile1;
 
     @Builder

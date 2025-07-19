@@ -20,17 +20,23 @@ import java.time.LocalDateTime;
 public class MyPetApplicationFormDTO {
     @Schema(description = "입양 신청 ID")
     private Long formId;
-    @Schema(description = "입양 신청 ID")
+    @Schema(description = "입양 신청 상태")
     private String processState;
+    @Schema(description = "성별")
     private String sexCd;
+    @Schema(description = "이름")
     private String kindFullNm;
+    @Schema(description = "공고번호")
     private String noticeNo;
+    @Schema(description = "실종장소")
     private String happenPlace;
+    @Schema(description = "이미지")
     private String popfile1;
-    private LocalDateTime notyCreatedAt;
+    @Schema(description = "공고신청일")
+    private LocalDateTime formCreatedAt;
 
     @Builder
-    public MyPetApplicationFormDTO(Long formId, String processState, String sexCd, String kindFullNm, String noticeNo, String happenPlace, String popfile1, LocalDateTime notyCreatedAt) {
+    public MyPetApplicationFormDTO(Long formId, String processState, String sexCd, String kindFullNm, String noticeNo, String happenPlace, String popfile1, LocalDateTime formCreatedAt) {
         this.formId = formId;
         this.processState = processState;
         this.sexCd = sexCd;
@@ -38,19 +44,19 @@ public class MyPetApplicationFormDTO {
         this.noticeNo = noticeNo;
         this.happenPlace = happenPlace;
         this.popfile1 = popfile1;
-        this.notyCreatedAt = notyCreatedAt;
+        this.formCreatedAt = formCreatedAt;
     }
 
     public static MyPetApplicationFormDTO of(PetApplicationForm form) {
         return MyPetApplicationFormDTO.builder()
-                .formId(form.getId())
+                .formId(form.getFormId())
                 .processState(form.getAnimal().getProcessState())
                 .sexCd(form.getAnimal().getSexCd())
                 .kindFullNm(form.getAnimal().getKindFullNm())
                 .noticeNo(form.getAnimal().getNoticeNo())
                 .happenPlace(form.getAnimal().getHappenPlace())
                 .popfile1(form.getAnimal().getPopfile1())
-                .notyCreatedAt(LocalDateTime.now())
+                .formCreatedAt(form.getFormCreatedAt())
                 .build();
     }
 }

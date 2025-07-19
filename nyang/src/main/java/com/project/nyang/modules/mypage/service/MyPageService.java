@@ -1,12 +1,14 @@
 package com.project.nyang.modules.mypage.service;
 
+import com.project.nyang.global.exception.CustomException;
+import com.project.nyang.global.exception.ErrorCode;
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
+import com.project.nyang.modules.adoption.repository.AdoptionRepository;
 import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.modules.board.repository.BoardRepository;
 import com.project.nyang.modules.like.entity.LikeIt;
 import com.project.nyang.modules.like.repository.LikeRepository;
 import com.project.nyang.modules.mypage.dto.*;
-import com.project.nyang.modules.mypage.repository.TempPetApplicationFormRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,7 +27,7 @@ public class MyPageService {
 
     private final LikeRepository likeRepository;
     private final BoardRepository boardRepository;
-    private final TempPetApplicationFormRepository tempPetApplicationFormRepository;
+    private final AdoptionRepository adoptionRepository;
 
     public Page<MyAnimalDTO> getMyAnimals(Long userId, int page, int size) {
         Page<LikeIt> likeIts = likeRepository.findByUser_IdAndAnimalNotNull(userId, PageRequest.of(page, size));
@@ -56,8 +58,18 @@ public class MyPageService {
     }
 
     public Page<MyPetApplicationFormDTO> getPetApplicationForms(Long userId, int page, int size) {
-        Page<PetApplicationForm> forms = tempPetApplicationFormRepository.findByUser_Id(userId, PageRequest.of(page, size));
+        Page<PetApplicationForm> forms = adoptionRepository.findByUser_Id(userId, PageRequest.of(page, size));
 
         return forms.map(MyPetApplicationFormDTO::of);
+    }
+
+    public MyPetApplicationDetailDTO getPetApplicationDetail(Long userId, Long formId) {
+        PetApplicationForm form = adoptionRepository.findById(formId).orElseThrow(() -> new CustomException(ErrorCode.APPLICATION_NOT_FOUND));
+
+        if(!form.getUser().getId().equals(userId)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_REQUEST);
+        }
+
+        return MyPetApplicationDetailDTO.toDTO(form);
     }
 }
