@@ -11,6 +11,7 @@ import com.project.nyang.modules.notification.entity.Notification;
 import com.project.nyang.modules.notification.repository.NotificationRepository;
 import com.project.nyang.modules.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -104,7 +105,7 @@ public class NotificationService {
         return notificationRepository.findByUserAndTypeOrderByNotyCreatedAtDesc(user, type);
     }
 
-    @Operation(summary = "알림 읽음 처리", description = "알림을 읽음 상태로 변경합니다.")
+    @Operation(summary = "특정 알림 읽음 처리", description = "알림을 읽음 상태로 변경합니다.")
     public void markAsRead(Long notyId, User user) {
         Notification notification = notificationRepository.findByNotyIdAndUser(notyId, user)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOTIFICATION_NOT_FOUND));
@@ -114,5 +115,9 @@ public class NotificationService {
     }
 
 
-
+    @Transactional
+    @Operation(summary = "모든 알림 읽음 처리", description = "현재 로그인한 사용자의 모든 알림을 읽음 상태로 변경합니다.")
+    public void markAllAsRead(User user) {
+        notificationRepository.updateAllIsReadByUser(user.getId());
+    }
 }

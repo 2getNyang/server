@@ -24,7 +24,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/notifications/")
-@Tag(name="🔔 채팅 알림 기능", description = "예상으로 임시 구현해서 수정 필요, 사용 X")
+@Tag(name="🔔 채팅 알림 기능", description = "알림 제공하는데 필요한 API 제공")
 public class NotificationController {
 
     private final NotificationService notificationService;
@@ -43,10 +43,16 @@ public class NotificationController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "안읽은 알림 조회", description = "isread 값이 0인 알림들을 조회합니다.")
+    @Operation(summary = "안읽은 알림 조회", description = "현재 로그인한 사용자의 isread 값이 false인 안읽은 알림들을 조회합니다.")
     @GetMapping("/unread/count")
     public ResponseEntity<Long> getUnreadCount(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(notificationService.countUnreadNotifications(userDetails.getUser()));
     }
 
+    @Operation(summary = "모든 알림 읽음 처리", description = "현재 로그인한 사용자의 모든 알림을 읽음 처리합니다.")
+    @PatchMapping("/read-all")
+    public ResponseEntity<Void> markAllAsRead(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        notificationService.markAllAsRead(userDetails.getUser());
+        return ResponseEntity.ok().build();
+    }
 }

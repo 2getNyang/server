@@ -2,7 +2,10 @@ package com.project.nyang.modules.notification.repository;
 
 import com.project.nyang.modules.notification.entity.Notification;
 import com.project.nyang.modules.user.entity.User;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,4 +28,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     Optional<Notification> findByNotyIdAndUser(Long notyId, User user); // 잘못된 파라미터 및 리턴 타입 수정
 
     long countByUserAndIsReadFalse(User user);
+
+    @Modifying
+    @Query("UPDATE Notification n SET n.isRead = true WHERE n.user.id = :userId AND n.isRead = false")
+    void updateAllIsReadByUser(@Param("userId") Long userId);
 }
