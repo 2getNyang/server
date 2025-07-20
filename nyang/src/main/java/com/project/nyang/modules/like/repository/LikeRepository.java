@@ -4,6 +4,8 @@ import com.project.nyang.modules.animal.entity.Animal;
 import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.modules.like.entity.LikeIt;
 import com.project.nyang.modules.user.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -32,4 +34,8 @@ public interface LikeRepository extends JpaRepository<LikeIt, Long> {
     boolean existsByUserAndBoard(User user, Board board);
 
     boolean existsByUserAndAnimal(User user, Animal animal);
+
+    Page<LikeIt> findByUser_IdAndAnimalNotNull(Long userId, Pageable pageable);
+
+    Page<LikeIt> findByUser_idAndBoardNotNull(Long userId, Pageable pageable);
 }

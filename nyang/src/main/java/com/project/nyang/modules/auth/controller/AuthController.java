@@ -4,6 +4,7 @@ import com.project.nyang.global.common.api.ApiSuccessResponse;
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
 import com.project.nyang.global.security.jwt.JwtTokenProvider;
+import com.project.nyang.global.security.oauth2.OAuth2WithdrawKakaoService;
 import com.project.nyang.global.security.oauth2.OAuth2WithdrawNaverService;
 import com.project.nyang.modules.auth.service.AuthService;
 import com.project.nyang.modules.user.entity.User;
@@ -42,6 +43,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final OAuth2WithdrawNaverService oauth2WithdrawNaverService;
+    private final OAuth2WithdrawKakaoService oauth2WithdrawKakaoService;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -143,7 +145,7 @@ public class AuthController {
         switch (user.getLoginType()) {
             case "naver" -> oauth2WithdrawNaverService.unlinkNaver(snsAccessToken);
 //            case "google" -> oauth2WithdrawService.revokeGoogle(snsAccessToken);
-//            case "kakao" -> oauth2WithdrawService.(snsAccessToken);
+           case "kakao" -> oauth2WithdrawKakaoService.unlinkKakao(snsAccessToken);
             default -> throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
         // 쿠키 삭제 응답
