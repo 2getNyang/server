@@ -3,6 +3,7 @@ package com.project.nyang.global.searchlog.kafka;
 import com.project.nyang.global.searchlog.dto.SearchLogMessage;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -23,6 +24,9 @@ import java.util.Map;
  */
 @Configuration
 public class KafkaProducerConfig {
+    @Value("${spring.kafka.bootstrap-servers}")
+    private String kafkaBootstrapServers;
+
     // Kafka로 메시지를 보낼 때 사용하는 프로듀서(Producer) 객체를 만드는 팩토리
     // key 타입은 String, value 타입은 SearchLogMessage (우리가 보낼 데이터 타입)
     @Bean
@@ -30,7 +34,7 @@ public class KafkaProducerConfig {
         // Kafka Producer 설정을 위한 Map 생성
         Map<String, Object> config = new HashMap<>();
         // Kafka 서버 주소를 등록
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapServers);
         // 메시지의 key를 String으로 직렬화
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         // 메시지의 value(SearchLogMessage)를 JSON 형태로 직렬화

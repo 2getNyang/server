@@ -3,6 +3,7 @@ package com.project.nyang.global.searchlog.kafka;
 import com.project.nyang.global.searchlog.dto.SearchLogMessage;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -24,6 +25,9 @@ import java.util.Map;
 @Configuration
 public class KafkaConsumerConfig {
 
+    @Value("${spring.kafka.bootstrap-servers}")
+    private String kafkaBootstrapServers;
+
     // ConsumerFactory는 Kafka로부터 메시지를 꺼낼 때 필요한 '소비자' 객체를 만드는 팩토리
     @Bean
     public ConsumerFactory<String, SearchLogMessage> consumerFactory() {
@@ -39,7 +43,7 @@ public class KafkaConsumerConfig {
         // Kafka Consumer의 필수 옵션들을 담는 Map
         Map<String, Object> config = new HashMap<>();
         // kafka 서버의 주소(포트 포함)**를 지정
-        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapServers);
         // 이 Consumer가 속한 Consumer Group 이름
         // 같은 Group 내 Consumer들이 서로 메시지를 분배해서 소비
         config.put(ConsumerConfig.GROUP_ID_CONFIG, "search-log-group");

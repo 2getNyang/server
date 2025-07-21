@@ -1,8 +1,8 @@
 services:
 
-  nyang_prometheus:
+  nyang-prometheus:
     image: prom/prometheus:latest
-    container_name: nyang_prometheus
+    container_name: nyang-prometheus
     restart: unless-stopped
     ports:
       - "9090:9090"
@@ -12,22 +12,22 @@ services:
     networks:
       - nyang_server
 
-  nyang_grafana:
+  nyang-grafana:
     image: grafana/grafana:latest
-    container_name: nyang_grafana
+    container_name: nyang-grafana
     restart: unless-stopped
     ports:
       - "3000:3000"
     depends_on:
-      - nyang_prometheus
+      - nyang-prometheus
     volumes:
       - ./volumes/grafana:/var/lib/grafana  # [데이터 볼륨]
     networks:
       - nyang_server
 
-  nyang_elasticsearch:
+  nyang-elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
-    container_name: nyang_elasticsearch
+    container_name: nyang-elasticsearch
     environment:
       - node.name=es01
       - discovery.type=single-node
@@ -45,24 +45,24 @@ services:
       - nyang_server
 
 
-  nyang_kibana:
+  nyang-kibana:
     image: docker.elastic.co/kibana/kibana:8.12.0
-    container_name: nyang_kibana
+    container_name: nyang-kibana
     environment:
-      - ELASTICSEARCH_HOSTS=http://nyang_elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=http://nyang-elasticsearch:9200
       - SERVER_SSL_ENABLED=false
     ports:
       - "5601:5601"
     volumes:
       - ./volumes/kibana-data:/usr/share/kibana/data
     depends_on:
-      - nyang_elasticsearch
+      - nyang-elasticsearch
     networks:
       - nyang_server
 
-  nyang_logstash:
+  nyang-logstash:
     image: docker.elastic.co/logstash/logstash:8.12.0
-    container_name: nyang_logstash
+    container_name: nyang-logstash
     ports:
       - "5044:5044"  # For beats (optional)
       - "5001:5000"  # TCP input
@@ -71,15 +71,15 @@ services:
       - ./logstash/logstash.yml:/usr/share/logstash/config/logstash.yml:ro  # <-- 이 줄 추가!
       - ../../logs:/logs #로그 볼륨
     depends_on:
-      - nyang_elasticsearch
+      - nyang-elasticsearch
     networks:
       - nyang_server
 
   #Kafka 클러스터 코디네이터
   #분산 시스템에서 여러 서버(노드)들의 상태와 설정을 ‘중앙에서 관리’해주는 시스템
-  nyang_zookeeper:
+  nyang-zookeeper:
     image: confluentinc/cp-zookeeper:7.6.0
-    container_name: nyang_zookeeper
+    container_name: nyang-zookeeper
     restart: unless-stopped
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -90,22 +90,22 @@ services:
       - nyang_server
 
   #    Kafka 브로커
-  nyang_kafka:
+  nyang-kafka:
     image: confluentinc/cp-kafka:7.6.0
-    container_name: nyang_kafka
+    container_name: nyang-kafka
     restart: unless-stopped
     ports:
       - "9092:9092"
       - "29092:29092"
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: nyang_zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://nyang_kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_ZOOKEEPER_CONNECT: nyang-zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://nyang-kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
-      - nyang_zookeeper
+      - nyang-zookeeper
     networks:
       - nyang_server
 
