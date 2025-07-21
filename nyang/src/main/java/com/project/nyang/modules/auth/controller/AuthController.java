@@ -7,6 +7,8 @@ import com.project.nyang.global.security.jwt.JwtTokenProvider;
 import com.project.nyang.global.security.oauth2.OAuth2WithdrawKakaoService;
 import com.project.nyang.global.security.oauth2.OAuth2WithdrawNaverService;
 import com.project.nyang.global.security.oauth2.docs.OAuth2WithdrawGoogleService;
+import com.project.nyang.modules.auth.entity.Auth;
+import com.project.nyang.modules.auth.repository.AuthRepository;
 import com.project.nyang.modules.auth.service.AuthService;
 import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.modules.user.repository.UserRepository;
@@ -47,6 +49,7 @@ public class AuthController {
     private final OAuth2WithdrawKakaoService oauth2WithdrawKakaoService;
     private final OAuth2WithdrawGoogleService oauth2WithdrawGoogleService;
     private final UserRepository userRepository;
+    private final AuthRepository authRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
     /**
@@ -111,13 +114,17 @@ public class AuthController {
     @PostMapping("/withdraw")
     public ResponseEntity<?> withdraw(
             @CookieValue("accessToken") String accessToken,
-            @CookieValue("sns_access_token") String snsAccessToken,
             HttpServletResponse response
     ) {
         // user 확인
         Long userId = jwtTokenProvider.getUserIdFromToken(accessToken);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        // auth 테이블에서 sns_access_token 을가져옴
+        Auth auth = authRepository.findByUser(user)
+                .orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED));
+        String snsAccessToken = auth.getSnsAccessToken();
+
         switch (user.getLoginType()) {
             case "naver" -> oauth2WithdrawNaverService.unlinkNaver(snsAccessToken);
             case "google" -> oauth2WithdrawGoogleService.unlinkGoogle(snsAccessToken);

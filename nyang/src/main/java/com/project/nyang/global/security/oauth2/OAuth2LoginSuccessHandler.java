@@ -34,8 +34,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         DefaultOAuth2User oAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
 
         Map<String, Object> attributes = oAuth2User.getAttributes();
-
-        String snsAccessToken = (String) attributes.get("snsAccessToken");
+        
         String accessToken = (String) attributes.get("accessToken");
         String refreshToken = (String) attributes.get("refreshToken");
         String name = (String) attributes.get("name");
@@ -71,14 +70,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 .build();
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
-        /** SNS AccessToken */
-        ResponseCookie snsAccessTokenCookie = ResponseCookie.from("sns_access_token", snsAccessToken)
-                .httpOnly(false)         // JS에서 읽을 수 있게 유지
-                .secure(false)           // ✅ 로컬에서는 false
-                .sameSite("Lax")         // ✅ 'None' 대신 'Lax' 사용 (이러면 secure 요구 안 함)
-                .path("/")
-                .build();
-        response.addHeader("Set-Cookie", snsAccessTokenCookie.toString());
 
         response.sendRedirect("http://localhost:8081/oauth2/redirect?token=" + accessToken);
 
