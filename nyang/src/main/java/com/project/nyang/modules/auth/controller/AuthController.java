@@ -123,7 +123,7 @@ public class AuthController {
         // auth 테이블에서 sns_access_token 을가져옴
         Auth auth = authRepository.findByUser(user)
                 .orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED));
-        String sns_access_token = auth.getSnsAccessToken();
+        String snsAccessToken = auth.getSnsAccessToken();
 
         switch (user.getLoginType()) {
             case "naver" -> oauth2WithdrawNaverService.unlinkNaver(snsAccessToken);
