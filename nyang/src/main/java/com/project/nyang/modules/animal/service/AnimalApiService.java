@@ -276,6 +276,8 @@ public class AnimalApiService {
                 .specialMark(animal.getSpecialMark())
                 .kindFullNm(animal.getKindFullNm())
                 .noticeNo(animal.getNoticeNo())
+                .noticeSdt(animal.getNoticeSdt().format(formatter))
+                .noticeEdt(animal.getNoticeEdt().format(formatter))
                 .happenDt(animal.getHappenDt().format(formatter))
                 .happenPlace(animal.getHappenPlace())
                 .popfile1(animal.getPopfile1())

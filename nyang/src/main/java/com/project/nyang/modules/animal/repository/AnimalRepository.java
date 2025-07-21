@@ -142,7 +142,7 @@ public interface AnimalRepository extends JpaRepository<Animal, String> {
     // 가장 오래된 발견일자의 모든 동물 정보 불러오기
     List<Animal> findAllByHappenDt(LocalDate oldestDate);
 
-
+    //동물 번호로 찾은 동물들 불러오기
     List<Animal> findByDesertionNoIn(Set<String> desertionNos);
 
     @Query("""

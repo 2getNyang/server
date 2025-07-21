@@ -10,11 +10,14 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDate;
 
 /**
  * AnimalEsController입니다.
@@ -39,5 +42,23 @@ public class AnimalEsController {
             @Parameter(description = "한 페이지에 보여줄 게시물 개수", example = "12") @RequestParam(defaultValue = "12") int size) {
 
         return ResponseEntity.ok(ApiSuccessResponse.success(animalEsService.searchEsAnimals(keyword, page, size), "키워드 기반 동물 검색 성공"));
+    }
+
+    @Operation(summary = "유기 동물 정보 통합검색 (키워드+필터)")
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<Page<AnimalEsListDTO>>> searchWithKeywordAndFilter(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestParam(required = false) String upKindCd,
+            @RequestParam(required = false) String kindCd,
+            @RequestParam(required = false) String regionCode,
+            @RequestParam(required = false) String subRegionCode,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size) {
+
+        PageRequest pageable = PageRequest.of(page, size);
+        Page<AnimalEsListDTO> results = animalEsService.searchWithKeywordAndFilter(keyword, startDate, endDate, upKindCd, kindCd, regionCode, subRegionCode, pageable);
+        return ResponseEntity.ok(ApiSuccessResponse.success(results, "통합 검색 성공"));
     }
 }

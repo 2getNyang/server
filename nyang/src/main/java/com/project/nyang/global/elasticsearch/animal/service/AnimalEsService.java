@@ -1,18 +1,16 @@
 package com.project.nyang.global.elasticsearch.animal.service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.*;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
+import co.elastic.clients.json.JsonData;
 import com.project.nyang.global.elasticsearch.animal.dto.AnimalEsDocument;
 import com.project.nyang.global.elasticsearch.animal.dto.AnimalEsListDTO;
-import com.project.nyang.global.elasticsearch.board.dto.BoardEsDocument;
-import com.project.nyang.global.elasticsearch.board.dto.BoardListDTO;
-import com.project.nyang.global.elasticsearch.board.dto.LostBoardListDTO;
+import com.project.nyang.global.exception.CustomException;
+import com.project.nyang.global.exception.ErrorCode;
 import com.project.nyang.global.searchlog.dto.SearchLogMessage;
-import com.project.nyang.modules.animal.dto.AnimalListDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -41,6 +40,8 @@ public class AnimalEsService {
     // Elastic search에 명령을 전달하는 서버 API
     private final ElasticsearchClient client;
     private final KafkaTemplate<String, SearchLogMessage> kafkaTemplate;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
 
     public Page<? extends AnimalEsListDTO> searchEsAnimals(String keyword, int page, int size) {
         String searchedAt = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
@@ -122,6 +123,134 @@ public class AnimalEsService {
 
         } catch (Exception e) {
             throw new RuntimeException("검색 중 오류 발생", e);
+        }
+    }
+
+    //통합 검색 (검색어 + 필터)
+    public Page<AnimalEsListDTO> searchWithKeywordAndFilter(String keyword, LocalDate startDate, LocalDate endDate, String upKindCd, String kindCd, String regionCode, String subRegionCode, PageRequest pageable) {
+        String searchedAt = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
+        SearchLogMessage message = new SearchLogMessage(keyword, searchedAt);
+
+        CompletableFuture<?> future = kafkaTemplate.send("search-log", message);
+
+        future.thenAccept(result -> log.info("Search log sent: {}", message))
+                .exceptionally(ex -> {
+                    log.warn("Failed to send search log: {}", ex.getMessage());
+                    return null;
+                });
+
+        try {
+            int from = pageable.getPageNumber() * pageable.getPageSize();
+            int size = pageable.getPageSize();
+
+            List<Query> filters = new ArrayList<>();
+
+            //날짜 선택 유효성 검사
+            if (startDate != null && endDate != null && endDate.isBefore(startDate)) {
+                throw new CustomException(ErrorCode.INVALID_NOTICE_DATE);
+            }
+            if ((startDate == null && endDate != null) || (startDate != null && endDate == null)) {
+                throw new CustomException(ErrorCode.INVALID_DATE);
+            }
+
+            // 날짜 필터
+            if (startDate != null && endDate != null) {
+                filters.add(RangeQuery.of(r -> r
+                        .field("noticeSdt")
+                        .lte(JsonData.of(endDate.format(formatter)))
+                )._toQuery());
+
+                filters.add(RangeQuery.of(r -> r
+                        .field("noticeEdt")
+                        .gte(JsonData.of(startDate.format(formatter)))
+                )._toQuery());
+            }
+
+            // 축종 코드
+            if (upKindCd != null && !upKindCd.isBlank()) {
+                filters.add(TermQuery.of(t -> t.field("upKindCd.keyword").value(upKindCd))._toQuery());
+            }
+
+            //품종 선택 유효성 검사
+            if ((upKindCd == null && kindCd != null)) {
+                throw new CustomException(ErrorCode.BAD_REQUEST);
+            }
+
+            // 품종 코드
+            if (kindCd != null && !kindCd.isBlank()) {
+                filters.add(TermQuery.of(t -> t.field("kindCd.keyword").value(kindCd))._toQuery());
+            }
+
+            // 시도 코드
+            if (regionCode != null && !regionCode.isBlank()) {
+                filters.add(TermQuery.of(t -> t.field("regionCode.keyword").value(regionCode))._toQuery());
+            }
+
+            //시군구 선택 유효성 검사
+            if ((regionCode == null && subRegionCode != null)) {
+                throw new CustomException(ErrorCode.BAD_REQUEST);
+            }
+
+            // 시군구 코드
+            if (subRegionCode != null && !subRegionCode.isBlank()) {
+                filters.add(TermQuery.of(t -> t.field("subRegionCode.keyword").value(subRegionCode))._toQuery());
+            }
+
+            Query query;
+            if (keyword == null || keyword.isBlank()) {
+                query = BoolQuery.of(b -> b
+                        .filter(filters)
+                )._toQuery();
+            } else {
+                query = BoolQuery.of(b -> b
+                        .should(TermQuery.of(t -> t
+                                .field("noticeNo.keyword")
+                                .value(keyword)
+                        )._toQuery())
+                        .should(MultiMatchQuery.of(m -> m
+                                .query(keyword)
+                                .fields(
+                                        "specialMark",
+                                        "happenPlace",
+                                        "kindFullNm",
+                                        "colorCd",
+                                        "careName",
+                                        "regionName",
+                                        "subRegionName"
+                                )
+                                .fuzziness("AUTO")
+                        )._toQuery())
+                        .filter(filters)
+                )._toQuery();
+            }
+
+            SearchRequest request = SearchRequest.of(s -> s
+                    .index("animal-index")
+                    .from(from)
+                    .size(size)
+                    .query(query)
+            );
+
+            SearchResponse<AnimalEsDocument> response = client.search(request, AnimalEsDocument.class);
+
+            List<AnimalEsDocument> content = response.hits().hits().stream()
+                    .map(Hit::source)
+                    .toList();
+
+            long total = response.hits().total() != null ? response.hits().total().value() : 0L;
+
+            List<AnimalEsListDTO> animalEsListDTOS = new ArrayList<>();
+            for (AnimalEsDocument doc : content) {
+                animalEsListDTOS.add(AnimalEsDocument.toAnimalEsDTO(doc));
+            }
+
+            return new PageImpl<>(animalEsListDTOS, pageable, total);
+
+        } catch (Exception e) {
+            if (e instanceof CustomException) {
+                throw (CustomException) e;
+            }
+            throw new RuntimeException("통합 검색 중 오류 발생", e);
         }
     }
 }
