@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -70,6 +71,7 @@ public class OAuth2LogoutSuccessHandler implements LogoutSuccessHandler {
 
         deleteCookie(response, "accessToken");
         deleteCookie(response, "refreshToken");
+        deleteCookie(response, "sns_access_token");
 
         // 최종적으로 redirectUrl로 리디렉트
         response.sendRedirect(redirectUrl);
@@ -77,10 +79,13 @@ public class OAuth2LogoutSuccessHandler implements LogoutSuccessHandler {
 
 /* 쿠키 삭제 메서드 */
     private void deleteCookie(HttpServletResponse response, String name) {
-        Cookie cookie = new Cookie(name, null);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
+        ResponseCookie cookie = ResponseCookie.from(name, "")
+                .path("/")
+                .maxAge(0)
+                .httpOnly(true) // 필요에 따라 false
+                .build();
+
+        response.addHeader("Set-Cookie", cookie.toString());
     }
+
 }

@@ -31,23 +31,24 @@ public class AnimalDataScheduler {
     public void refreshDailyData() {
         LocalDate today = LocalDate.now();
         String todayStr = today.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        log.info("01시 스케줄링 - 오늘 데이터 수집 : {}", todayStr);
+        log.info("01시 스케줄링 - 오늘 동물 데이터 수집 : {}", todayStr);
 
         animalApiService.fetchAndSaveAnimals(todayStr, todayStr);
         animalApiService.updateAnimals(todayStr, todayStr);
 
-        //가장 오래된 데이터 삭제하기
-        animalApiService.deleteOldestAnimals();
+        log.info("01시 스케줄링 - 오늘 동물 데이터 수집 완료");
     }
 
     @Scheduled(cron = "0 0 13 * * *")
     public void refreshDailyDataAfternoon() {
         LocalDate today = LocalDate.now();
         String todayStr = today.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        log.info("13시 스케줄링 - 오늘 데이터 수집 : {}", todayStr);
+        log.info("13시 스케줄링 - 오늘 동물 데이터 수집 : {}", todayStr);
 
         animalApiService.fetchAndSaveAnimals(todayStr, todayStr);
         animalApiService.updateAnimals(todayStr, todayStr);
+
+        log.info("13시 스케줄링 - 오늘 동물 데이터 수집 완료");
     }
 
     //스케줄링 테스트

@@ -3,6 +3,7 @@ package com.project.nyang.modules.adoption.entity;
 import com.project.nyang.modules.animal.entity.Animal;
 import com.project.nyang.modules.shelter.entity.Shelter;
 import com.project.nyang.modules.user.entity.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,13 +27,18 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "PET_APPLICATION_FORM")
+@Builder
 @EntityListeners(AuditingEntityListener.class)
 public class PetApplicationForm {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "form_id")
-    private Long id;
+    private Long formId;
+
+    @Column(name = "notice_no", nullable = false)
+    private String noticeNo;
 
     @Column(name = "user_name", nullable = false)
     private String userName;
@@ -67,12 +73,41 @@ public class PetApplicationForm {
     private YesNo experience;
 
     @CreatedDate
-    @Column(name = "noty_created_at", columnDefinition = "TIMESTAMP",
+    @Column(name = "form_created_at", columnDefinition = "TIMESTAMP",
             updatable = false, nullable = false)
-    private LocalDateTime notyCreatedAt;
+    private LocalDateTime formCreatedAt;
 
     @Column(name = "application_reason", columnDefinition = "TEXT", nullable = false)
     private String applicationReason;
+
+    @Column(name = "adult_count", nullable = false)
+    private int adultCount;
+
+    @Column(name = "children_count", nullable = false)
+    private int childrenCount;
+
+    @Column(name = "resent_at", columnDefinition = "TIMESTAMP")
+    private LocalDateTime resentAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "all_consent", nullable = false, length = 3)
+    private YesNo allConsent;  // YES/NO
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "housing_type", nullable = false, length = 20)
+    private HousingType housingType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "has_allergy", nullable = false, length = 3)
+    private YesNo hasAllergy;  // YES/NO
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "has_other_pets", nullable = false, length = 3)
+    private YesNo hasOtherPets; // YES/NO
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "consent_for_check", nullable = false, length = 3)
+    private YesNo consentForCheck; // YES/NO
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "desertion_no", referencedColumnName = "desertion_no")
@@ -91,41 +126,20 @@ public class PetApplicationForm {
     }
 
     public enum YesNo {
-        Y, N
+        YES, NO
     }
 
-    //전에 builder 패턴 사용하기로 했어서 임시 추가
-    @Builder
-    public PetApplicationForm(
-        String userName,
-        LocalDate userBirth,
-        Gender userGender,
-        String userPhone,
-        String familyPhone,
-        String family,
-        String address,
-        String detailAddress,
-        String job,
-        YesNo experience,
-        LocalDateTime submissionTime,
-        String applicationReason,
-        Animal animal,
-        Shelter shelter,
-        User user
-    ) {
-        this.userName = userName;
-        this.userBirth = userBirth;
-        this.userGender = userGender;
-        this.userPhone = userPhone;
-        this.familyPhone = familyPhone;
-        this.family = family;
-        this.address = address;
-        this.detailAddress = detailAddress;
-        this.job = job;
-        this.experience = experience;
-        this.applicationReason = applicationReason;
-        this.animal = animal;
-        this.shelter = shelter;
-        this.user = user;
+    public enum HousingType {
+        DAGA_GU_JUTAUK,
+        DANDOK_JUTAUK,
+        APARTMENT,
+        ONE_ROOM,
+        ETC
     }
+
+    // 재전송 처리 메서드
+    public void markResent() {
+        this.resentAt = LocalDateTime.now();
+    }
+
 }

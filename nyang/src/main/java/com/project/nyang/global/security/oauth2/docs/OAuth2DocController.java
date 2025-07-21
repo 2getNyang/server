@@ -1,11 +1,11 @@
 package com.project.nyang.global.security.oauth2.docs;
 
+import com.project.nyang.global.security.oauth2.OAuth2WithdrawNaverService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 소셜 로그인 관련 설명 Swagger 문서 클래스입니다.
@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "🌐 소셜 로그인 API", description = "카카오 로그인 설명용 API 문서입니다.")
 @RestController
 @RequestMapping("/oauth2/docs")
+@RequiredArgsConstructor
 public class OAuth2DocController {
+
 
     @Operation(summary = "카카오 로그인", description = """
             카카오 로그인은 아래 URL로 이동하여 OAuth2 인증을 시작합니다.  

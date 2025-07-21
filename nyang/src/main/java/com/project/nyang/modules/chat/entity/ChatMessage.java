@@ -12,34 +12,37 @@ import lombok.*;
  * @fileName : ChatMessage
  * @since : 25. 7. 7.
  */
-//@Entity
-//@Getter
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@Table(name = "CHAT_MSG")
-//public class ChatMessage extends BaseTime {
-//
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "chat_msg_id")
-//    private Long chatMsgId;
-//
-//    @Lob
-//    @Column(name = "chat_content", nullable = false)
-//    private String chatContent;
-//
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "chat_room_id", nullable = false)
-//    private ChatRoom chatRoom;
-//
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id")
-//    private User user;
-//
-//    @Builder
-//    public ChatMessage(String chatContent, ChatRoom chatRoom, User user) {
-//        this.chatContent = chatContent;
-//        this.chatRoom = chatRoom;
-//        this.user = user;
-//    }
-//}
+@Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "CHAT_Message")
+public class ChatMessage extends BaseTime {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id", nullable = false)
+    private ChatRoom room;
+
+    @Column(name = "sender_id", nullable = false)
+    private Long senderId;
+
+    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
+    private String content;
+
+    @Column(name = "is_read", nullable = false)
+    private Boolean isRead = false;
+
+    public ChatMessage(ChatRoom room, Long senderId, String content) {
+        this.room = room;
+        this.senderId = senderId;
+        this.content = content;
+    }
+
+    public void markAsRead() {
+        this.isRead = true;
+    }
+}
+
