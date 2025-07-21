@@ -94,4 +94,7 @@ public interface ShelterRepository extends JpaRepository<Shelter, String> {
     //동물 api에서 보호소 번호 찾아오기
     Optional<Shelter> findByCareRegNumber(String careRegNumber);
 
+    //보호소 총 갯수
+    long count();
+
 }

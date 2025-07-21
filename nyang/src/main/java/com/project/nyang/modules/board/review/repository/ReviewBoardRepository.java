@@ -1,9 +1,12 @@
 package com.project.nyang.modules.board.review.repository;
 
 import com.project.nyang.modules.board.entity.Board;
+import com.project.nyang.modules.image.entity.Image;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -17,4 +20,5 @@ public interface ReviewBoardRepository extends JpaRepository<Board, Long> {
     Optional<Board> findByIdAndDeletedAtIsNull(Long id);
 
     Page<Board> findAllByDeletedAtIsNullAndCategory_CategoryId(Pageable pageable, Long categoryCategoryId);
+
 }

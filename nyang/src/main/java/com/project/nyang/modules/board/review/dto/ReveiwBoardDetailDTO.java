@@ -60,21 +60,34 @@ public class ReveiwBoardDetailDTO {
         private String sexCd;
         @Schema(description = "구조일")
         private LocalDate happenDt;
-        @Schema(description = "지역 이름")
+        @Schema(description = "시/도 이름")
+        private String regionName;
+        @Schema(description = "시/군/구 이름")
         private String subRegionName;
         @Schema(description = "보호소 이름")
         private String careName;
+        @Schema(description = "공고 번호")
+        private String noticeNo;
+        @Schema(description = "썸네일")
+        private String profile1;
+        @Schema(description = "신청일자")
+        private LocalDateTime formCreateAt;
 
         @Builder
-        public PetApplicationDTO(String desertionNo, Long formId, String kindFullNm, String age, String sexCd, LocalDate happenDt, String subRegionName, String careName) {
+        public PetApplicationDTO(String desertionNo, Long formId, String kindFullNm, String age, String sexCd,
+                                 String noticeNo, String profile1, LocalDate happenDt, String regionName, String subRegionName, String careName, LocalDateTime formCreateAt) {
             this.desertionNo = desertionNo;
             this.formId = formId;
             this.kindFullNm = kindFullNm;
             this.age = age;
             this.sexCd = sexCd;
             this.happenDt = happenDt;
+            this.regionName = regionName;
             this.subRegionName = subRegionName;
             this.careName = careName;
+            this.noticeNo = noticeNo;
+            this.profile1 = profile1;
+            this.formCreateAt = formCreateAt;
         }
 
         public static PetApplicationDTO toDTO(PetApplicationForm form) {
@@ -85,8 +98,12 @@ public class ReveiwBoardDetailDTO {
                     .age(form.getAnimal().getAge())
                     .sexCd(form.getAnimal().getSexCd())
                     .happenDt(form.getAnimal().getHappenDt())
+                    .regionName(form.getAnimal().getShelter().getRegion().getRegionName())
                     .subRegionName(form.getAnimal().getShelter().getSubRegion().getSubRegionName())
                     .careName(form.getAnimal().getShelter().getCareName())
+                    .noticeNo(form.getAnimal().getNoticeNo())
+                    .profile1(form.getAnimal().getPopfile1())
+                    .formCreateAt(form.getFormCreatedAt())
                     .build();
         }
     }
@@ -123,16 +140,19 @@ public class ReveiwBoardDetailDTO {
         private LocalDateTime createdAt;
         @Schema(description = "댓글 작성자")
         private String commentNickname;
+        @Schema(description = "댓글 작성자 id")
+        private Long commentUserId;
         @Schema(description = "부모 댓글 ID")
         private Long parentId;
 
         @Builder
-        public CommentDTO(String commnetContent, LocalDateTime createdAt, String commentNickname, Long parentId, Long id) {
+        public CommentDTO(String commnetContent, LocalDateTime createdAt, String commentNickname, Long parentId, Long id, Long commentUserId) {
             this.id = id;
             this.commnetContent = commnetContent;
             this.createdAt = createdAt;
             this.commentNickname = commentNickname;
             this.parentId = parentId;
+            this.commentUserId = commentUserId;
         }
 
         public static CommentDTO toDTO(Comment comment) {
@@ -142,6 +162,7 @@ public class ReveiwBoardDetailDTO {
                     .commentNickname(comment.getUser().getNickname())
                     .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
                     .id(comment.getId())
+                    .commentUserId(comment.getUser().getId())
                     .build();
         }
     }

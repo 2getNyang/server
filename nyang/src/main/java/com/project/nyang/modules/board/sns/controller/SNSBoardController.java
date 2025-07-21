@@ -7,8 +7,10 @@ import com.project.nyang.global.common.api.ApiSuccessResponse;
 import com.project.nyang.global.security.core.CustomUserDetails;
 import com.project.nyang.modules.board.sns.dto.SNSBoardDTO;
 import com.project.nyang.modules.board.sns.dto.SNSBoardUpdateDTO;
+import com.project.nyang.modules.board.sns.dto.SNSBoardUpdateFormDTO;
 import com.project.nyang.modules.board.sns.service.SNSBoardService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -112,6 +114,19 @@ public class SNSBoardController {
 
         SNSBoardDTO createdBoard = snsBoardService.createSNSBoard(boardDTO, imageFiles, userId);
         return ResponseEntity.ok(ApiSuccessResponse.success(createdBoard));
+    }
+
+    /* 글 수정폼 호출 */
+    @Operation(summary = "SNS 게시글 수정폼 호출")
+    @GetMapping("/{boardId}/form")
+    public ResponseEntity<ApiResponse<SNSBoardUpdateFormDTO>> getSNSBoardFormEdit(
+            @Parameter(description = "수정할 게시글의 ID", example = "13")
+            @PathVariable Long boardId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails)
+    {
+        Long userId = customUserDetails.getId();
+        SNSBoardUpdateFormDTO formDTO = snsBoardService.getSNSBoardUpdateForm(boardId, userId);
+        return ResponseEntity.ok(ApiSuccessResponse.success(formDTO,"SNS 게시글 수정 폼 호출 완료"));
     }
 
     // 수정

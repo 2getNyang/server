@@ -7,6 +7,7 @@ import com.project.nyang.global.security.oauth2.OAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -60,6 +61,7 @@ public class SecurityConfig {
                                 "/api/v1/recommendations/**",
                                 "/api/v1/shelters/**",
                                 "/api/v1/regions/**",
+                                "/api/v1/upKinds/**",
                                 "/api/v1/public/**",
                                 "api/v1/notifications/**",//알림기능 테스트 때문에 추가
                                 "/ws-stomp/**",         //채팅관련
@@ -68,6 +70,10 @@ public class SecurityConfig {
                                 "/api/v1/user/**",
                                 "/*"
 
+                        ).permitAll()
+
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/v1/like/**"
                         ).permitAll()
 
                         .requestMatchers(
@@ -81,7 +87,13 @@ public class SecurityConfig {
                                 "/api/v1/my/**"
                         ).authenticated() //인증이 필요한 경로
 
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/v1/like/**"
+                        ).authenticated()
 
+                        .requestMatchers(HttpMethod.DELETE,
+                                "/api/v1/like/**"
+                        ).authenticated()
                 )
 
                 //스프링 시큐리티에서 세션관리정책을 설정하는 부분

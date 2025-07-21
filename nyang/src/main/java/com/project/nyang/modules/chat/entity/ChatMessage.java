@@ -5,6 +5,8 @@ import com.project.nyang.modules.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 /**
  * 채팅 메시지 엔티티
  *
@@ -15,8 +17,8 @@ import lombok.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "CHAT_Message")
-public class ChatMessage extends BaseTime {
+@Table(name = "CHAT_MESSAGE")
+public class ChatMessage extends BaseTime{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

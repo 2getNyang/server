@@ -30,7 +30,7 @@ public class MyPageService {
     private final AdoptionRepository adoptionRepository;
 
     public Page<MyAnimalDTO> getMyAnimals(Long userId, int page, int size) {
-        Page<LikeIt> likeIts = likeRepository.findByUser_IdAndAnimalNotNull(userId, PageRequest.of(page, size));
+        Page<LikeIt> likeIts = likeRepository.findByUser_IdAndAnimalIsNotNull(userId, PageRequest.of(page, size));
 
         return likeIts.map(likeIt -> {
             return MyAnimalDTO.of(likeIt.getAnimal()); // Animal → DTO 변환
@@ -38,7 +38,7 @@ public class MyPageService {
     }
 
     public Page<MyLikedBoardDTO> getLikedBoards(Long userId, int page, int size) {
-        Page<LikeIt> likeIts = likeRepository.findByUser_idAndBoardNotNull(userId, PageRequest.of(page, size));
+        Page<LikeIt> likeIts = likeRepository.findByUser_IdAndBoardIsNotNull(userId, PageRequest.of(page, size));
 
         return likeIts.map(likeIt -> {
             return MyLikedBoardDTO.of(likeIt.getBoard());

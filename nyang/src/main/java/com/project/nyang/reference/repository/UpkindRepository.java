@@ -2,7 +2,9 @@ package com.project.nyang.reference.repository;
 
 import com.project.nyang.reference.entity.UpKind;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -15,4 +17,10 @@ import java.util.Optional;
 public interface UpkindRepository extends JpaRepository<UpKind,String> {
     Optional<UpKind> findByUpKindNm(String upKindNm);
     Optional<UpKind> findByUpKindCd(String upKindCd);
+
+    /**
+     * 모든 축종이름을 조회하는 쿼리
+     */
+    @Query("SELECT uk.upKindNm FROM UpKind uk")
+    List<String> findAllUpKinds();
 }

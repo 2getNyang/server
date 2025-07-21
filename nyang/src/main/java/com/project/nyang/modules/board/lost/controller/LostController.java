@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +36,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/boards/lost")
+@Slf4j
 public class LostController {
 
     private final LostService lostService;
@@ -162,6 +164,8 @@ public class LostController {
             @RequestPart LostUpdateRequestDTO requestDTO,
             @RequestPart(required = false) List<MultipartFile> newImages
     ) {
+        log.info("boardId(path) = {}", boardId);
+        log.info("dto.boardId(body) = {}", requestDTO.getBoardId());
         lostService.updateBoard(boardId, requestDTO, newImages);
         return ResponseEntity.ok(ApiSuccessResponse.success(boardId,"게시글 수정 완료"));
     }

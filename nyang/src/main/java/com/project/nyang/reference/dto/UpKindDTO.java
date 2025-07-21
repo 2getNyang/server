@@ -21,6 +21,10 @@ public class UpKindDTO {
     private String upKindCd;     // 예: "417000"
     private String upKindName;   // 예: "고양이"
 
+    public UpKindDTO(String upKindName) {
+        this.upKindName = upKindName;
+    }
+
     public static UpKindDTO from(UpKind upKind) {
         return UpKindDTO.builder()
                 .upKindCd(upKind.getUpKindCd())

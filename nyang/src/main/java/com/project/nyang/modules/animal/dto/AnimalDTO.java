@@ -105,4 +105,9 @@ public class AnimalDTO {
     @Schema(description = "보호소 전화번호", example = "02-1234-5678")
     private String shelterTel;
 
+    @Schema(description = "보호소ID", example = "348527200900001")
+    private String careRegNumber;
+
+
+
 }

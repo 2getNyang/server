@@ -21,6 +21,8 @@ public class KindDTO {
     private String kindCd;     // 예: "000054"
     private String kindName;   // 예: "푸들"
 
+    public KindDTO(String kindName) {this.kindName = kindName;}
+
     public static KindDTO from(Kind kind) {
         return KindDTO.builder()
                 .kindCd(kind.getKindCd())

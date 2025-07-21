@@ -1,7 +1,11 @@
 package com.project.nyang.reference.repository;
 
+import com.project.nyang.reference.dto.KindDTO;
+import com.project.nyang.reference.dto.SubRegionDTO;
 import com.project.nyang.reference.entity.Kind;
+import com.project.nyang.reference.entity.Region;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import javax.swing.*;
 import java.util.List;
@@ -19,4 +23,11 @@ public interface KindRepository extends JpaRepository<Kind,String> {
     Optional<Kind> findByKindCd(String kindCd);
 
     List<Kind> findByUpKindCd_UpKindCd(String upKindCd);
+
+    @Query("SELECT new com.project.nyang.reference.dto.KindDTO(kind.kindNm) " +
+            "FROM Kind kind " +
+            "WHERE kind.upKindCd.upKindNm = :upKindNm")
+    List<KindDTO> findKindsByUpKind(String upKindNm);
+
+
 }
