@@ -19,7 +19,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/api/**")
                 .allowedHeaders("*")
                 .allowedOrigins("http://localhost:8081")
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowCredentials(true); // 로그인 세션 유지 필요시
     }
 }

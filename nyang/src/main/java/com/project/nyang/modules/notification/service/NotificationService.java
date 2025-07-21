@@ -114,10 +114,14 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 
-
     @Transactional
     @Operation(summary = "모든 알림 읽음 처리", description = "현재 로그인한 사용자의 모든 알림을 읽음 상태로 변경합니다.")
     public void markAllAsRead(User user) {
         notificationRepository.updateAllIsReadByUser(user.getId());
+    }
+
+    @Operation(summary = "안읽은 알림 데이터 조회",description = "현재 로그인한 사용자의 읽지 않은 모든 알림을 조회합니다")
+    public List<Notification> getUnreadNotifications(User user) {
+        return notificationRepository.findByUserAndIsReadOrderByNotyCreatedAtDesc(user, false);
     }
 }
