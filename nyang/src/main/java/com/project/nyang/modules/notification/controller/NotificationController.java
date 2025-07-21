@@ -36,6 +36,13 @@ public class NotificationController {
         return ResponseEntity.ok(notifications.stream().map(NotificationDTO::new).toList());
     }
 
+    @Operation(summary = "안읽은 알림 리스트 조회", description = "현재 로그인한 사용자의 isRead 값이 false인 알림들을 최신순으로 조회합니다.")
+    @GetMapping("/unread")
+    public ResponseEntity<List<NotificationDTO>> getUnreadNotifications(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        List<Notification> unreadList = notificationService.getUnreadNotifications(userDetails.getUser());
+        return ResponseEntity.ok(unreadList.stream().map(NotificationDTO::new).toList());
+    }
+
     @Operation(summary = "미확인 알림 읽음 수정",description = "알람 확인시 isread 값을 1로 변경합니다.")
     @PatchMapping("/{id}/read")
     public ResponseEntity<Void> markAsRead(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -43,7 +50,7 @@ public class NotificationController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "안읽은 알림 조회", description = "현재 로그인한 사용자의 isread 값이 false인 안읽은 알림들을 조회합니다.")
+    @Operation(summary = "안읽은 알림 개수 조회", description = "현재 로그인한 사용자의 isread 값이 false인 안읽은 알림 데이터 개수를 조회합니다.")
     @GetMapping("/unread/count")
     public ResponseEntity<Long> getUnreadCount(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(notificationService.countUnreadNotifications(userDetails.getUser()));
