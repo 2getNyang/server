@@ -61,6 +61,8 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'  // Spring Cloud AWS v2.x
 	implementation 'com.amazonaws:aws-java-sdk-s3'  // AWS SDK for Java v1
 
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
 	//pdf 변환을 위한 라이브러리
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'com.openhtmltopdf:openhtmltopdf-core:1.0.10'

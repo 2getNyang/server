@@ -2,6 +2,7 @@ package com.project.nyang.modules.adoption.controller;
 
 import com.project.nyang.global.common.api.ApiResponse;
 import com.project.nyang.global.common.api.ApiSuccessResponse;
+import com.project.nyang.global.security.core.CustomUserDetails;
 import com.project.nyang.modules.adoption.dto.AdoptionDTO;
 import com.project.nyang.modules.adoption.service.AdoptionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -25,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 public class AdoptionController {
 
     private final AdoptionService adoptionService;
+
+
 
     @Operation(summary = "Form에서 받아온 정보 처리", description = "사용자가 작성한 입양신청를 처리합니다.")
     @PostMapping("/{desertionNo}")
@@ -46,4 +50,13 @@ public class AdoptionController {
         adoptionService.processAdoptionApplication(updatedRequest);
         return ResponseEntity.ok(ApiSuccessResponse.success(null, "입양 신청이 접수되었습니다."));
     }
+
+    @Operation(summary = "입양 신청 재요청", description = "입양 신청 재요청을 처리합니다.")
+    @PostMapping("/{formId}/resend")
+    ResponseEntity<ApiResponse<String>> resendAdoption(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long formId) {
+        Long userId = userDetails.getId();
+        adoptionService.reprocessAdoptionApplication(formId, userId);
+        return ResponseEntity.ok(ApiSuccessResponse.success(null, "입양 신청이 재전송되었습니다."));
+    }
+
 }

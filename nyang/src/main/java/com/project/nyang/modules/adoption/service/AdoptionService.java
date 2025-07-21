@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.time.LocalDateTime;
 
 /**
  * 입양신청서 데이터를 처리하는 서비스입니다
@@ -83,6 +84,55 @@ public class AdoptionService {
         }
 
         //6. 알림 생성 및 전송
+        notificationService.mailSentNotification(user);
+    }
+
+    @Operation(summary = "입양신청 재요청", description = "입양신청 재요청 메서드 입니다")
+    public void reprocessAdoptionApplication(Long formId, Long userId) {
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        PetApplicationForm form = adoptionRepository.findById(formId).orElseThrow(() ->
+                new CustomException(ErrorCode.APPLICATION_NOT_FOUND));
+
+        if (form.getFormCreatedAt().plusDays(2).isAfter(LocalDateTime.now())) {
+            throw new IllegalStateException("신청 후 2일이 지나야 다시 신청할 수 있습니다.");
+        }
+
+        if (form.getResentAt() != null) {
+            throw new IllegalStateException("이미 재신청한 이력이 있습니다.");
+        }
+
+        AdoptionDTO application = AdoptionDTO.toDTO(form);
+
+        // 워드로 작성한 템플릿에 DTO 값 치환
+        File pdfFile = pdfGenerator.htmlToPdf(application);
+
+        // 보호소 이메일 조회
+        String shelterEmail = findShelterEmail(application.getCareRegNumber());
+        log.info("보호소 이메일 조회가 완료되었습니다: ", shelterEmail);
+
+        form.markResent();
+
+        // 이메일 전송
+        mailService.sendEmailWithPdf(
+                shelterEmail,
+                "새 입양 신청서가 도착했습니다",
+                "<p>새로운 입양 신청서가 접수되었습니다. 첨부된 PDF 파일을 확인하세요.</p>",
+                pdfFile
+        );
+
+        // 저장된 PDF 삭제
+        if (pdfFile.exists()) {
+            boolean deleted = pdfFile.delete();
+            if (deleted) {
+                log.info("✅ 임시 PDF 파일 삭제 완료: {}", pdfFile.getAbsolutePath());
+            } else {
+                log.warn("⚠️ 임시 PDF 파일 삭제 실패: {}", pdfFile.getAbsolutePath());
+            }
+        }
+
+        // 알림 생성 및 전송
         notificationService.mailSentNotification(user);
     }
 

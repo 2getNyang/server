@@ -1,5 +1,6 @@
 package com.project.nyang.modules.notification.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.nyang.modules.notification.entity.Notification;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -37,6 +38,7 @@ public class NotificationDTO {
     @Schema(description = "알림 타입")
     private String notyType;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Schema(description = "알림 생성 시간")
     private LocalDateTime notyCreatedAt;
 
