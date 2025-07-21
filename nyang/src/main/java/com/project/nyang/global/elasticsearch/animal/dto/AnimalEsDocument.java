@@ -52,6 +52,12 @@ public class AnimalEsDocument {
     @Schema(description = "공고 번호", example = "서울특별시-성동구-2025-00535")
     private String noticeNo;
 
+    @Schema(description = "공고 시작")
+    private String noticeSdt;
+
+    @Schema(description = "공고 종료")
+    private String noticeEdt;
+
     @Schema(description = "발견일", example = "2025-07-18")
     private String happenDt;
 
@@ -92,7 +98,7 @@ public class AnimalEsDocument {
     private String careName;
 
     @Builder
-    public AnimalEsDocument(String desertionNo, String processState, String sexCd, String colorCd, String age, String weight, String specialMark, String kindFullNm, String noticeNo, String happenDt, String happenPlace, String popfile1, String upKindCd, String upKindNm, String kindCd, String kindNm, String regionCode, String regionName, String subRegionCode, String subRegionName,  String careRegNumber, String careName) {
+    public AnimalEsDocument(String desertionNo, String processState, String sexCd, String colorCd, String age, String weight, String specialMark, String kindFullNm, String noticeNo, String noticeSdt, String noticeEdt, String happenDt, String happenPlace, String popfile1, String upKindCd, String upKindNm, String kindCd, String kindNm, String regionCode, String regionName, String subRegionCode, String subRegionName,  String careRegNumber, String careName) {
         this.desertionNo = desertionNo;
         this.processState = processState;
         this.sexCd = sexCd;
@@ -102,6 +108,8 @@ public class AnimalEsDocument {
         this.specialMark = specialMark;
         this.kindFullNm = kindFullNm;
         this.noticeNo = noticeNo;
+        this.noticeSdt = noticeSdt;
+        this.noticeEdt = noticeEdt;
         this.happenDt = happenDt;
         this.happenPlace = happenPlace;
         this.popfile1 = popfile1;
