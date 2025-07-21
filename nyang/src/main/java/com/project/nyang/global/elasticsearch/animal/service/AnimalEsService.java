@@ -196,6 +196,8 @@ public class AnimalEsService {
                 filters.add(TermQuery.of(t -> t.field("subRegionCode.keyword").value(subRegionCode))._toQuery());
             }
 
+            log.info("filters: {}", filters);
+
             Query query;
             if (keyword == null || keyword.isBlank()) {
                 query = BoolQuery.of(b -> b
@@ -204,7 +206,7 @@ public class AnimalEsService {
             } else {
                 query = BoolQuery.of(b -> b
                         .should(TermQuery.of(t -> t
-                                .field("noticeNo.keyword")
+                                .field("noticeNo")
                                 .value(keyword)
                         )._toQuery())
                         .should(MultiMatchQuery.of(m -> m
@@ -223,6 +225,8 @@ public class AnimalEsService {
                         .filter(filters)
                 )._toQuery();
             }
+
+            log.info("Generated query: {}", query);
 
             SearchRequest request = SearchRequest.of(s -> s
                     .index("animal-index")
