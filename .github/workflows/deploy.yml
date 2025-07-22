@@ -20,6 +20,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Build with Gradle
+        working-directory: server/nyang   # 이 부분 추가 (build.gradle 있는 위치)
         run: ./gradlew clean bootJar
 
       - name: Copy JAR to EC2
