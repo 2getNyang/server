@@ -127,7 +127,7 @@ public class AnimalEsService {
     }
 
     //통합 검색 (검색어 + 필터)
-    public Page<AnimalEsListDTO> searchWithKeywordAndFilter(String keyword, LocalDate startDate, LocalDate endDate, String upKindCd, String kindCd, String regionCode, String subRegionCode, PageRequest pageable) {
+    public Page<AnimalEsListDTO> searchWithKeywordAndFilter(String keyword, LocalDate startDate, LocalDate endDate, String upKindNm, String kindNm, String regionName, String subRegionName, PageRequest pageable) {
         String searchedAt = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
         SearchLogMessage message = new SearchLogMessage(keyword, searchedAt);
 
@@ -157,43 +157,43 @@ public class AnimalEsService {
             if (startDate != null && endDate != null) {
                 filters.add(RangeQuery.of(r -> r
                         .field("noticeSdt")
-                        .lte(JsonData.of(endDate.format(formatter)))
+                        .gte(JsonData.of(startDate.format(formatter)))
                 )._toQuery());
 
                 filters.add(RangeQuery.of(r -> r
                         .field("noticeEdt")
-                        .gte(JsonData.of(startDate.format(formatter)))
+                        .lte(JsonData.of(endDate.format(formatter)))
                 )._toQuery());
             }
 
-            // 축종 코드
-            if (upKindCd != null && !upKindCd.isBlank()) {
-                filters.add(TermQuery.of(t -> t.field("upKindCd.keyword").value(upKindCd))._toQuery());
+            // 축종 이름
+            if (upKindNm != null && !upKindNm.isBlank()) {
+                filters.add(TermQuery.of(t -> t.field("upKindNm.keyword").value(upKindNm))._toQuery());
             }
 
             //품종 선택 유효성 검사
-            if ((upKindCd == null && kindCd != null)) {
+            if ((upKindNm == null && kindNm != null)) {
                 throw new CustomException(ErrorCode.BAD_REQUEST);
             }
 
             // 품종 코드
-            if (kindCd != null && !kindCd.isBlank()) {
-                filters.add(TermQuery.of(t -> t.field("kindCd.keyword").value(kindCd))._toQuery());
+            if (kindNm != null && !kindNm.isBlank()) {
+                filters.add(TermQuery.of(t -> t.field("kindNm.keyword").value(kindNm))._toQuery());
             }
 
             // 시도 코드
-            if (regionCode != null && !regionCode.isBlank()) {
-                filters.add(TermQuery.of(t -> t.field("regionCode.keyword").value(regionCode))._toQuery());
+            if (regionName != null && !regionName.isBlank()) {
+                filters.add(TermQuery.of(t -> t.field("regionName.keyword").value(regionName))._toQuery());
             }
 
             //시군구 선택 유효성 검사
-            if ((regionCode == null && subRegionCode != null)) {
+            if ((regionName == null && subRegionName != null)) {
                 throw new CustomException(ErrorCode.BAD_REQUEST);
             }
 
             // 시군구 코드
-            if (subRegionCode != null && !subRegionCode.isBlank()) {
-                filters.add(TermQuery.of(t -> t.field("subRegionCode.keyword").value(subRegionCode))._toQuery());
+            if (subRegionName != null && !subRegionName.isBlank()) {
+                filters.add(TermQuery.of(t -> t.field("subRegionName.keyword").value(subRegionName))._toQuery());
             }
 
             log.info("filters: {}", filters);
