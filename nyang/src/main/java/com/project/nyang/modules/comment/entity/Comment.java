@@ -23,6 +23,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "COMMENT")
 public class Comment extends BaseTime {
 
     @Id

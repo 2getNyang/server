@@ -15,7 +15,7 @@ import lombok.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "CHAT_Message")
+@Table(name = "CHAT_MESSAGE")
 public class ChatMessage extends BaseTime {
 
     @Id
