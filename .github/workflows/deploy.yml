@@ -34,8 +34,8 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
-          source: "server/nyang/build/libs/*.jar"
-          target: "/home/ubuntu/togetnyang/"
+          source: "nyang/build/libs/*.jar"
+          target: "/home/ubuntu/togetnyang/server/"
 
       - name: Copy deploy.sh to EC2
         uses: appleboy/scp-action@v0.1.4
@@ -43,8 +43,8 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
-          source: "server/nyang/.github/scripts/deploy.sh"
-          target: "/home/ubuntu/togetnyang/"
+          source: "nyang/.github/scripts/deploy.sh"
+          target: "/home/ubuntu/togetnyang/server/"
 
       - name: Run deploy script on EC2
         uses: appleboy/ssh-action@v1.0.0
