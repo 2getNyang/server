@@ -21,9 +21,9 @@ jobs:
 
       - name: Build with Gradle
         run: |
-          cd ./server/nyang
           echo "Current working directory:"
           pwd
+          ls
           ./gradlew clean bootJar
 
       - name: Copy JAR to EC2
