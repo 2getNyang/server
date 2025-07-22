@@ -20,7 +20,11 @@ jobs:
           distribution: 'temurin'
 
       - name: Build with Gradle
-        run: ./gradlew clean bootJar
+        run:
+          echo "Current working directory:"
+          pwd
+          cd server/nyang
+          ./gradlew clean bootJar
 
       - name: Copy JAR to EC2
         uses: appleboy/scp-action@v0.1.4
