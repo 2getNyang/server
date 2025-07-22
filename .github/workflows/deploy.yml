@@ -25,6 +25,7 @@ jobs:
           echo "Current working directory:"
           pwd
           ls
+          chmod +x ./gradlew
           ./gradlew clean bootJar
 
       - name: Copy JAR to EC2
