@@ -3,6 +3,7 @@ name: Simple Deploy to EC2
 on:
   push:
     branches: [ feature/github-actions-deploy ]  # ✅ dev 브랜치에 push 시 동작
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -22,9 +23,6 @@ jobs:
       - name: Build with Gradle
         run: |
           cd nyang
-          echo "Current working directory:"
-          pwd
-          ls
           chmod +x ./gradlew
           ./gradlew clean bootJar
 
