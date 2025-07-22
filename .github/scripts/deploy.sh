@@ -3,38 +3,20 @@
 set -e
 
 echo "> 최신 JAR 파일을 nyang 프로젝트 디렉토리로 이동"
-cp /home/ubuntu/togetnyang/*.jar /home/ubuntu/togetnyang/server/nyang/app.jar
+cp /home/ubuntu/togetnyang/*.jar /home/ubuntu/togetnyang/server/nyang/*.jar
 
 cd /home/ubuntu/togetnyang/server/nyang
 
-### ✅ 여기에 .env 생성
-echo "> .env 파일 생성"
-cat <<EOF > .env
-DB_SERVER=${DB_SERVER}
-DB_PORT=${DB_PORT}
-DB_USER=${DB_USER}
-DB_PASS=${DB_PASS}
-REDIS_HOST=${REDIS_HOST}
-KAKAO_CLIENT_ID=${KAKAO_CLIENT_ID}
-KAKAO_CLIENT_SECRET=${KAKAO_CLIENT_SECRET}
-NAVER_CLIENT_ID=${NAVER_CLIENT_ID}
-NAVER_CLIENT_SECRET=${NAVER_CLIENT_SECRET}
-GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-JWT_SECRET_KEY=${JWT_SECRET_KEY}
-SPRING_MAIL_USERNAME=${SPRING_MAIL_USERNAME}
-SPRING_MAIL_PASSWORD=${SPRING_MAIL_PASSWORD}
-AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
-AWS_SECRET_KEY=${AWS_SECRET_KEY}
-AWS_BUCKET=${AWS_BUCKET}
-AWS_REGION=${AWS_REGION}
-KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
-ELASTICSEARCH_URIS=${ELASTICSEARCH_URIS}
-publicapi.service-key=${PUBLICAPI_SERVICE_KEY}
-EOF
+if [ -f .env ]; then
+  echo "> .env 파일 로드"
+  export $(cat .env | xargs)
+else
+  echo "❌ .env 파일이 존재하지 않습니다. 배포 중단."
+  exit 1
+fi
 
 echo "> 기존 컨테이너 종료"
 docker compose down
 
 echo "> 새 컨테이너 빌드 및 실행"
-docker compose up -d --build
+docker compose up -f docker-compose-nyang.yml -d --build
