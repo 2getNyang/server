@@ -2,7 +2,7 @@ name: Simple Deploy to EC2
 
 on:
   push:
-    branches: [ dev ]  # ✅ dev 브랜치에 push 시 동작
+    branches: [ feature/github-actions-deploy ]  # ✅ dev 브랜치에 push 시 동작
 
 jobs:
   deploy:
