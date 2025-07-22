@@ -41,7 +41,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
-          source: "nyang/.github/scripts/deploy.sh"
+          source: ".github/scripts/deploy.sh"
           target: "/home/ubuntu/togetnyang/server/"
 
       - name: Run deploy script on EC2
@@ -51,5 +51,5 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
-            chmod +x /home/ubuntu/togetnyang/deploy.sh
-            /home/ubuntu/togetnyang/deploy.sh
+            chmod +x /home/ubuntu/togetnyang/server/.github/scripts/deploy.sh
+            /home/ubuntu/togetnyang/server/.github/scripts/deploy.sh
