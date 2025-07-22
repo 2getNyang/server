@@ -16,7 +16,7 @@ else
 fi
 
 echo "> 기존 컨테이너 종료"
-docker compose down
+docker-compose -f docker-compose-nyang.yml down
 
 echo "> 새 컨테이너 빌드 및 실행"
-docker compose up -f docker-compose-nyang.yml -d --build
+docker-compose -f docker-compose-nyang.yml up -d --build
