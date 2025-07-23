@@ -15,17 +15,17 @@ services:
     networks:
       - nyang_server
 
-#  nginx1:
-#    build: ./nginx
-#    container_name: nginx1
-#    ports:
-#      - "8080:80"
-#    volumes:
-#      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-#    depends_on:
-#      - nyang1
-#    networks:
-#      - nyang_server
+  nginx1:
+    build: ./nginx
+    container_name: nginx1
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - nyang1
+    networks:
+      - nyang_server
 
 networks:
   nyang_server:
