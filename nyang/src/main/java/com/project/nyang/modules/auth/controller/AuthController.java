@@ -6,7 +6,7 @@ import com.project.nyang.global.exception.ErrorCode;
 import com.project.nyang.global.security.jwt.JwtTokenProvider;
 import com.project.nyang.global.security.oauth2.OAuth2WithdrawKakaoService;
 import com.project.nyang.global.security.oauth2.OAuth2WithdrawNaverService;
-import com.project.nyang.global.security.oauth2.docs.OAuth2WithdrawGoogleService;
+import com.project.nyang.global.security.oauth2.OAuth2WithdrawGoogleService;
 import com.project.nyang.modules.auth.entity.Auth;
 import com.project.nyang.modules.auth.repository.AuthRepository;
 import com.project.nyang.modules.auth.service.AuthService;
