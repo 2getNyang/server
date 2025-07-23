@@ -69,7 +69,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 .path("/")
                 .build();
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
-        
+
         response.sendRedirect("http://2gaenyang.site/oauth2/redirect?token=" + accessToken);
 
     }

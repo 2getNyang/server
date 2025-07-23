@@ -1,10 +1,14 @@
+version: '3'
 services:
   nyang1:  # 서비스 이름은 컨테이너간 통신하기 위한 이름
     build: .
     env_file:
       - .env
     image: nyang
+    restart: always
     container_name: nyang1
+    ports:
+      - "8080:8080"
     environment:
       PROJECT_NAME: 백앤드 서버1
       DB_SERVER: ${DB_SERVER}
@@ -14,19 +18,6 @@ services:
       REDIS_HOST: ${REDIS_HOST}
     networks:
       - nyang_server
-
-#  nginx1:
-#    build: ./nginx
-#    container_name: nginx1
-#    ports:
-#      - "8080:80"
-#    volumes:
-#      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-#    depends_on:
-#      - nyang1
-#    networks:
-#      - nyang_server
-
 networks:
   nyang_server:
     external: true
