@@ -2,8 +2,8 @@
 
 set -e
 
-echo "> 최신 JAR 파일을 nyang 프로젝트 디렉토리로 이동"
-cp /home/ubuntu/togetnyang/*.jar /home/ubuntu/togetnyang/server/nyang/*.jar
+#echo "> 최신 JAR 파일을 nyang 프로젝트 디렉토리로 이동"
+#cp /home/ubuntu/togetnyang/*.jar /home/ubuntu/togetnyang/server/nyang/*.jar
 
 cd /home/ubuntu/togetnyang/server/nyang
 
@@ -16,7 +16,7 @@ else
 fi
 
 echo "> 기존 컨테이너 종료"
-docker compose down
+sudo docker-compose -f docker-compose-nyang.yml down
 
 echo "> 새 컨테이너 빌드 및 실행"
-docker compose up -f docker-compose-nyang.yml -d --build
+sudo docker-compose -f docker-compose-nyang.yml up -d --build

@@ -5,8 +5,6 @@ import com.project.nyang.modules.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 /**
  * 채팅 메시지 엔티티
  *

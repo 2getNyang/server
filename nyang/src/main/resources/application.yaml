@@ -1,7 +1,18 @@
 spring:
+  server:
+    address: 0.0.0.0
+    port: 8080
+    forward-headers-strategy: framework
   profiles:
     active: dev
-
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+  datasource:
+    url: jdbc:mysql://${DB_SERVER}:${DB_PORT}/nyangDB?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&rewriteBatchedStatements=true
+    username: ${DB_USER}
+    password: ${DB_PASS}
   jpa:
     show-sql: false  # System.out 에 쿼리 출력 X (로깅을 통해 출력)
     properties:
@@ -19,10 +30,10 @@ spring:
       WRITE_DATES_AS_TIMESTAMPS: false
 
   elasticsearch:
-    uris: http://localhost:9200
+    uris: ${ELASTICSEARCH_URIS}
 
   kafka:
-    bootstrap-servers: localhost:29092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     consumer:
       group-id: search-log-group
       auto-offset-reset: earliest
@@ -118,7 +129,7 @@ jwt:
   refreshTokenExpirationTime: 1209600000     # 14일
 
 publicapi:
-  service-key: ${publicapi.service-key}
+  service-key: ${PUBLICAPI_SERVICE_KEY}
 
 # prometheus
 management:
