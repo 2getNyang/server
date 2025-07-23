@@ -3,6 +3,7 @@ package com.project.nyang.modules.animal.repository;
 import com.project.nyang.modules.animal.dto.AnimalDTO;
 import com.project.nyang.modules.animal.dto.AnimalListDTO;
 import com.project.nyang.modules.animal.entity.Animal;
+import com.project.nyang.reference.entity.Region;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -119,6 +120,7 @@ public interface AnimalRepository extends JpaRepository<Animal, String> {
     FROM Animal a
     LEFT JOIN LikeIt l ON l.animal = a
     WHERE a.noticeEdt >= CURRENT_DATE
+    AND a.processState LIKE '%보호중%'
     GROUP BY a.desertionNo, a.noticeEdt
     ORDER BY 
         DATEDIFF(a.noticeEdt, CURRENT_DATE) ASC, 
@@ -159,4 +161,13 @@ public interface AnimalRepository extends JpaRepository<Animal, String> {
 
     @Query("SELECT a FROM Animal a JOIN FETCH a.shelter WHERE a.desertionNo = :desertionNo")
     Optional<Animal> findByDesertionNoWithShelter(@Param("desertionNo") String desertionNo);
+
+
+    //"보호중"이 포함된 ANIMAL.process_state의 갯수(메인페이지용)
+    long countByProcessStateContaining(String keyword);
+
+    //"반환"또는 "입양"이 포함된 process_state의 갯수(메인페이지용)
+    long countByProcessStateContainingOrProcessStateContaining(String keyword1, String keyword2);
+
+
 }

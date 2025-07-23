@@ -31,11 +31,16 @@ public interface LikeRepository extends JpaRepository<LikeIt, Long> {
 
     Optional<LikeIt> findByUser_IdAndBoard_Id(Long userId, Long boardId);
 
-    boolean existsByUserAndBoard(User user, Board board);
-
     boolean existsByUserAndAnimal(User user, Animal animal);
 
-    Page<LikeIt> findByUser_IdAndAnimalNotNull(Long userId, Pageable pageable);
+    boolean existsByUserIdAndBoardId(Long userId, Long boardId);
 
-    Page<LikeIt> findByUser_idAndBoardNotNull(Long userId, Pageable pageable);
+    boolean existsByUserIdAndAnimal_DesertionNo(Long userId, String desertionNo);
+
+    // 동물에 대한 좋아요
+    Page<LikeIt> findByUser_IdAndAnimalIsNotNull(Long userId, Pageable pageable);
+
+    // 게시글에 대한 좋아요
+    Page<LikeIt> findByUser_IdAndBoardIsNotNull(Long userId, Pageable pageable);
+
 }

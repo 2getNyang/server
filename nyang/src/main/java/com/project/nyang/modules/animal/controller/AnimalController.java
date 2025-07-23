@@ -4,6 +4,7 @@ import com.project.nyang.global.common.api.ApiResponse;
 import com.project.nyang.global.common.api.ApiSuccessResponse;
 import com.project.nyang.global.security.core.CustomUserDetails;
 import com.project.nyang.modules.animal.dto.AnimalDTO;
+import com.project.nyang.modules.animal.dto.AnimalDashboardDTO;
 import com.project.nyang.modules.animal.dto.AnimalListDTO;
 import com.project.nyang.modules.animal.service.AnimalService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -83,6 +84,13 @@ public class AnimalController {
         System.out.println("북마크체크: "+animal.isBookmarked());
 
         return ResponseEntity.ok(ApiSuccessResponse.success(animal,"동물공고 상세 조회에 성공하였습니다"));
+    }
+
+    //메인페이지용 카운트갯수
+    @GetMapping("/counts")
+    public ResponseEntity<ApiResponse<AnimalDashboardDTO>> getCounts() {
+        AnimalDashboardDTO result = animalService.getDashboardCounts();
+        return ResponseEntity.ok(ApiSuccessResponse.success(result));
     }
 
 

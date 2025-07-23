@@ -10,12 +10,16 @@ spring:
     username: ${DB_USER}
     password: ${DB_PASS}
   jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
-    hibernate:
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
-      ddl-auto: none
+    show-sql: false  # System.out 에 쿼리 출력 X (로깅을 통해 출력)
+    properties:
+      hibernate:
+        format_sql: true          # SQL 예쁘게 출력
+        highlight_sql: true       # SQL 컬러 출력 (Hibernate 6 이상)
+        jdbc:
+          batch_size: 100         # 배치 insert/update 시 유효
+        order_inserts: true       # INSERT 순서 정렬
+        order_updates: true       # UPDATE 순서 정렬
+
 
   jackson:
     serialization:
@@ -143,10 +147,11 @@ management:
     elasticsearch:
       enabled: false
 
+
 #logging:
 #  pattern:
 #    console: %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight([%-3level]) %cyan(%logger{5}) - %msg%n
-#logging:
-#  level:
-#    org.hibernate.sql: debug
-#    org.hibernate.orm.jdbc.bind: trace
+logging:
+  level:
+    org.hibernate.SQL: debug  # SQL 로그
+    org.hibernate.type.descriptor.sql.BasicBinder: trace

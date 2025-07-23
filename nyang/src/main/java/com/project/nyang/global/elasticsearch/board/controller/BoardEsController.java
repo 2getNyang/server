@@ -36,7 +36,6 @@ public class BoardEsController {
             @Parameter(description = "검색어", example = "제목") @RequestParam String keyword,
             @Parameter(description = "페이지 번호", example = "0") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "한 페이지에 보여줄 게시물 개수", example = "12") @RequestParam(defaultValue = "12") int size) {
-
         return ResponseEntity.ok(ApiSuccessResponse.success(boardEsService.searchBoard(REVIEW_CATEGORY_ID, keyword, page, size), "입양 후기 게시판 검색 성공"));
     }
 
@@ -46,7 +45,6 @@ public class BoardEsController {
             @Parameter(description = "검색어", example = "제목") @RequestParam String keyword,
             @Parameter(description = "페이지 번호", example = "0")@RequestParam(defaultValue = "0") int page,
             @Parameter(description = "한 페이지에 보여줄 게시물 개수", example = "12") @RequestParam(defaultValue = "12") int size) {
-
         return ResponseEntity.ok(ApiSuccessResponse.success(boardEsService.searchBoard(SNS_CATEGORY_ID, keyword, page, size), "sns 홍보 게시판 검색 성공"));
     }
     @Operation(summary = "lost 게시글 검색 ")
@@ -55,8 +53,6 @@ public class BoardEsController {
             @Parameter(description = "검색어", example = "검색어") @RequestParam String keyword,
             @Parameter(description = "페이지 번호", example = "0")@RequestParam(defaultValue = "0") int page,
             @Parameter(description = "한 페이지에 보여줄 게시물 개수", example = "12") @RequestParam(defaultValue = "12") int size) {
-
         return ResponseEntity.ok(ApiSuccessResponse.success(boardEsService.searchLostBoard(LOST_CATEGORY_ID, keyword, page, size), "검색 성공"));
     }
-
 }

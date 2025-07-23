@@ -12,6 +12,7 @@ import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.reference.entity.*;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "BOARD")
+@Where(clause = "deleted_at IS NULL")
 public class Board extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -127,7 +129,12 @@ public class Board extends BaseTime {
     public void updateReviewBoard(ReviewBoardUpdateDTO boardDTO, PetApplicationForm form) {
         boardTitle = boardDTO.getBoardTitle();
         boardContent = boardDTO.getBoardContent();
-        petApplicationForm = form;
+        // form이 있는 경우에만 연관관계 업데이트
+        if (form != null) {
+            this.petApplicationForm = form;
+        } else {
+            this.petApplicationForm = null; // 명시적으로 제거하거나 유지할지 판단
+        }
     }
     public void updateSNSBoard(SNSBoardUpdateDTO boardDTO) {
         boardTitle = boardDTO.getBoardTitle();

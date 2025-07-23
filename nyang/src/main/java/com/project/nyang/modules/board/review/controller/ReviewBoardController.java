@@ -3,10 +3,7 @@ package com.project.nyang.modules.board.review.controller;
 import com.project.nyang.global.common.api.ApiResponse;
 import com.project.nyang.global.common.api.ApiSuccessResponse;
 import com.project.nyang.global.security.core.CustomUserDetails;
-import com.project.nyang.modules.board.review.dto.ReveiwBoardDetailDTO;
-import com.project.nyang.modules.board.review.dto.ReveiwBoardListDTO;
-import com.project.nyang.modules.board.review.dto.ReviewBoardCreateDTO;
-import com.project.nyang.modules.board.review.dto.ReviewBoardUpdateDTO;
+import com.project.nyang.modules.board.review.dto.*;
 import com.project.nyang.modules.board.review.service.ReveiwBoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,9 +33,21 @@ public class ReviewBoardController {
 
     private final ReveiwBoardService reveiwBoardService;
 
+    /*
+    *
+    * */
+
     /**
      * 사용자가 입양 후기를 작성하는 기능
      */
+    @Operation(summary = "입양 후기 게시글 등록폼")
+    @GetMapping("/form")
+    public ResponseEntity<ApiResponse<ReviewBoardCreateFromDTO>> getReviewBoardForm(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long userId = userDetails.getId();
+        ReviewBoardCreateFromDTO form = reveiwBoardService.getReviewCreateForms(userId);
+        return ResponseEntity.ok(ApiSuccessResponse.success(form,"입양 후기 게시물 등록폼 호출"));
+    }
+
     @Operation(summary = "입양 후기 게시글 등록")
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ApiResponse<Object>> createReviewBoard(@AuthenticationPrincipal CustomUserDetails userDetails,
@@ -68,6 +77,17 @@ public class ReviewBoardController {
         Long userId = userDetails.getId();
         reveiwBoardService.deleteReviewBoard(id, userId);
         return ResponseEntity.ok(ApiSuccessResponse.success(id, "입양 후기 게시물 삭제 완료"));
+    }
+
+    @Operation(summary = "입양 후기 게시글 수정폼 조회")
+    @GetMapping("/{boardId}/form")
+    public ResponseEntity<?> getReviewBoardUpdateForm(
+            @PathVariable Long boardId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long userId = userDetails.getId();
+        ReviewBoardUpdateFormDTO formDTO = reveiwBoardService.getReviewBoardUpdateForm(boardId, userId);
+        return ResponseEntity.ok(ApiSuccessResponse.success(formDTO));
     }
 
     @Operation(summary = "입양 후기 게시글 수정")

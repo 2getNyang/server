@@ -6,8 +6,10 @@ import com.project.nyang.global.elasticsearch.board.dto.BoardEsDocument;
 import com.project.nyang.global.elasticsearch.board.repository.BoardEsRepository;
 import com.project.nyang.global.elasticsearch.board.service.BoardEsService;
 import com.project.nyang.modules.board.entity.Board;
+import com.project.nyang.modules.board.lost.dto.LostUpdateResponseDTO;
 import com.project.nyang.modules.board.sns.dto.SNSBoardDTO;
 import com.project.nyang.modules.board.sns.dto.SNSBoardUpdateDTO;
+import com.project.nyang.modules.board.sns.dto.SNSBoardUpdateFormDTO;
 import com.project.nyang.modules.board.sns.repository.SNSBoardRepository;
 import com.project.nyang.modules.image.entity.Image;
 import com.project.nyang.modules.image.repository.ImageRepository;
@@ -17,15 +19,15 @@ import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.reference.entity.Category;
 import com.project.nyang.reference.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.project.nyang.global.exception.ErrorCode.*;
@@ -40,6 +42,7 @@ import static com.project.nyang.global.exception.ErrorCode.*;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SNSBoardService {
     private final SNSBoardRepository snsBoardRepository;
     private final CategoryRepository categoryRepository;
@@ -133,6 +136,48 @@ public class SNSBoardService {
 
 
 
+    /* SNS 게시글 수정폼 호출*/
+    public SNSBoardUpdateFormDTO getSNSBoardUpdateForm(Long boardId, Long userId){
+
+        // 1. 사용자 인증 및 게시글 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException(String.valueOf(UNAUTHORIZED)));
+
+        Board board = snsBoardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException(String.valueOf(BOARD_NOT_FOUND)));
+        // 카테고리 확인
+        if (!board.getCategory().getCategoryId().equals(SNS_CATEGORY_ID)) {
+            throw new IllegalArgumentException(String.valueOf(CATEGORY_NOT_FOUND));
+        }
+        // 삭제된 글인지 확인
+        if(board.getDeletedAt()!=null){
+            throw new IllegalArgumentException(String.valueOf(BOARD_ALLREDAY_DELETE));
+        }
+        if (!board.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException(String.valueOf(FORBIDDEN));
+        }
+
+        List<SNSBoardUpdateFormDTO.ImageInfo> images = board.getImages().stream()
+                .filter(img -> img.getDeletedAt() == null)
+                .map(img -> SNSBoardUpdateFormDTO.ImageInfo.builder()
+                        .imageId(img.getImageId())
+                        .imageUrl(img.getS3Url())
+                        .isThumbnail("Y".equalsIgnoreCase(img.getThumbnailIs()))
+                        .build())
+                .collect(Collectors.toList());
+
+        return SNSBoardUpdateFormDTO.builder()
+                .categoryId(board.getCategory().getCategoryId())
+                .boardId(board.getId())
+                .userId(board.getUser().getId())
+                .boardTitle(board.getBoardTitle())
+                .boardContent(board.getBoardContent())
+                .instagramLink(board.getInstagramLink())
+                .images(images)
+                .build();
+    }
+
+
 
     /* SNS 게시글 수정 */
     @Transactional
@@ -161,17 +206,16 @@ public class SNSBoardService {
         // 2. 기존 이미지 처리 및 썸네일 지정
         List<Image> currentImages = board.getImages();
         List<Long> remainIds = dto.getRemainImageIds();
+        boolean thumbnailDeleted = false;
         Long thumbnailId = (remainIds != null && !remainIds.isEmpty()) ? remainIds.get(0) : null;
 
         for (Image image : currentImages) {
             if (!remainIds.contains(image.getImageId())) {
-                image.softDelete();
-            } else {
-                if (image.getImageId().equals(thumbnailId)) {
-                    image.markAsThumbnail();
+                if ("Y".equalsIgnoreCase(image.getThumbnailIs())) {
+                    thumbnailDeleted = true;
                 }
+                image.softDelete();
             }
-            imageRepository.save(image);
         }
 
         // 3. 새 이미지 업로드
@@ -194,6 +238,18 @@ public class SNSBoardService {
                 uploadedImages.add(image);
             }
             board.getImages().addAll(uploadedImages);
+        }
+        // 새 이미지 업로드 후 썸네일 대체
+        if (thumbnailDeleted) {
+            Optional<Image> newThumbnail = currentImages.stream()
+                    .filter(img -> img.getDeletedAt() == null)
+                    .findFirst();
+
+            if (newThumbnail.isEmpty() && uploadedImages != null) {
+                newThumbnail = uploadedImages.stream().findFirst();
+            }
+
+            newThumbnail.ifPresent(Image::markAsThumbnail);
         }
 
         board.updateSNSBoard(dto);
@@ -300,6 +356,7 @@ public class SNSBoardService {
     @Transactional(readOnly = true)
     public Page<SNSBoardDTO> getBoardsPaged(Pageable pageable) {
         // category 가 SNS 친구만 페이징 조회
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Board> boardsPage = snsBoardRepository.findByCategory_CategoryIdAndDeletedAtIsNull(SNS_CATEGORY_ID, pageable);
 
         List<SNSBoardDTO> dtoList = boardsPage

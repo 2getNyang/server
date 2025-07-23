@@ -6,6 +6,7 @@ import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.modules.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "COMMENT")
+@Where(clause = "deleted_at IS NULL")
 public class Comment extends BaseTime {
 
     @Id

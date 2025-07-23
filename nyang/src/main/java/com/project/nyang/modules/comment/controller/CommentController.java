@@ -58,7 +58,7 @@ public class CommentController {
     public ResponseEntity<ApiResponse<Object>> deleteComment(@AuthenticationPrincipal CustomUserDetails userDetails, @Parameter(description = "댓글 ID") @PathVariable Long commentId) {
         Long userId = userDetails.getId();
         commentService.deleteComment(userId, commentId);
-        return ResponseEntity.ok(ApiSuccessResponse.success(null, "게시글 삭제 성공: " + commentId));
+        return ResponseEntity.ok(ApiSuccessResponse.success(null, "댓글 삭제 성공: " + commentId));
     }
 
 }

@@ -16,7 +16,7 @@ import lombok.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "CHAT_MESSAGE")
-public class ChatMessage extends BaseTime {
+public class ChatMessage extends BaseTime{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

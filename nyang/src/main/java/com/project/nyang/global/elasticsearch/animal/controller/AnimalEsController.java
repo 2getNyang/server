@@ -50,15 +50,15 @@ public class AnimalEsController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
-            @RequestParam(required = false) String upKindCd,
-            @RequestParam(required = false) String kindCd,
-            @RequestParam(required = false) String regionCode,
-            @RequestParam(required = false) String subRegionCode,
+            @RequestParam(required = false) String upKindNm,
+            @RequestParam(required = false) String kindNm,
+            @RequestParam(required = false) String regionName,
+            @RequestParam(required = false) String subRegionName,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size) {
 
         PageRequest pageable = PageRequest.of(page, size);
-        Page<AnimalEsListDTO> results = animalEsService.searchWithKeywordAndFilter(keyword, startDate, endDate, upKindCd, kindCd, regionCode, subRegionCode, pageable);
+        Page<AnimalEsListDTO> results = animalEsService.searchWithKeywordAndFilter(keyword, startDate, endDate, upKindNm, kindNm, regionName, subRegionName, pageable);
         return ResponseEntity.ok(ApiSuccessResponse.success(results, "통합 검색 성공"));
     }
 }

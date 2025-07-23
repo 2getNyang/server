@@ -29,6 +29,31 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final AnimalRepository animalRepository;
 
+
+    /*
+    * 게시글의 좋아요 수를 카운트 하는 메서드
+    * */
+    public Long countLike(Long boardId){
+        Board board = boardRepository.findById(boardId).orElseThrow(()
+                -> new IllegalArgumentException("게시글이 없습니다."));
+
+        return likeRepository.countByBoardId(boardId);
+
+    }
+
+    /*
+    * 특정 게시글의 좋아요 유무 확인하는 메서드
+    * */
+    public boolean hasUserLikedBoard(Long userId, Long boardId) {
+        return likeRepository.existsByUserIdAndBoardId(userId, boardId);
+    }
+    
+    /*
+    * 특정 공고의 찜 유무 확인하는 메서드
+    * */
+    public boolean hasUserBookMarked(Long userId, String desertionNo){
+        return likeRepository.existsByUserIdAndAnimal_DesertionNo(userId, desertionNo);
+    }
     /**
      * 게시글에 좋아요를 추가하는 메서드
      * @param userId: 사용자 ID
@@ -43,10 +68,10 @@ public class LikeService {
         Board board = boardRepository.findById(boardId).orElseThrow(()
                 -> new IllegalArgumentException("게시글이 없습니다."));
 
-        boolean alreadyLiked = likeRepository.existsByUserAndBoard(user, board);
-        if (alreadyLiked) {
-            throw new IllegalArgumentException("이미 좋아요를 누른 게시글입니다.");
-        }
+//        boolean alreadyLiked = likeRepository.existsByUserAndBoard(user, board);
+//        if (alreadyLiked) {
+//            throw new IllegalArgumentException("이미 좋아요를 누른 게시글입니다.");
+//        }
 
         LikeIt like = LikeIt.builder()
                 .user(user)
