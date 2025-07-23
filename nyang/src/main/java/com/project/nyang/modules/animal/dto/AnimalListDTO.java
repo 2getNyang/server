@@ -24,13 +24,13 @@ public class AnimalListDTO{
     @Schema(description = "유기 동물 번호", example = "311303202500535")
     private String desertionNo;
 
-    @Schema(description = "보호상태 (NOTICE / PROTECT / FINISH)", example = "NOTICE")
+    @Schema(description = "보호상태 (보호중 / 종료)", example = "보호중")
     private String processState;
 
     @Schema(description = "성별 (M / F / Q)", example = "F")
     private String sexCd;
 
-    @Schema(description = "동물 종류 전체 이름", example = "[고양이] 샴")
+    @Schema(description = "동물 종류 전체 이름", example = "[개] 시바")
     private String kindFullNm;
 
     @Schema(description = "공고 번호", example = "서울특별시-성동구-2025-00535")

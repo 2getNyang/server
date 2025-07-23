@@ -1,6 +1,7 @@
 package com.project.nyang.reference.dto;
 
 import com.project.nyang.reference.entity.UpKind;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,8 +19,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpKindDTO {
-    private String upKindCd;     // 예: "417000"
-    private String upKindName;   // 예: "고양이"
+    @Schema(description = "축종 코드", example = "417000")
+    private String upKindCd;
+    @Schema(description = "축종 이름", example = "개")
+    private String upKindName;
 
     public UpKindDTO(String upKindName) {
         this.upKindName = upKindName;

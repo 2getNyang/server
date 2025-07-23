@@ -17,7 +17,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegionDTO {
+    @Schema(description = "시도 이름", example = "서울특별시")
     private String regionCode;
+    @Schema(description = "시도 코드", example = "6110000")
     private String regionName;
 
     public RegionDTO(String regionName) {

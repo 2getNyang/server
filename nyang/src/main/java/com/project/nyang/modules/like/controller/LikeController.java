@@ -50,6 +50,7 @@ public class LikeController {
         return ResponseEntity.ok(ApiSuccessResponse.success(count, "좋아요 수 조회 성공"));
     }
 
+    @Operation(summary = "게시글 좋아요 여부 확인")
     @GetMapping("/{boardId}/me")
     public ResponseEntity<ApiResponse<Boolean>> checkLike(@AuthenticationPrincipal CustomUserDetails userDetails, @Parameter(description = "게시글 ID", example = "1") @PathVariable Long boardId){
         Long userId = userDetails.getId();

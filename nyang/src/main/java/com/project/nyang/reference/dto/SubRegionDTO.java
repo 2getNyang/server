@@ -19,6 +19,7 @@ import lombok.*;
 public class SubRegionDTO {
     @Schema(description = "시군구 이름", example = "강남구")
     private String subRegionName;  // 시군구 이름만 포함
+    @Schema(description = "시군구 코드", example = "3220000")
     private String subRegionCode;
 
     public SubRegionDTO(String subRegionName) {
