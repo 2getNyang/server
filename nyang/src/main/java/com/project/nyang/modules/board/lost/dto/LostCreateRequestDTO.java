@@ -37,9 +37,9 @@ public class LostCreateRequestDTO {
     private LocalDate missingDate;
     @Schema(description = "실종/목격 장소", example = "부천역 3번 출구 근처")
     private String missingLocation;
-    @Schema(description = "시/도 이름", example = "경기도")
+    @Schema(description = "시/도 코드", example = "6410000")
     private String regionCode;
-    @Schema(description = "시/군/구 이름", example = "부천시")
+    @Schema(description = "시/군/구 코드", example = "3860000")
     private String subRegionCode;
     @Schema(description = "작성자 연락처", example = "010-2222-3333")
     private String phone;

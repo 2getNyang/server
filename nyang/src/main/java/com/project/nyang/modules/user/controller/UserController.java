@@ -9,6 +9,7 @@ import com.project.nyang.modules.user.dto.UpdateUserInfoDTO;
 import com.project.nyang.modules.user.dto.UserInfoDTO;
 import com.project.nyang.modules.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -33,17 +34,23 @@ public class UserController {
 
     private final UserService userService;
 
-    //채팅방에서 상대방 정보 조회
+    @Operation(
+            summary = "채팅 사용자 정보 조회",
+            description = "채팅방에서 상대방 사용자 정보를 조회합니다"
+    )
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ChatUserInfoDTO>> getChatUserInfo(@PathVariable Long id) {
         ChatUserInfoDTO dto = userService.getChatUserInfo(id);
         return ResponseEntity.ok(ApiSuccessResponse.success(dto, "사용자 정보 조회 성공"));
     }
 
-    //프론트엔드에 보낼 사용자 조회
+    @Operation(
+            summary = "로그인 사용자 인증 정보 조회",
+            description = "프론트엔드에서 사용하기 위한 로그인 사용자 인증 정보 조회 (ID, 이메일 등)"
+    )
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<AuthInfoDTO>> getAuthInfo(
-            @AuthenticationPrincipal CustomUserDetails userDetails
+            @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long userId = userDetails.getId();
         AuthInfoDTO authInfoDTO = userService.getAuthInfo(userId);
@@ -54,7 +61,7 @@ public class UserController {
     //사용자 정보 조회
     @Operation(summary = "사용자 정보 조회", description = "로그인 사용자의 기본 정보(닉네임·이메일·소셜 타입 등)를 반환")
     @GetMapping("/info")
-    public ResponseEntity<ApiResponse<UserInfoDTO>> getMyInfo(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<ApiResponse<UserInfoDTO>> getMyInfo(@Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails) {
         Long userId = userDetails.getId();
         UserInfoDTO userInfo = userService.getUserInfo(userId);
         return ResponseEntity.ok(ApiSuccessResponse.success(userInfo, "사용자 정보 조회에 성공하였습니다"));
@@ -64,7 +71,7 @@ public class UserController {
     //닉네임과 이메일만
     @Operation(summary = "사용자 정보 수정", description = "닉네임과 이메일 수정")
     @PutMapping("/info")
-    public ResponseEntity<ApiResponse<UserInfoDTO>> updateMyInfo(@AuthenticationPrincipal CustomUserDetails userDetails,
+    public ResponseEntity<ApiResponse<UserInfoDTO>> updateMyInfo(@Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails,
                                              @RequestBody UpdateUserInfoDTO updateUserInfoDTO) {
         Long userId = userDetails.getId();
         UserInfoDTO userInfo = userService.updateUserInfo(userId, updateUserInfoDTO);

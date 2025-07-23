@@ -42,20 +42,27 @@ public class ChatController {
     private final ChatRoomService chatRoomService;
     private final SimpMessagingTemplate messagingTemplate;
 
+    @Operation(
+            summary = "채팅방 생성",
+            description = "두 사용자의 ID를 받아 채팅방을 생성하거나 기존 채팅방을 반환합니다."
+    )
     @PostMapping("/api/v1/chat/room")
     public ResponseEntity<Long> createRoom(@RequestParam Long user1Id, @RequestParam Long user2Id) {
         Long roomId = chatRoomService.getOrCreateChatRoom(user1Id, user2Id);
         return ResponseEntity.ok(roomId);
     }
 
-    @GetMapping("/api/v1/chat/rooms")
     @Operation(summary = "채팅방 목록 조회")
+    @GetMapping("/api/v1/chat/rooms")
     public ApiResponse<List<ChatRoomSummaryDTO>> getChatRooms(@AuthenticationPrincipal CustomUserDetails userDetails) {
         Long userId = userDetails.getId();
         return ApiSuccessResponse.success(chatRoomService.getUserChatRooms(userId), "채팅방 목록 조회 성공");
     }
 
-
+    @Operation(
+            summary = "채팅방 메시지 조회",
+            description = "특정 채팅방의 모든 메시지를 조회합니다."
+    )
     @GetMapping("/api/v1/chat/room/{roomId}/messages")
     public ResponseEntity<ApiResponse<List<ChatMessageDTO>>> getMessagesByRoom(
             @PathVariable Long roomId

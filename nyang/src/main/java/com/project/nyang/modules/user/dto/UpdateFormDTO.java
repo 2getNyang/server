@@ -12,9 +12,9 @@ import lombok.Getter;
  */
 @Getter
 public class UpdateFormDTO {
-    @Schema(description = "사용자 닉네임", example = "고양이사랑")
+    @Schema(description = "닉네임", example = "엄라스틱서치")
     private String nickname;
 
-    @Schema(description = "사용자 이메일", example = "meowmeow@example.com")
+    @Schema(description = "이메일", example = "eomlasticsearch@gmail.com")
     private String email;
 }

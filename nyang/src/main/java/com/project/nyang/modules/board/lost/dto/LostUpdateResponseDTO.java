@@ -39,7 +39,7 @@ public class LostUpdateResponseDTO {
     private String regionCode;
     @Schema(description = "시/군/구 이름", example = "부천시")
     private String subRegionName;
-    @Schema(description = "시/군/구 코드", example = "부천시")
+    @Schema(description = "시/군/구 코드", example = "3860000")
     private String subRegionCode;
     @Schema(description = "작성자 연락처", example = "010-2222-3333")
     private String phone;

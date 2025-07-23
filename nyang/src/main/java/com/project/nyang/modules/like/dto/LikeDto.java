@@ -13,9 +13,9 @@ import lombok.Getter;
  */
 @Getter
 public class LikeDto {
-    @Schema(description = "좋아요 수")
+    @Schema(description = "좋아요 수", example = "7")
     private Long likeCount;
-    @Schema(description = "좋아요 여부")
+    @Schema(description = "좋아요 여부", example = "true")
     private boolean isLiked;
 
     @Builder
