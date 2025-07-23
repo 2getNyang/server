@@ -91,7 +91,7 @@ public class AnimalService {
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_ANIMAL));
 
         // 댓글 조회
-        List<Comment> comments = commentRepository.findByAnimal_DesertionNo(desertionNo);
+        List<Comment> comments = commentRepository.findWithUserAndParentAndChildrenByAnimalDesertionNo(desertionNo);
         List<AnimalCommentDTO> commentDTOs = comments.stream()//리스트 안의 요소들을 하나씩 치러할수있는 파이프라인을 만듬
                 .map(AnimalCommentDTO::fromEntity)//스트림의 각 요소를 함수로 변환  (Comment 객체를 CommentDTO로 변환)
                 .toList(); //리스트로 수집함  (최종적으로 List<CommentDTO>를 얻음)
