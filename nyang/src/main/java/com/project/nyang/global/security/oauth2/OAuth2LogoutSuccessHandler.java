@@ -63,7 +63,7 @@ public class OAuth2LogoutSuccessHandler implements LogoutSuccessHandler {
             // 구글 로그아웃
             else if (email != null && email.toString().endsWith("@gmail.com")) {
                 System.out.println("구글 로그아웃입니다.");
-                redirectUrl = "https://localhost:8080/login";
+                redirectUrl = "https://2gaenyang.site/";
             }
 
         }
