@@ -24,6 +24,9 @@ public class AnimalCommentDTO {
     private Long userId;
     //댓글작성한 User 닉네임
     private String nickname;
+
+    //댓글 parent_id
+    private Long parentId;
     //작성한 댓글 내용
     private String commentContent;
     //댓글 작성 시간
@@ -37,6 +40,7 @@ public class AnimalCommentDTO {
                 .commentId(comment.getId())
                 .userId(comment.getUser() != null ? comment.getUser().getId() : null)
                 .nickname(comment.getUser() != null ? comment.getUser().getNickname() : null)
+                .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
                 .commentContent(comment.getCommentContent())
                 .createdAt(comment.getCreatedAt())
                 .childComments(

@@ -4,11 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.nyang.global.common.api.ApiResponse;
 import com.project.nyang.global.common.api.ApiSuccessResponse;
+import com.project.nyang.global.security.core.CustomUserDetails;
 import com.project.nyang.modules.chat.dto.ChatMessageDTO;
 import com.project.nyang.modules.chat.dto.ChatReadDTO;
+import com.project.nyang.modules.chat.dto.ChatRoomSummaryDTO;
 import com.project.nyang.modules.chat.redis.RedisPublisher;
 import com.project.nyang.modules.chat.service.ChatMessageService;
 import com.project.nyang.modules.chat.service.ChatRoomService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +19,9 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -31,7 +32,7 @@ import java.util.List;
  * @since : 2025-07-14
  */
 @RequiredArgsConstructor
-@Controller
+@RestController
 @Slf4j
 public class ChatController {
 
@@ -46,6 +47,14 @@ public class ChatController {
         Long roomId = chatRoomService.getOrCreateChatRoom(user1Id, user2Id);
         return ResponseEntity.ok(roomId);
     }
+
+    @GetMapping("/api/v1/chat/rooms")
+    @Operation(summary = "채팅방 목록 조회")
+    public ApiResponse<List<ChatRoomSummaryDTO>> getChatRooms(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long userId = userDetails.getId();
+        return ApiSuccessResponse.success(chatRoomService.getUserChatRooms(userId), "채팅방 목록 조회 성공");
+    }
+
 
     @GetMapping("/api/v1/chat/room/{roomId}/messages")
     public ResponseEntity<ApiResponse<List<ChatMessageDTO>>> getMessagesByRoom(

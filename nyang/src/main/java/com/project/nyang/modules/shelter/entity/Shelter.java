@@ -17,6 +17,7 @@ import lombok.*;
 @Entity
 @Getter
 @NoArgsConstructor
+@Table(name = "SHELTER")
 public class Shelter {
     @Id
     @Column(name = "care_reg_number", nullable = false)

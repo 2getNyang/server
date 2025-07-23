@@ -100,25 +100,30 @@ public class SNSBoardDTO {
         @Schema(description = "댓글 작성자 닉네임", example = "고양집사")
         private String commentNickname;
 
+        @Schema(description = "댓글 작성자 id", example = "3")
+        private Long commentUserId;
+
         @Schema(description = "부모 댓글 ID (대댓글일 경우)", example = "100")
         private Long parentId;
 
         @Builder
-        public CommentDTO(String commentContent, LocalDateTime createdAt, String commentNickname, Long parentId, Long id) {
+        public CommentDTO(String commentContent, LocalDateTime createdAt, String commentNickname, Long parentId, Long id, Long CommentUserId) {
             this.id = id;
             this.commentContent = commentContent;
             this.createdAt = createdAt;
             this.commentNickname = commentNickname;
             this.parentId = parentId;
+            this.commentUserId = CommentUserId;
         }
 
         public static SNSBoardDTO.CommentDTO toDTO(Comment comment) {
-            return SNSBoardDTO.CommentDTO.builder()
+            return CommentDTO.builder()
                     .commentContent(comment.getCommentContent())
                     .createdAt(comment.getCreatedAt())
                     .commentNickname(comment.getUser().getNickname())
                     .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
                     .id(comment.getId())
+                    .CommentUserId(comment.getUser().getId())
                     .build();
         }
     }

@@ -3,6 +3,7 @@ package com.project.nyang.modules.animal.service;
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
 import com.project.nyang.modules.animal.dto.AnimalDTO;
+import com.project.nyang.modules.animal.dto.AnimalDashboardDTO;
 import com.project.nyang.modules.animal.dto.AnimalListDTO;
 import com.project.nyang.modules.animal.entity.Animal;
 import com.project.nyang.modules.animal.repository.AnimalRepository;
@@ -11,8 +12,10 @@ import com.project.nyang.modules.comment.entity.Comment;
 import com.project.nyang.modules.comment.repository.CommentRepository;
 import com.project.nyang.modules.like.repository.LikeRepository;
 import com.project.nyang.modules.shelter.entity.Shelter;
+import com.project.nyang.modules.shelter.repository.ShelterRepository;
 import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.modules.user.repository.UserRepository;
+import com.project.nyang.reference.dto.RegionDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -42,6 +45,7 @@ public class AnimalService {
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
     private final UserRepository userRepository;
+    private final ShelterRepository shelterRepository;
 
     //페이징 전체 목록
     @Transactional
@@ -132,11 +136,21 @@ public class AnimalService {
                 .shelterName(shelter.getCareName())
                 .shelterAddress(shelter.getCareAddress())
                 .shelterTel(shelter.getCareTel())
+                .careRegNumber(shelter.getCareRegNumber())
                 .build();
     }
 
     @Transactional
     public List<AnimalListDTO> getRecommendAnimals() {
         return animalRepository.findRecommendAnimals(PageRequest.of(0, 6));
+    }
+
+    public AnimalDashboardDTO getDashboardCounts() {
+        return AnimalDashboardDTO.builder()
+                .shelterCount(shelterRepository.count())    //보호소 갯수
+                .protectedAnimalCount(animalRepository.countByProcessStateContaining("보호중"))    //보호중 공고 갯수
+                //입양완료된 공고 갯수
+                .adoptedOrReturnedCount(animalRepository.countByProcessStateContainingOrProcessStateContaining("반환", "입양"))
+                .build();
     }
 }

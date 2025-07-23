@@ -19,7 +19,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class ChatRoom {
+public class ChatRoom extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

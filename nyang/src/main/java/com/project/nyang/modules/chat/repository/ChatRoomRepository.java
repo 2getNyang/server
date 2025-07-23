@@ -1,8 +1,11 @@
 package com.project.nyang.modules.chat.repository;
 
 import com.project.nyang.modules.chat.entity.ChatRoom;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -14,4 +17,7 @@ import java.util.Optional;
  */
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     Optional<ChatRoom> findByUser1IdAndUser2Id(Long user1Id, Long user2Id);
+
+    @Query("SELECT cr FROM ChatRoom cr WHERE cr.user1Id = :userId OR cr.user2Id = :userId")
+    List<ChatRoom> findChatRoomsByUser(@Param("userId") Long userId);
 }

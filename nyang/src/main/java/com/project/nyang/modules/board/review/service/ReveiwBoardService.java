@@ -8,26 +8,27 @@ import com.project.nyang.modules.adoption.entity.PetApplicationForm;
 import com.project.nyang.global.elasticsearch.board.dto.BoardEsDocument;
 import com.project.nyang.global.elasticsearch.board.repository.BoardEsRepository;
 import com.project.nyang.modules.adoption.repository.AdoptionRepository;
-import com.project.nyang.modules.board.review.dto.ReviewBoardUpdateDTO;
+import com.project.nyang.modules.board.review.dto.*;
 import com.project.nyang.modules.board.entity.Board;
-import com.project.nyang.modules.board.review.dto.ReveiwBoardDetailDTO;
-import com.project.nyang.modules.board.review.dto.ReveiwBoardListDTO;
-import com.project.nyang.modules.board.review.dto.ReviewBoardCreateDTO;
 import com.project.nyang.modules.board.review.repository.ReviewBoardRepository;
+import com.project.nyang.modules.board.sns.dto.SNSBoardUpdateFormDTO;
 import com.project.nyang.modules.image.entity.Image;
 import com.project.nyang.modules.like.repository.LikeRepository;
 import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.modules.user.repository.UserRepository;
 import com.project.nyang.reference.entity.Category;
 import com.project.nyang.reference.repository.CategoryRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -53,6 +54,33 @@ public class ReveiwBoardService {
     private final LikeRepository likeRepository;
 
     /**
+    * 입양 후기 게시글 생성 폼
+    * */
+    public ReviewBoardCreateFromDTO getReviewCreateForms(Long userId) {
+            List<PetApplicationForm> forms = Optional.ofNullable(
+                    adoptionRepository.findAllByUser_IdOrderByFormCreatedAtAsc(userId)
+            ).orElse(Collections.emptyList());
+
+            List<ReviewBoardCreateFromDTO.PetApplicationDTO> petApplicationDTOs = forms.stream()
+                    .map(form -> ReviewBoardCreateFromDTO.PetApplicationDTO.builder()
+                            .formId(form.getFormId())
+                            .noticeNo(form.getAnimal().getNoticeNo())
+                            .kindFullNm(form.getAnimal().getKindFullNm())
+                            .sexCd(form.getAnimal().getSexCd())
+                            .regionName(form.getAnimal().getShelter().getRegion().getRegionName())
+                            .subRegionName(form.getAnimal().getShelter().getSubRegion().getSubRegionName())
+                            .profile1(form.getAnimal().getPopfile1())
+                            .formCreateAt(form.getFormCreatedAt())
+                            .build())
+                    .toList();
+
+            return ReviewBoardCreateFromDTO.builder()
+                    .userId(userId)
+                    .petApplicationDTO(petApplicationDTOs)
+                    .build();
+        }
+
+    /**
      * 입양 후기 게시글 등록
      *
      * @param boardDTO
@@ -61,8 +89,7 @@ public class ReveiwBoardService {
     @Transactional
     public void createReviewBoard(Long userId, ReviewBoardCreateDTO boardDTO, List<MultipartFile> images) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED)
-                );
+                .orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED));
 
         Category category = categoryRepository.findById(CATEGORY_ID).orElseThrow(() -> new IllegalArgumentException("카테고리 번호가 잘못되었습니다 :" + CATEGORY_ID));
 
@@ -133,7 +160,8 @@ public class ReveiwBoardService {
      */
     @Transactional
     public Page<ReveiwBoardListDTO> getReviewBoards(int page, int size) {
-        Page<Board> boards = reviewBoardRepository.findAllByDeletedAtIsNullAndCategory_CategoryId(PageRequest.of(page, size), CATEGORY_ID);
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC,"createdAt"));
+        Page<Board> boards = reviewBoardRepository.findAllByDeletedAtIsNullAndCategory_CategoryId(pageRequest, CATEGORY_ID);
 
         return boards.map(board -> ReveiwBoardListDTO.builder()
                 .id(board.getId())
@@ -234,6 +262,59 @@ public class ReveiwBoardService {
         boardEsRepository.deleteById(String.valueOf(board.getId()));
     }
 
+    /*
+    * 입양 후기 게시글 수정폼
+    * */
+    public ReviewBoardUpdateFormDTO getReviewBoardUpdateForm(Long boardId, Long userId) {
+        // 1. 게시글 + 유저 검증
+        Board board = reviewBoardRepository.findByIdAndDeletedAtIsNull(boardId)
+                .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
+
+        if (!board.getUser().getId().equals(userId)) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
+        // 2. 이미지 목록 (soft delete 되지 않은)
+        List<ReviewBoardUpdateFormDTO.ImageInfo> images = board.getImages().stream()
+                .filter(img -> img.getDeletedAt() == null)
+                .map(img -> ReviewBoardUpdateFormDTO.ImageInfo.builder()
+                        .imageId(img.getImageId())
+                        .imageUrl(img.getS3Url())
+                        .isThumbnail("Y".equalsIgnoreCase(img.getThumbnailIs()))
+                        .build())
+                .collect(Collectors.toList());
+
+        // 3. 입양 신청서 정보
+        PetApplicationForm form = board.getPetApplicationForm();
+
+        ReviewBoardUpdateFormDTO.PetApplicationDTO petDTO = null;
+        if(form!=null){
+            if (form != null) {
+                petDTO = ReviewBoardUpdateFormDTO.PetApplicationDTO.builder()
+                        .formId(form.getFormId())
+                        .noticeNo(form.getAnimal().getNoticeNo())
+                        .kindFullNm(form.getAnimal().getKind().getKindNm())
+                        .sexCd(form.getAnimal().getSexCd())
+                        .regionName(form.getAnimal().getShelter().getRegion().getRegionName())
+                        .subRegionName(form.getAnimal().getShelter().getSubRegion().getSubRegionName())
+                        .profile1(form.getAnimal().getPopfile1())
+                        .formCreateAt(form.getFormCreatedAt())
+                        .build();
+            }
+        }
+
+        // 4. 최종 응답 DTO 조립
+        return ReviewBoardUpdateFormDTO.builder()
+                .boardId(board.getId())
+                .userId(board.getUser().getId())
+                .boardTitle(board.getBoardTitle())
+                .boardContent(board.getBoardContent())
+                .images(images)
+                .petApplicationDTO(petDTO)
+                .build();
+    }
+
+
     /**
      * 입양 후기 게시글 수정
      *
@@ -250,10 +331,10 @@ public class ReveiwBoardService {
             throw new CustomException(ErrorCode.FORBIDDEN); // 403: 권한 없음
         }
 
-        PetApplicationForm form = null;
-        if(boardDTO.getFormId() != null){
-            form = adoptionRepository.findById(boardDTO.getFormId()).orElseThrow(() ->new CustomException(ErrorCode.APPLICATION_NOT_FOUND));
-        }
+        PetApplicationForm form = board.getPetApplicationForm();
+//        if(boardDTO.getFormId() != null){
+//            form = adoptionRepository.findById(boardDTO.getFormId()).orElseThrow(() ->new CustomException(ErrorCode.APPLICATION_NOT_FOUND));
+//        }
 
         board.updateReviewBoard(boardDTO, form);
 

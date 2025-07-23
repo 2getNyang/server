@@ -18,6 +18,7 @@ import lombok.*;
 @Getter
 @Entity //DB 테이블과 자바 객체를 연결
 @Builder
+@Table(name = "AUTH")
 public class Auth {
 
     @Id

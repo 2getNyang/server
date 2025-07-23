@@ -41,4 +41,11 @@ public class BookmarkController {
         return ResponseEntity.ok(ApiSuccessResponse.success(likeService.deleteBookmark(userId, desertionNo), "찜 취소 성공"));
     }
 
+    @GetMapping("/{desertionNo}/me")
+    public ResponseEntity<ApiResponse<Boolean>> checkBookmark(@AuthenticationPrincipal CustomUserDetails userDetails, @Parameter(description = "공고 번호") @PathVariable String desertionNo){
+        Long userId = userDetails.getId();
+        boolean hasBookMarked = likeService.hasUserBookMarked(userId, desertionNo);
+        return ResponseEntity.ok(ApiSuccessResponse.success(hasBookMarked));
+    }
+
 }

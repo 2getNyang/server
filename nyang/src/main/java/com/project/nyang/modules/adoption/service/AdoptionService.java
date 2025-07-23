@@ -7,6 +7,7 @@ import com.project.nyang.modules.adoption.entity.PetApplicationForm;
 import com.project.nyang.modules.adoption.mail.service.MailService;
 import com.project.nyang.modules.adoption.pdf.PdfGenerator;
 import com.project.nyang.modules.adoption.repository.AdoptionRepository;
+import com.project.nyang.modules.animal.dto.AnimalDTO;
 import com.project.nyang.modules.animal.entity.Animal;
 import com.project.nyang.modules.animal.repository.AnimalRepository;
 import com.project.nyang.modules.notification.service.NotificationService;
@@ -53,6 +54,9 @@ public class AdoptionService {
 
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        Animal animal = animalRepository.findByDesertionNo(dto.getDesertionNo())
+                .orElseThrow(()->new CustomException(ErrorCode.INVALID_ANIMAL));
 
         // 1. DB 저장
        AdoptionDTO application = saveApplication(dto);
@@ -141,11 +145,17 @@ public class AdoptionService {
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_USER));
 
-        Shelter shelter = shelterRepository.findByCareRegNumber(dto.getCareRegNumber())
-                .orElseThrow(() -> new CustomException(ErrorCode.SHELTER_NOT_FOUND));
-
         Animal animal = animalRepository.findByDesertionNo(dto.getDesertionNo())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_ANIMAL));
+
+        Shelter shelter = animal.getShelter();
+        String careRegNumber = shelter.getCareRegNumber();
+
+        shelterRepository.findByCareRegNumber(careRegNumber)
+                .orElseThrow(() -> new CustomException(ErrorCode.SHELTER_NOT_FOUND));
+
+        System.out.println("***============** careRegNumber : "  + careRegNumber);
+        System.out.println("***============** noticeNo : "  + animal.getNoticeNo());
 
         PetApplicationForm form = PetApplicationForm.builder()
                 .userName(dto.getUserName())

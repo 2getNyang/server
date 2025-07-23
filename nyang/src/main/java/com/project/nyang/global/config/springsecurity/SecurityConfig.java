@@ -7,6 +7,7 @@ import com.project.nyang.global.security.oauth2.OAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -47,27 +48,33 @@ public class SecurityConfig {
                                 "/swagger-resources/**"
                         ).permitAll()
 
+
                         //인증필요없음
                         .requestMatchers(
-                                "/api/auth/**",       // 로그인/리프레시/로그아웃 등 인증 없이 사용
-                                "/oauth2/**",         // OAuth2 리디렉션
-                                "/login/**",          // 스프링 시큐리티 내부 로그인 관련
-                                "/api/test/**", // ✅ 이 줄 추가: 공통 응답 테스트 컨트롤러 허용
-                                "/api/v1/animals/**",
-                                "/api/v1/boards/**",
-                                "/*",
-                                "/api/v1/adoptions/*",//입양신청
-                                "/api/v1/recommendations/**",
-                                "/api/v1/shelters/**",
-                                "/api/v1/regions/**",
-                                "/api/v1/public/**",
-                                "api/v1/notifications/**",//알림기능 테스트 때문에 추가
-                                "/ws-stomp/**",         //채팅관련
-                                "/chat/**", "/sub/**", "/pub/**",
-                                "/api/v1/chat/**",
-                                "/api/v1/user/**",
-                                "/*"
+                                        "/api/auth/**",       // 로그인/리프레시/로그아웃 등 인증 없이 사용
+                                        "/oauth2/**",         // OAuth2 리디렉션
+                                        "/login/**",          // 스프링 시큐리티 내부 로그인 관련
+                                        "/api/test/**", // ✅ 이 줄 추가: 공통 응답 테스트 컨트롤러 허용
+                                        "/api/v1/animals/**",
+                                        "/api/v1/boards/**",
+                                        "/*",
+                                        "/api/v1/adoptions/*",//입양신청
+                                        "/api/v1/recommendations/**",
+                                        "/api/v1/shelters/**",
+                                        "/api/v1/regions/**",
+                                        "/api/v1/upKinds/**",
+                                        "/api/v1/public/**",
+                                        "api/v1/notifications/**",//알림기능 테스트 때문에 추가
+                                        "/ws-stomp/**",         //채팅관련
+                                        "/chat/**", "/sub/**", "/pub/**",
+                                        "/api/v1/chat/**",
+                                        "/api/v1/user/**",
+                                        "/*"
 
+                                ).permitAll()
+
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/v1/like/**"
                         ).permitAll()
 
                         .requestMatchers(
@@ -78,10 +85,17 @@ public class SecurityConfig {
                                 "/api/v1/user/**",
                                 "/api/v1/boards/review/**",
                                 "/api/v1/auth/me",
-                                "/api/v1/my/**"
+                                "/api/v1/my/**",
+                                "/api/v1/adoptions/**"//입양신청
                         ).authenticated() //인증이 필요한 경로
 
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/v1/like/**"
+                        ).authenticated()
 
+                        .requestMatchers(HttpMethod.DELETE,
+                                "/api/v1/like/**"
+                        ).authenticated()
                 )
 
                 //스프링 시큐리티에서 세션관리정책을 설정하는 부분

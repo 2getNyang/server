@@ -75,16 +75,19 @@ public class LostDetailResponseDTO {
         private LocalDateTime createdAt;
         @Schema(description = "댓글 작성자")
         private String commentNickname;
+        @Schema(description = "댓글 작성자 id")
+        private Long commentUserId;
         @Schema(description = "부모 댓글 ID")
         private Long parentId;
 
         @Builder
-        public CommentDTO(String commnetContent, LocalDateTime createdAt, String commentNickname, Long parentId, Long id) {
+        public CommentDTO(String commnetContent, LocalDateTime createdAt, String commentNickname, Long parentId, Long id,Long commentUserId) {
             this.id = id;
             this.commnetContent = commnetContent;
             this.createdAt = createdAt;
             this.commentNickname = commentNickname;
             this.parentId = parentId;
+            this.commentUserId = commentUserId;
         }
 
         public static CommentDTO toDTO(Comment comment) {
@@ -94,6 +97,7 @@ public class LostDetailResponseDTO {
                     .commentNickname(comment.getUser().getNickname())
                     .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
                     .id(comment.getId())
+                    .commentUserId(comment.getUser().getId())
                     .build();
         }
     }
