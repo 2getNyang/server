@@ -1,9 +1,17 @@
+
 spring:
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+  datasource:
+    url: jdbc:mysql://${DB_SERVER}:${DB_PORT}/nyangDB?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&rewriteBatchedStatements=true
+    username: ${DB_USER}
+    password: ${DB_PASS}
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
       ddl-auto: none
-logging:
-  level:
-    org.hibernate.SQL: debug
-    org.hibernate.type.descriptor.sql.BasicBinder: trace

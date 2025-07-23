@@ -1,32 +1,28 @@
 spring:
   profiles:
     active: dev
-  data:
-    redis:
-      host: ${REDIS_HOST}
-      port: 6379
-  datasource:
-    url: jdbc:mysql://${DB_SERVER}:${DB_PORT}/nyangDB?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&rewriteBatchedStatements=true
-    username: ${DB_USER}
-    password: ${DB_PASS}
+
   jpa:
+    show-sql: false  # System.out 에 쿼리 출력 X (로깅을 통해 출력)
     properties:
       hibernate:
+        format_sql: true          # SQL 예쁘게 출력
+        highlight_sql: true       # SQL 컬러 출력 (Hibernate 6 이상)
         jdbc:
-          batch_size: 100
-        order_inserts: true
-        order_updates: true
-      show-sql: true
+          batch_size: 100         # 배치 insert/update 시 유효
+        order_inserts: true       # INSERT 순서 정렬
+        order_updates: true       # UPDATE 순서 정렬
+
 
   jackson:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
 
   elasticsearch:
-    uris: ${ELASTICSEARCH_URIS}
+    uris: http://localhost:9200
 
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    bootstrap-servers: localhost:29092
     consumer:
       group-id: search-log-group
       auto-offset-reset: earliest
@@ -144,10 +140,11 @@ management:
     elasticsearch:
       enabled: false
 
+
 #logging:
 #  pattern:
 #    console: %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight([%-3level]) %cyan(%logger{5}) - %msg%n
-#logging:
-#  level:
-#    org.hibernate.sql: debug
-#    org.hibernate.orm.jdbc.bind: trace
+logging:
+  level:
+    org.hibernate.SQL: debug  # SQL 로그
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
