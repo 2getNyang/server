@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/shelters")
 @RequiredArgsConstructor
+@Slf4j
 public class ShelterController {
 
     private final ShelterService shelterService;
@@ -45,7 +47,6 @@ public class ShelterController {
             @Parameter(description = "페이지당 항목 수", example = "12")
             @RequestParam(defaultValue = "12") int size
     ) {
-
         Page<ShelterListDTO> shelters = shelterService.getAllShelters(page, size);
         return shelterService.getAllShelters(page, size);
     }

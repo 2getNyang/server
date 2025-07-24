@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Board elastic search API", description = "게시글 elastic search 관련 기능")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api/v1/boards")
+@RequestMapping("/api/v1/boards")
 public class BoardEsController {
 
     private final BoardEsService boardEsService;

@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -36,6 +37,7 @@ import java.util.List;
 @Tag(name = "🐥SNS Board API", description = "내새꾸 자랑하는 SNS 게시판 관련 기능")
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/api/v1/boards/{slug}")
 public class SNSBoardController {
 

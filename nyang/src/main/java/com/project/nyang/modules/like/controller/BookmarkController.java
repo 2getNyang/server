@@ -2,6 +2,8 @@ package com.project.nyang.modules.like.controller;
 
 import com.project.nyang.global.common.api.ApiResponse;
 import com.project.nyang.global.common.api.ApiSuccessResponse;
+import com.project.nyang.global.exception.CustomException;
+import com.project.nyang.global.exception.ErrorCode;
 import com.project.nyang.global.security.core.CustomUserDetails;
 import com.project.nyang.modules.like.dto.LikeDto;
 import com.project.nyang.modules.like.service.LikeService;
@@ -31,6 +33,12 @@ public class BookmarkController {
     @PostMapping("/{desertionNo}")
     public ResponseEntity<ApiResponse<LikeDto>> createBookmark(@AuthenticationPrincipal CustomUserDetails userDetails, @Parameter(description = "공고 번호") @PathVariable String desertionNo) {
         Long userId = userDetails.getId();
+        if(desertionNo == null){
+            return null;
+        }
+        if (userDetails == null) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
         return ResponseEntity.ok(ApiSuccessResponse.success(likeService.createBookmark(userId, desertionNo), "찜하기 성공"));
     }
 
@@ -45,6 +53,9 @@ public class BookmarkController {
     @Operation(summary = "입양 공고 찜 여부 확인")
     @GetMapping("/{desertionNo}/me")
     public ResponseEntity<ApiResponse<Boolean>> checkBookmark(@Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails, @Parameter(description = "공고 번호") @PathVariable String desertionNo){
+        if (userDetails == null) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
         Long userId = userDetails.getId();
         boolean hasBookMarked = likeService.hasUserBookMarked(userId, desertionNo);
         return ResponseEntity.ok(ApiSuccessResponse.success(hasBookMarked));

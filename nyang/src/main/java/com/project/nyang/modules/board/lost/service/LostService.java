@@ -146,6 +146,8 @@ public class LostService {
                 .subRegionName(board.getSubRegion() != null ? board.getSubRegion().getSubRegionName() : null)
                 .missingLocation(board.getMissingLocation())
                 .missingDate(board.getMissingDate())
+                .distinctFeatures(board.getDistinctFeatures())
+                .boardContent(board.getBoardContent())
                 .phone(board.getPhone())
                 .likeCount(likeCount)
                 .comments(commentDTOList)

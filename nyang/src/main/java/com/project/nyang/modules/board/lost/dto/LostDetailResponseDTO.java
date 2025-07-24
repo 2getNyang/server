@@ -50,6 +50,10 @@ public class LostDetailResponseDTO {
     private LocalDate missingDate;
     @Schema(description = "실종/목격 장소", example = "부천역 3번 출구 근처")
     private String missingLocation;
+    @Schema(description = "특징", example = "한쪽 귀가 접혀있어요")
+    private String distinctFeatures;
+    @Schema(description = "본문", example = "부천역에서 잃어버렸어요 연락주세요")
+    private String boardContent;
     @Schema(description = "작성자 연락처", example = "010-2222-3333")
     private String phone;
     @Schema(description = "좋아요 수", example = "5")

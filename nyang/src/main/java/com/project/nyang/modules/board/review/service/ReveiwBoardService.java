@@ -87,7 +87,7 @@ public class ReveiwBoardService {
      * @param userId:  사용자 ID
      */
     @Transactional
-    public void createReviewBoard(Long userId, ReviewBoardCreateDTO boardDTO, List<MultipartFile> images) {
+    public Long createReviewBoard(Long userId, ReviewBoardCreateDTO boardDTO, List<MultipartFile> images) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED));
 
@@ -148,7 +148,7 @@ public class ReveiwBoardService {
                 .build();
 
         boardEsRepository.save(doc);
-
+        return board.getId();
     }
 
     /**

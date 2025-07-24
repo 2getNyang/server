@@ -51,6 +51,7 @@ public class SecurityConfig {
 
                         //인증필요없음
                         .requestMatchers(
+                                        "/",
                                         "/api/auth/**",       // 로그인/리프레시/로그아웃 등 인증 없이 사용
                                         "/oauth2/**",         // OAuth2 리디렉션
                                         "/login/**",          // 스프링 시큐리티 내부 로그인 관련
@@ -67,7 +68,10 @@ public class SecurityConfig {
                                         "/ws-stomp/**",         //채팅관련
                                         "/chat/**", "/sub/**", "/pub/**",
                                         "/api/v1/chat/**",
-                                        "/api/v1/user/**"
+                                        "/api/v1/user/**",
+                                        "/api/v1/boards/sns/elasticsearch/**",
+                                        "/api/v1/boards/review/elasticsearch/**",
+                                        "/api/v1/boards/lost/elasticsearch/**"
                                 ).permitAll()
 
                         .requestMatchers(HttpMethod.GET,
@@ -83,7 +87,8 @@ public class SecurityConfig {
                                 "/api/v1/boards/review/**",
                                 "/api/v1/auth/me",
                                 "/api/v1/my/**",
-                                "/api/v1/adoptions/**"//입양신청
+                                "/api/v1/adoptions/**",//입양신청
+                                "/api/v1/user/me"
                         ).authenticated() //인증이 필요한 경로
 
                         .requestMatchers(HttpMethod.POST,

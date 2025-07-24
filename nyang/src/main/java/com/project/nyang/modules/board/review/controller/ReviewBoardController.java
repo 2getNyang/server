@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/boards/review")
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewBoardController {
 
     private final ReveiwBoardService reveiwBoardService;
@@ -50,12 +52,12 @@ public class ReviewBoardController {
 
     @Operation(summary = "입양 후기 게시글 등록")
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ApiResponse<Object>> createReviewBoard(@AuthenticationPrincipal CustomUserDetails userDetails,
+    public ResponseEntity<ApiResponse<Long>> createReviewBoard(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                  @RequestPart ReviewBoardCreateDTO boardDTO,
                                                                  @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         Long userId = userDetails.getId();
-        reveiwBoardService.createReviewBoard(userId, boardDTO, images);
-        return ResponseEntity.ok(ApiSuccessResponse.success(null, "입양 후기 게시물 등록 완료"));
+        Long boardId = reveiwBoardService.createReviewBoard(userId, boardDTO, images);
+        return ResponseEntity.ok(ApiSuccessResponse.success(boardId, "입양 후기 게시물 등록 완료"));
     }
 
     @Operation(summary = "입양 후기 게시글 리스트 조회")
@@ -67,7 +69,6 @@ public class ReviewBoardController {
     @Operation(summary = "입양 후기 게시글 상세 조회")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ReveiwBoardDetailDTO>> getReviewBoardDetail(@Parameter(description = "게시물 ID", example = "1") @PathVariable Long id) {
-
         return ResponseEntity.ok(ApiSuccessResponse.success(reveiwBoardService.getReviewBoardDetail(id), "입양 후기 게시글 상세 조회 성공"));
     }
 

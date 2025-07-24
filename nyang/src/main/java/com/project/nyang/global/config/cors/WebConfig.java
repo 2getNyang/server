@@ -18,7 +18,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
                 .allowedHeaders("*")
-                .allowedOrigins("http://15.164.4.171")
+                .allowedOrigins("http://15.164.4.171","http://localhost:8081")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowCredentials(true); // 로그인 세션 유지 필요시
     }

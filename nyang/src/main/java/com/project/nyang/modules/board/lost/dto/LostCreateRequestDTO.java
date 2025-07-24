@@ -63,6 +63,7 @@ public class LostCreateRequestDTO {
     public Board toEntity(User user, Category category, List<Image> imageUrls,
                           Region region, SubRegion subRegion, UpKind upKind, Kind kind) {
         return Board.builder()
+                .id(boardId)
                 .category(category)
                 .user(user)
                 .region(region)

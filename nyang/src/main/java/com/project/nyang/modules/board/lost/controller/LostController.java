@@ -66,6 +66,7 @@ public class LostController {
             @Parameter(description = "조회할 게시글의 ID", example = "13")
             @PathVariable Long boardId)
     {
+        log.info("✅실종/목격 게시판 단일 조회");
         LostDetailResponseDTO responseDTO = lostService.getLostDetail(boardId);
         return ResponseEntity.ok(ApiSuccessResponse.success(responseDTO));
     }
@@ -109,7 +110,6 @@ public class LostController {
             @RequestPart("dto") LostCreateRequestDTO dto,
             @RequestPart(value = "images", required = false) List<MultipartFile> images
     ) {
-
         Long boardId = lostService.createLostBoard(dto, images);
         return ResponseEntity.ok(ApiSuccessResponse.success(boardId));
     }

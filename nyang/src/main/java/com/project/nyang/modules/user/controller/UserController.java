@@ -1,7 +1,10 @@
 package com.project.nyang.modules.user.controller;
 
+import com.project.nyang.global.common.api.ApiErrorResponse;
 import com.project.nyang.global.common.api.ApiResponse;
 import com.project.nyang.global.common.api.ApiSuccessResponse;
+import com.project.nyang.global.exception.CustomException;
+import com.project.nyang.global.exception.ErrorCode;
 import com.project.nyang.global.security.core.CustomUserDetails;
 import com.project.nyang.modules.user.dto.ChatUserInfoDTO;
 import com.project.nyang.modules.user.dto.AuthInfoDTO;
@@ -13,6 +16,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -52,6 +56,9 @@ public class UserController {
     public ResponseEntity<ApiResponse<AuthInfoDTO>> getAuthInfo(
             @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
+        if (userDetails == null) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
         Long userId = userDetails.getId();
         AuthInfoDTO authInfoDTO = userService.getAuthInfo(userId);
         return ResponseEntity.ok(ApiSuccessResponse.success(authInfoDTO, "사용자 정보 조회에 성공하였습니다"));
