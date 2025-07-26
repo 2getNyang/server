@@ -3,6 +3,7 @@ package com.project.nyang.modules.animal.controller;
 import com.project.nyang.global.common.publicapi.PublicAnimalApiClient;
 import com.project.nyang.modules.animal.dto.AnimalApiResponse;
 import com.project.nyang.modules.animal.service.AnimalApiService;
+import com.project.nyang.modules.animal.service.AnimalDataSyncService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * AnimalApiController입니다
@@ -27,6 +29,7 @@ public class AnimalApiController {
 
     private final AnimalApiService animalApiService;
     private final PublicAnimalApiClient publicAnimalApiClient;
+    private final AnimalDataSyncService animalDataSyncService;
 
     //테스트
     @GetMapping("/test")
@@ -46,5 +49,12 @@ public class AnimalApiController {
     public ResponseEntity<String> getUpdateAnimals(@RequestParam String startDate, @RequestParam String endDate) {
         animalApiService.updateAnimals(startDate, endDate);
         return ResponseEntity.ok("공공데이터 API의 동물 정보를 성공적으로 업데이트하였습니다.");
+    }
+
+    //db와 es 인덱스 비교
+    @GetMapping("/compare")
+    public ResponseEntity<?> compareDbAndEs() {
+        Map<String, Object> result = animalDataSyncService.compareDbAndEsIndex();
+        return ResponseEntity.ok(result);
     }
 }
