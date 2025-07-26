@@ -122,11 +122,11 @@ public class AnimalApiService {
 
             if (!animalsToSave.isEmpty()) {
                 //mysql 저장
-                animalRepository.saveAll(animalsToSave);
-                log.info("DB에 저장 완료: {} animals on page {}", animalsToSave.size(), pageNo);
+                List<Animal> savedAnimals = animalRepository.saveAll(animalsToSave);
+                log.info("DB에 저장 완료: {} animals on page {}", savedAnimals.size(), pageNo);
 
                 // 바로 Elasticsearch 저장 (fetchJoin된 상태이므로 Lazy 예외 발생하지 않음)
-                List<AnimalEsDocument> esDocs = animalsToSave.stream()
+                List<AnimalEsDocument> esDocs = savedAnimals.stream()
                         .map(this::convertToEsDocument)
                         .toList();
                 animalEsRepository.saveAll(esDocs);
@@ -192,11 +192,11 @@ public class AnimalApiService {
             }
 
             if (!animalsToUpdate.isEmpty()) {
-                animalRepository.saveAll(animalsToUpdate);
+                List<Animal> updatedAnimals = animalRepository.saveAll(animalsToUpdate);
                 log.info("DB에 수정 완료: {} animals on page {}", animalsToUpdate.size(), pageNo);
 
                 // Elasticsearch 수정
-                List<AnimalEsDocument> esDocuments = animalsToUpdate.stream()
+                List<AnimalEsDocument> esDocuments = updatedAnimals.stream()
                         .map(this::convertToEsDocument)
                         .toList();
 
