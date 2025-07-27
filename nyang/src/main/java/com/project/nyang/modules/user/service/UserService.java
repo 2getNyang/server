@@ -8,9 +8,9 @@ import com.project.nyang.modules.user.dto.UpdateUserInfoDTO;
 import com.project.nyang.modules.user.dto.UserInfoDTO;
 import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.modules.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * UserService입니다.
@@ -27,6 +27,7 @@ public class UserService {
     private final UserRepository  userRepository;
 
     //채팅방에서 상대방 정보 가져오는 메서드
+    @Transactional(readOnly = true)
     public ChatUserInfoDTO getChatUserInfo(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
@@ -37,6 +38,7 @@ public class UserService {
         );
     }
 
+    @Transactional(readOnly = true)
     public AuthInfoDTO getAuthInfo(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST));
@@ -49,6 +51,7 @@ public class UserService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public UserInfoDTO getUserInfo(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST));
