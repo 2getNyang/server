@@ -11,7 +11,6 @@ import com.project.nyang.modules.adoption.repository.AdoptionRepository;
 import com.project.nyang.modules.board.review.dto.*;
 import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.modules.board.review.repository.ReviewBoardRepository;
-import com.project.nyang.modules.board.sns.dto.SNSBoardUpdateFormDTO;
 import com.project.nyang.modules.image.entity.Image;
 import com.project.nyang.modules.like.repository.LikeRepository;
 import com.project.nyang.modules.user.entity.User;
@@ -19,7 +18,7 @@ import com.project.nyang.modules.user.repository.UserRepository;
 import com.project.nyang.reference.entity.Category;
 import com.project.nyang.reference.repository.CategoryRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -56,6 +55,7 @@ public class ReveiwBoardService {
     /**
     * 입양 후기 게시글 생성 폼
     * */
+    @Transactional(readOnly = true)
     public ReviewBoardCreateFromDTO getReviewCreateForms(Long userId) {
             List<PetApplicationForm> forms = Optional.ofNullable(
                     adoptionRepository.findAllByUser_IdOrderByFormCreatedAtAsc(userId)
@@ -158,7 +158,7 @@ public class ReveiwBoardService {
      * @param size: 한 페이지에 보여줄 게시물 개수
      * @return
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public Page<ReveiwBoardListDTO> getReviewBoards(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC,"createdAt"));
         Page<Board> boards = reviewBoardRepository.findAllByDeletedAtIsNullAndCategory_CategoryId(pageRequest, CATEGORY_ID);
@@ -265,6 +265,7 @@ public class ReveiwBoardService {
     /*
     * 입양 후기 게시글 수정폼
     * */
+    @Transactional(readOnly = true)
     public ReviewBoardUpdateFormDTO getReviewBoardUpdateForm(Long boardId, Long userId) {
         // 1. 게시글 + 유저 검증
         Board board = reviewBoardRepository.findByIdAndDeletedAtIsNull(boardId)
@@ -288,19 +289,17 @@ public class ReveiwBoardService {
         PetApplicationForm form = board.getPetApplicationForm();
 
         ReviewBoardUpdateFormDTO.PetApplicationDTO petDTO = null;
-        if(form!=null){
-            if (form != null) {
-                petDTO = ReviewBoardUpdateFormDTO.PetApplicationDTO.builder()
-                        .formId(form.getFormId())
-                        .noticeNo(form.getAnimal().getNoticeNo())
-                        .kindFullNm(form.getAnimal().getKind().getKindNm())
-                        .sexCd(form.getAnimal().getSexCd())
-                        .regionName(form.getAnimal().getShelter().getRegion().getRegionName())
-                        .subRegionName(form.getAnimal().getShelter().getSubRegion().getSubRegionName())
-                        .profile1(form.getAnimal().getPopfile1())
-                        .formCreateAt(form.getFormCreatedAt())
-                        .build();
-            }
+        if (form != null) {
+            petDTO = ReviewBoardUpdateFormDTO.PetApplicationDTO.builder()
+                    .formId(form.getFormId())
+                    .noticeNo(form.getAnimal().getNoticeNo())
+                    .kindFullNm(form.getAnimal().getKind().getKindNm())
+                    .sexCd(form.getAnimal().getSexCd())
+                    .regionName(form.getAnimal().getShelter().getRegion().getRegionName())
+                    .subRegionName(form.getAnimal().getShelter().getSubRegion().getSubRegionName())
+                    .profile1(form.getAnimal().getPopfile1())
+                    .formCreateAt(form.getFormCreatedAt())
+                    .build();
         }
 
         // 4. 최종 응답 DTO 조립

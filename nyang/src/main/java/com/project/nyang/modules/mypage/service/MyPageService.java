@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 마이페이지 service
@@ -29,6 +30,7 @@ public class MyPageService {
     private final BoardRepository boardRepository;
     private final AdoptionRepository adoptionRepository;
 
+    @Transactional(readOnly = true)
     public Page<MyAnimalDTO> getMyAnimals(Long userId, int page, int size) {
         Page<LikeIt> likeIts = likeRepository.findByUser_IdAndAnimalIsNotNull(userId, PageRequest.of(page, size));
 
@@ -37,6 +39,7 @@ public class MyPageService {
         });
     }
 
+    @Transactional(readOnly = true)
     public Page<MyLikedBoardDTO> getLikedBoards(Long userId, int page, int size) {
         Page<LikeIt> likeIts = likeRepository.findByUser_IdAndBoardIsNotNull(userId, PageRequest.of(page, size));
 
@@ -45,24 +48,28 @@ public class MyPageService {
         });
     }
 
+    @Transactional(readOnly = true)
     public Page<MyBoardDTO> getMyBoards(Long userId, Long categoryId, int page, int size) {
-        Page<Board> boards = boardRepository.findByUser_IdAndDeletedAtIsNullAndCategory_CategoryId(userId, categoryId, PageRequest.of(page, size));
+        Page<Board> boards = boardRepository.findWithUserAndImagesByUser_IdAndDeletedAtIsNullAndCategory_CategoryId(userId, categoryId, PageRequest.of(page, size));
 
         return boards.map(MyBoardDTO::of);
     }
 
+    @Transactional(readOnly = true)
     public Page<MyLostBoardDTO> getMyLostBoards(Long userId, Long categoryId, int page, int size) {
-        Page<Board> boards = boardRepository.findByUser_IdAndDeletedAtIsNullAndCategory_CategoryId(userId, categoryId, PageRequest.of(page, size));
+        Page<Board> boards = boardRepository.findWithUserImagesAndKindByUser_IdAndDeletedAtIsNullAndCategory_CategoryId(userId, categoryId, PageRequest.of(page, size));
 
         return boards.map(MyLostBoardDTO::of);
     }
 
+    @Transactional(readOnly = true)
     public Page<MyPetApplicationFormDTO> getPetApplicationForms(Long userId, int page, int size) {
         Page<PetApplicationForm> forms = adoptionRepository.findByUser_Id(userId, PageRequest.of(page, size));
 
         return forms.map(MyPetApplicationFormDTO::of);
     }
 
+    @Transactional(readOnly = true)
     public MyPetApplicationDetailDTO getPetApplicationDetail(Long userId, Long formId) {
         PetApplicationForm form = adoptionRepository.findById(formId).orElseThrow(() -> new CustomException(ErrorCode.APPLICATION_NOT_FOUND));
 
