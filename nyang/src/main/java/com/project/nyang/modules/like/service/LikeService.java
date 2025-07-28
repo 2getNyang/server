@@ -9,7 +9,7 @@ import com.project.nyang.modules.board.repository.BoardRepository;
 import com.project.nyang.modules.like.repository.LikeRepository;
 import com.project.nyang.modules.user.entity.User;
 import com.project.nyang.modules.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +33,7 @@ public class LikeService {
     /*
     * 게시글의 좋아요 수를 카운트 하는 메서드
     * */
+    @Transactional(readOnly = true)
     public Long countLike(Long boardId){
         Board board = boardRepository.findById(boardId).orElseThrow(()
                 -> new IllegalArgumentException("게시글이 없습니다."));
@@ -44,6 +45,7 @@ public class LikeService {
     /*
     * 특정 게시글의 좋아요 유무 확인하는 메서드
     * */
+    @Transactional(readOnly = true)
     public boolean hasUserLikedBoard(Long userId, Long boardId) {
         return likeRepository.existsByUserIdAndBoardId(userId, boardId);
     }
@@ -51,6 +53,7 @@ public class LikeService {
     /*
     * 특정 공고의 찜 유무 확인하는 메서드
     * */
+    @Transactional(readOnly = true)
     public boolean hasUserBookMarked(Long userId, String desertionNo){
         return likeRepository.existsByUserIdAndAnimal_DesertionNo(userId, desertionNo);
     }
