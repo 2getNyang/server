@@ -7,6 +7,7 @@ import com.project.nyang.reference.repository.KindRepository;
 import com.project.nyang.reference.repository.UpkindRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class UpkindAndKindService {
     /**
      * 모든 축종 조회
      */
+    @Transactional
     public List<UpKindDTO> getAllUpKinds() {
         return upkindRepository.findAllUpKinds().stream()
                 .map(upKindName -> new UpKindDTO(upKindName))
@@ -35,6 +37,7 @@ public class UpkindAndKindService {
     /**
      * 선택된 축종에 해당하는 품종 목록 조회.
      */
+    @Transactional
     public List<KindDTO> getKindsByUpKind(String upKindNm){
         return kindRepository.findKindsByUpKind(upKindNm);
     }

@@ -55,4 +55,26 @@ public class LostListResponseDTO {
 
     @Schema(description = "삭제일자", example = "2025-07-13 14:30:00")
     private LocalDateTime deleteAt;
+
+    public LostListResponseDTO(Long id, Long categoryId, Long userId, String nickName,
+                               String lostType, Long viewCount, String kindName, Integer age,
+                               String furColor, String gender, String missingLocation,
+                               LocalDate missingDate, String thumbnailUrl,
+                               LocalDateTime createdAt, LocalDateTime deleteAt) {
+        this.id = id;
+        this.categoryId = categoryId;
+        this.userId = userId;
+        this.nickName = nickName;
+        this.lostType = lostType;
+        this.viewCount = viewCount;
+        this.kindName = kindName;
+        this.age = age;
+        this.furColor = furColor;
+        this.gender = gender;
+        this.missingLocation = missingLocation;
+        this.missingDate = missingDate;
+        this.thumbnailUrl = thumbnailUrl;
+        this.createdAt = createdAt;
+        this.deleteAt = deleteAt;
+    }
 }
