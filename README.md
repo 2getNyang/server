@@ -92,7 +92,7 @@ $ docker compose -f docker-compose.data.yaml up -d
 ## 5.1 Language
 |        |                 |    |
 |--------|-----------------|---|
-|Java  |<img width="50" height="30" alt="Image" src="https://github.com/user-attachments/assets/9f43f57e-9bca-4615-a1d4-79873d7a3f3c" />| Gradle 17|
+|Java  |<img width="100" height="30 src="https://img.shields.io/badge/Java-000000?style=for-the-badge&logo=openjdk&logoColor=white"/>| Gradle 17|
 
 
 
