@@ -1,4 +1,4 @@
-<img width="1920" height="1289" alt="Image" src="https://github.com/user-attachments/assets/503b0319-0ab1-4eeb-937f-e89bf22865bc" />
+<img width="1920" height="1289" alt="Image" src="https://github.com/user-attachments/assets/8fb74b91-ec5e-4be5-bfad-418166a5a709" />
 
 <br/>
 <br/>
@@ -27,7 +27,7 @@ $ docker compose -f docker-compose.data.yaml up -d
 | 선순주 | 박세정 | 엄아영 | 이지은 | 오승훈 | 이은서 |
 |:------:|:------:|:------:|:------:|:------:|:------:|
 | BE |  BE | BE | BE | BE | BE |
-|<img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/c82b7981-bbe8-47bb-af59-9ada0c935d50" /> |<img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/e7df228c-19d3-4da4-9b0b-1eb0a27b56ae" /> |<img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/6c42fe7a-c0d3-46d9-8a4d-d58c7c143cd3" /> |<img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/70a2311e-fb0d-489f-8105-f12a796f17c7" />|<img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/ec16da5b-109a-4d8b-8560-007402048fc4" /> | <img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/6c10dcb1-e980-408d-b825-b7e32ac2c369" /> |
+|<img width="252" height="252" alt="Image" src="https://github.com/user-attachments/assets/98217954-b830-4f33-9a90-2ae967567ed9" /> |<<img width="252" height="252" alt="Image" src="https://github.com/user-attachments/assets/27eebd22-1686-4649-a708-2e81c5835313" />|<img width="252" height="252" alt="Image" src="https://github.com/user-attachments/assets/0a0b18ab-354d-4d73-89ab-b52b1a1778b5" /> |<img width="252" height="252" alt="Image" src="https://github.com/user-attachments/assets/1eb4cd62-2c8c-4455-a779-0654f6fe0bed" />|<img width="252" height="252" alt="Image" src="https://github.com/user-attachments/assets/03e418c7-e72c-41ad-83bf-314f4832b57c" /> | <img width="252" height="252" alt="Image" src="https://github.com/user-attachments/assets/024935dd-908b-4144-8083-e94eac8f1f83" /> |
 | [GitHub](https://github.com/dev-ssj) | [GitHub](https://github.com/zoni613) | [GitHub](https://github.com/Eomssi) | [GitHub](https://github.com/Ljeelra) | [GitHub](https://github.com/os-hoon) | [GitHub](https://github.com/ieunseo) |
 
 <br/>
@@ -79,12 +79,12 @@ $ docker compose -f docker-compose.data.yaml up -d
 # 4. Tasks & Responsibilities (작업 및 역할 분담)
 |  |  |  |
 |-----------------|-----------------|-----------------|
-| 선순주   | <img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/c82b7981-bbe8-47bb-af59-9ada0c935d50" /> | <ul><li>공통응답 API 구조설계 및 구현</li><li>실종/목격 제보게시판</li><li>S3, RDS 초기환경 설정</li><li>S3 이미지 관련 로직구현</li><li>사용자간 1:1채팅기능</li><li>전체적인 프론트엔드 연동</li><li>API 구조 및 DTO 전반수정</li></ul> |
-| 박세정   | <img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/e7df228c-19d3-4da4-9b0b-1eb0a27b56ae" />  | <ul><li>마이페이지</li><li>입양후기게시판</li><li>좋아요,댓글</li><li>깃액션 연동</li><li>게시판 엘라스틱 서치 연동</li><li>docker compose file 작성</li></ul> |
-| 엄아영   | <img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/6c42fe7a-c0d3-46d9-8a4d-d58c7c143cd3" />  | <ul><li>사용자정보수정</li><li>유기동물전체보기페이지</li><li>유기동물API연동</li><li>이달의 추천동물 통합검색</li><li>유기동물 통합검색</li><li>탄력적IP 설정</li></ul>  |
-| 이지은   | <img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/70a2311e-fb0d-489f-8105-f12a796f17c7" />  | <ul><li>소셜로그인(구글) 연동 </li><li> 유기동물 상세보기페이지 작성 </li><li>입양신청서 작성, 입양신청서 메일전송</li><li>알림기능</li></ul>  |
-| 오승훈   | <img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/ec16da5b-109a-4d8b-8560-007402048fc4" />  | <ul><li>JWT/SpringSecurity 초기설정</li><li>로그인/회원가입 공통로직 구현</li><li>소셜로그인 연동(카카오)</li><li>보호소 조회페이지 작성</li><li>보호소 상세조회 페이지 작성</li><li>카카오 지도 불러오기</li><li>깃액션 연동</li></ul>  |
-| 이은서   | <img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/6c10dcb1-e980-408d-b825-b7e32ac2c369" />  | <ul><li>AWS 초기설정</li><li>SNS홍보게시판 작성</li><li>로그아웃 공통로직 구현, 회원탈퇴 구현</li><li>소셜로그인 연동 (네이버)</li><li>게시판 엘라스틱서치 연동</li><li>docker-compose file 작성</li><li>회원탈퇴 페이지 연동</li><li>깃허브 관리 (이슈템플릿작성 및 이슈관리, 리드미 작성)</li></ul>  |
+| 선순주   | <img width="252" height="252" alt="Image" src="https://github.com/user-attachments/assets/98217954-b830-4f33-9a90-2ae967567ed9" /> | <ul><li>공통응답 API 구조설계 및 구현</li><li>실종/목격 제보게시판</li><li>S3, RDS 초기환경 설정</li><li>S3 이미지 관련 로직구현</li><li>사용자간 1:1채팅기능</li><li>전체적인 프론트엔드 연동</li><li>API 구조 및 DTO 전반수정</li></ul> |
+| 박세정   | <img width="252" height="252" alt="Image" src="https://github.com/user-attachments/assets/27eebd22-1686-4649-a708-2e81c5835313" />  | <ul><li>마이페이지</li><li>입양후기게시판</li><li>좋아요,댓글</li><li>깃액션 연동</li><li>게시판 엘라스틱 서치 연동</li><li>docker compose file 작성</li></ul> |
+| 엄아영   | <img width="252" height="252" alt="Image" src="https://github.com/user-attachments/assets/0a0b18ab-354d-4d73-89ab-b52b1a1778b5" />  | <ul><li>사용자정보수정</li><li>유기동물전체보기페이지</li><li>유기동물API연동</li><li>이달의 추천동물 통합검색</li><li>유기동물 통합검색</li><li>탄력적IP 설정</li></ul>  |
+| 이지은   | <img width="252" height="252" alt="Image" src="https://github.com/user-attachments/assets/1eb4cd62-2c8c-4455-a779-0654f6fe0bed" />  | <ul><li>소셜로그인(구글) 연동 </li><li> 유기동물 상세보기페이지 작성 </li><li>입양신청서 작성, 입양신청서 메일전송</li><li>알림기능</li></ul>  |
+| 오승훈   | <img width="252" height="252" alt="Image" src="https://github.com/user-attachments/assets/03e418c7-e72c-41ad-83bf-314f4832b57c" />  | <ul><li>JWT/SpringSecurity 초기설정</li><li>로그인/회원가입 공통로직 구현</li><li>소셜로그인 연동(카카오)</li><li>보호소 조회페이지 작성</li><li>보호소 상세조회 페이지 작성</li><li>카카오 지도 불러오기</li><li>깃액션 연동</li></ul>  |
+| 이은서   | <img width="252" height="252" alt="Image" src="https://github.com/user-attachments/assets/024935dd-908b-4144-8083-e94eac8f1f83" /> | <ul><li>AWS 초기설정</li><li>SNS홍보게시판 작성</li><li>로그아웃 공통로직 구현, 회원탈퇴 구현</li><li>소셜로그인 연동 (네이버)</li><li>게시판 엘라스틱서치 연동</li><li>docker-compose file 작성</li><li>회원탈퇴 페이지 연동</li><li>깃허브 관리 (이슈템플릿작성 및 이슈관리, 리드미 작성)</li></ul>  |
 
 <br/>
 
@@ -203,7 +203,7 @@ nyang (루트)
 
 ```
 # 6.1 ERD
-<img width="749" height="748" alt="Image" src="https://github.com/user-attachments/assets/d7a4fd48-cb29-42ad-9841-20ed84fb1cfd" />
+<img width="771" height="761" alt="Image" src="https://github.com/user-attachments/assets/189ecf4f-9bf8-4432-9c91-4cecd736e372" />
 <br/>
 <br/>
 
