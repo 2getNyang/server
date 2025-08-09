@@ -79,7 +79,7 @@ $ docker compose -f docker-compose.data.yaml up -d
 # 4. Tasks & Responsibilities (작업 및 역할 분담)
 |  |  |  |
 |-----------------|-----------------|-----------------|
-| 선순주   | <img width="252" height="252" alt="Image" src="https://github.com/user-attachments/assets/98217954-b830-4f33-9a90-2ae967567ed9" /> | <ul><li>공통응답 API 구조설계 및 구현</li><li>실종/목격 제보게시판</li><li>S3, RDS 초기환경 설정</li><li>S3 이미지 관련 로직구현</li><li>사용자간 1:1채팅기능</li><li>전체적인 프론트엔드 연동</li><li>API 구조 및 DTO 전반수정</li></ul> |
+| 선순주   | <img width="252" height="252" alt="Image" src="https://github.com/user-attachments/assets/98217954-b830-4f33-9a90-2ae967567ed9" /> | <ul><li>공통응답 API 구조설계 및 구현</li><li>실종/목격 제보게시판</li><li>S3, RDS 초기환경 설정</li><li>S3 이미지 관련 로직구현</li><li>WebSocket + STOMP + REDIS를 활용한 사용자간 1:1채팅기능</li><li>REDIS를 활용한 채팅 읽음 처리 기능</li><li>전체적인 프론트엔드 연동</li><li>API 구조 및 DTO 전반수정</li></ul> |
 | 박세정   | <img width="252" height="252" alt="Image" src="https://github.com/user-attachments/assets/27eebd22-1686-4649-a708-2e81c5835313" />  | <ul><li>마이페이지</li><li>입양후기게시판</li><li>좋아요,댓글</li><li>깃액션 연동</li><li>게시판 엘라스틱 서치 연동</li><li>docker compose file 작성</li></ul> |
 | 엄아영   | <img width="252" height="252" alt="Image" src="https://github.com/user-attachments/assets/0a0b18ab-354d-4d73-89ab-b52b1a1778b5" />  | <ul><li>사용자정보수정</li><li>유기동물전체보기페이지</li><li>유기동물API연동</li><li>이달의 추천동물 통합검색</li><li>유기동물 통합검색</li><li>탄력적IP 설정</li></ul>  |
 | 이지은   | <img width="252" height="252" alt="Image" src="https://github.com/user-attachments/assets/1eb4cd62-2c8c-4455-a779-0654f6fe0bed" />  | <ul><li>소셜로그인(구글) 연동 </li><li> 유기동물 상세보기페이지 작성 </li><li>입양신청</li><li>HTML 템플릿 기반 입양신청서 PDF 변환 및 메일 전송</li><li>WebSocket 활용한 입양신청 완료 실시간 알림기능</li><li>읽지 않은 채팅에 대한 실시간 알림 기능</li></ul>  |
