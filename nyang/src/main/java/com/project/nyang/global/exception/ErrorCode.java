@@ -56,14 +56,7 @@ public enum ErrorCode {
 
     //알림 관련 에러
     NOTIFICATION_NOT_FOUND(404,"관련 알림을 찾을 수 없습니다."),
-    CHATROOM_NOT_FOUND(404,"채팅방을 찾을 수 없습니다."),
-
-
-    ;
-
-
-
-
+    CHATROOM_NOT_FOUND(404,"채팅방을 찾을 수 없습니다.");
     private final int code;
     private final String message;
 }

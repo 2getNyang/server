@@ -70,5 +70,4 @@ public class Comment extends BaseTime {
    public void updateComment(String content) {
        this.commentContent = content;
    }
-
 }
