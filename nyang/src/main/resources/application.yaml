@@ -150,12 +150,9 @@ management:
   health:
     elasticsearch:
       enabled: false
-
-
-#logging:
-#  pattern:
-#    console: %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight([%-3level]) %cyan(%logger{5}) - %msg%n
 logging:
-  level:
-    org.hibernate.SQL: debug  # SQL 로그
-    org.hibernate.type.descriptor.sql.BasicBinder: trace
+#  level:
+#    org.hibernate.SQL: debug  # SQL 로그
+#    org.hibernate.type.descriptor.sql.BasicBinder: trace
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight([%-3level]) %cyan(%logger{5}) - %msg%n"

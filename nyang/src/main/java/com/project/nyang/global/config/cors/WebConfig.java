@@ -1,7 +1,9 @@
 package com.project.nyang.global.config.cors;
 
+import com.project.nyang.global.logging.RequestIdInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -13,6 +15,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+    private final RequestIdInterceptor requestIdInterceptor;
+
+    public WebConfig(RequestIdInterceptor requestIdInterceptor) {
+        this.requestIdInterceptor = requestIdInterceptor;
+    }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -21,5 +28,11 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins("http://15.164.4.171","http://localhost:8081")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowCredentials(true); // 로그인 세션 유지 필요시
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(requestIdInterceptor)
+                .addPathPatterns("/api/**");
     }
 }
