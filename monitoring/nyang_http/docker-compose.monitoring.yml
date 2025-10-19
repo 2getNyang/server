@@ -1,30 +1,30 @@
 version: '3'
 services:
 
-#  nyang-prometheus:
-#    image: prom/prometheus:latest
-#    container_name: nyang-prometheus
-#    restart: unless-stopped
-#    ports:
-#      - "9090:9090"
-#    volumes:
-#      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml # [설정파일]
-#      - ./volumes/prometheus:/prometheus          # [데이터 볼륨]
-#    networks:
-#      - nyang_server
+  #  nyang-prometheus:
+  #    image: prom/prometheus:latest
+  #    container_name: nyang-prometheus
+  #    restart: unless-stopped
+  #    ports:
+  #      - "9090:9090"
+  #    volumes:
+  #      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml # [설정파일]
+  #      - ./volumes/prometheus:/prometheus          # [데이터 볼륨]
+  #    networks:
+  #      - nyang_server
 
-#  nyang-grafana:
-#    image: grafana/grafana:latest
-#    container_name: nyang-grafana
-#    restart: unless-stopped
-#    ports:
-#      - "3000:3000"
-#    depends_on:
-#      - nyang-prometheus
-#    volumes:
-#      - ./volumes/grafana:/var/lib/grafana  # [데이터 볼륨]
-#    networks:
-#      - nyang_server
+  #  nyang-grafana:
+  #    image: grafana/grafana:latest
+  #    container_name: nyang-grafana
+  #    restart: unless-stopped
+  #    ports:
+  #      - "3000:3000"
+  #    depends_on:
+  #      - nyang-prometheus
+  #    volumes:
+  #      - ./volumes/grafana:/var/lib/grafana  # [데이터 볼륨]
+  #    networks:
+  #      - nyang_server
 
   nyang-elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
@@ -63,20 +63,20 @@ services:
     networks:
       - nyang_server
 
-#  nyang-logstash:
-#    image: docker.elastic.co/logstash/logstash:8.12.0
-#    container_name: nyang-logstash
-#    ports:
-#      - "5044:5044"  # For beats (optional)
-#      - "5001:5000"  # TCP input
-#    volumes:
-#      - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf   #logstash 설정파일
-#      - ./logstash/logstash.yml:/usr/share/logstash/config/logstash.yml:ro  # <-- 이 줄 추가!
-#      - ../../logs:/logs #로그 볼륨
-#    depends_on:
-#      - nyang-elasticsearch
-#    networks:
-#      - nyang_server
+  nyang-logstash:
+    image: docker.elastic.co/logstash/logstash:8.12.0
+    container_name: nyang-logstash
+    ports:
+      - "5044:5044"  # For beats (optional)
+      - "5001:5000"  # TCP input
+    volumes:
+      - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf   #logstash 설정파일
+      - ./logstash/logstash.yml:/usr/share/logstash/config/logstash.yml:ro  # <-- 이 줄 추가!
+      - ../../logs:/logs #로그 볼륨
+    depends_on:
+      - nyang-elasticsearch
+    networks:
+      - nyang_server
 
   #Kafka 클러스터 코디네이터
   #분산 시스템에서 여러 서버(노드)들의 상태와 설정을 ‘중앙에서 관리’해주는 시스템

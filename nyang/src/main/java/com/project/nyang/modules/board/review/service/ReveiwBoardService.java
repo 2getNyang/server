@@ -4,6 +4,7 @@ import com.project.nyang.global.common.S3.S3Service;
 import com.project.nyang.global.common.entity.BaseTime;
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
+import com.project.nyang.global.logging.RequestContext;
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
 import com.project.nyang.global.elasticsearch.board.dto.BoardEsDocument;
 import com.project.nyang.global.elasticsearch.board.repository.BoardEsRepository;
@@ -18,6 +19,7 @@ import com.project.nyang.modules.user.repository.UserRepository;
 import com.project.nyang.reference.entity.Category;
 import com.project.nyang.reference.repository.CategoryRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -39,6 +41,7 @@ import java.util.stream.Collectors;
  * @fileName : ReveiwBoardService
  * @since : 2025-07-08
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReveiwBoardService {
@@ -162,6 +165,8 @@ public class ReveiwBoardService {
     public Page<ReveiwBoardListDTO> getReviewBoards(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC,"createdAt"));
         Page<Board> boards = reviewBoardRepository.findAllByDeletedAtIsNullAndCategory_CategoryId(pageRequest, CATEGORY_ID);
+        String reqId = RequestContext.getRequestId();
+        long startTime = System.currentTimeMillis();
 
         return boards.map(board -> ReveiwBoardListDTO.builder()
                 .id(board.getId())
@@ -180,8 +185,6 @@ public class ReveiwBoardService {
                 .createdAt(board.getCreatedAt())
                 .boardViewCount(board.getViewCount())
                 // 좋아요 여부, 좋아요 수 추후 view가 수정될 경우 활용
-//                .likeItCount(board.getLikeList().size())
-//                .isLiked(board.existsLikeBy(board.getId(), board.getUser().getId()))
                 .build());
     }
 

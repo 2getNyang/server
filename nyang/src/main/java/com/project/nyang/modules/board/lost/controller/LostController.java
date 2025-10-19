@@ -51,7 +51,7 @@ public class LostController {
             """)
     @GetMapping
     public ResponseEntity<ApiResponse<Page<LostListResponseDTO>>> getBoardsByCategory(
-            @ParameterObject @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+            @ParameterObject @PageableDefault(size = 12, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
         Page<LostListResponseDTO> boards = lostService.getLostBoard(categoryId, pageable);
         return ResponseEntity.ok(ApiSuccessResponse.success(boards));

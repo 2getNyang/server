@@ -63,41 +63,9 @@ public class LostService {
     private final BoardEsRepository boardEsRepository;
 
     //실종/목격 게시판의 모든 글 가져오는 메서드(페이징 처리완료)
+    @Transactional
     public Page<LostListResponseDTO> getLostBoard(Long categoryId, Pageable pageable) {
-        Page<Board> boards = lostRepository.findByCategory_CategoryIdAndDeletedAtIsNull(categoryId, pageable);
-
-        return boards.map(board -> {
-            //썸네일 여부가 Y인 이미지 한개 가져오는 메서드
-            String thumbnailUrl = board.getImages().stream()
-                    .filter(image -> "Y".equalsIgnoreCase(image.getThumbnailIs()))
-                    .findFirst()
-                    .map(Image::getS3Url)
-                    .orElse(null);
-
-            return LostListResponseDTO.builder()
-                    .id(board.getId())
-                    .categoryId(board.getCategory().getCategoryId())
-                    .userId(board.getUser().getId())
-                    .nickName(board.getUser().getNickname())
-                    .lostType(
-                            "MS".equalsIgnoreCase(board.getLostType()) ? "실종" :
-                                    "WT".equalsIgnoreCase(board.getLostType()) ? "목격" : null
-                    )
-                    .kindName(board.getKind().getKindNm())
-                    .gender(
-                            "M".equalsIgnoreCase(board.getGender()) ? "수컷" :
-                                    "F".equalsIgnoreCase(board.getGender()) ? "암컷" :
-                                            "Q".equalsIgnoreCase(board.getGender()) ? "모름" : null)
-                    .age(board.getAge())
-                    .furColor(board.getFurColor())
-                    .missingLocation(board.getMissingLocation())
-                    .missingDate(board.getMissingDate())
-                    .viewCount(board.getViewCount())
-                    .thumbnailUrl(thumbnailUrl)
-                    .createdAt(board.getCreatedAt())
-                    .deleteAt(board.getDeletedAt())
-                    .build();
-        });
+        return lostRepository.findAllLostBoardsWithThumbnail(categoryId, pageable);
     }
 
     //실종/목격 게시판의 특정 글 조회 메서드
@@ -160,6 +128,7 @@ public class LostService {
     }
 
     //실종/목격 게시판 글작성 폼
+    @Transactional
     public LostCreateFormDTO getLostFormInfo() {
         return LostCreateFormDTO.builder()
                 .upKinds(upkindRepository.findAll().stream()
@@ -181,10 +150,10 @@ public class LostService {
         // 인증된 사용자 가져오기
         Long userId = SecurityUtil.getCurrentUserId();
 
-        // 프론트에서 넘어온 축종 코드 확인
-        log.info("프론트에서 받은 축종 코드: {}", dto.getKindCd());
-
-        upkindRepository.findByUpKindCd(dto.getKindCd());
+//        // 프론트에서 넘어온 축종 코드 확인
+//        log.info("프론트에서 받은 축종 코드: {}", dto.getKindCd());
+//
+//        //upkindRepository.findByUpKindCd(dto.getKindCd());
 
         //1. 연관 엔티티 유효성 검사
         User user = userRepository.findById(userId)
