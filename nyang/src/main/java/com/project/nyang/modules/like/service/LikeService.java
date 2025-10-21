@@ -1,5 +1,6 @@
 package com.project.nyang.modules.like.service;
 
+import com.project.nyang.global.logging.LogMessage;
 import com.project.nyang.modules.animal.entity.Animal;
 import com.project.nyang.modules.animal.repository.AnimalRepository;
 import com.project.nyang.modules.board.entity.Board;
@@ -33,6 +34,7 @@ public class LikeService {
     /*
     * 게시글의 좋아요 수를 카운트 하는 메서드
     * */
+    @LogMessage(value = "게시글 좋아요 수 카운트", operation = "READ")
     @Transactional(readOnly = true)
     public Long countLike(Long boardId){
         Board board = boardRepository.findById(boardId).orElseThrow(()
@@ -45,6 +47,7 @@ public class LikeService {
     /*
     * 특정 게시글의 좋아요 유무 확인하는 메서드
     * */
+    @LogMessage(value = "게시글 좋아요 유무 조회", operation = "READ")
     @Transactional(readOnly = true)
     public boolean hasUserLikedBoard(Long userId, Long boardId) {
         return likeRepository.existsByUserIdAndBoardId(userId, boardId);
@@ -53,6 +56,7 @@ public class LikeService {
     /*
     * 특정 공고의 찜 유무 확인하는 메서드
     * */
+    @LogMessage(value = "공고 좋아요 유무 조회", operation = "READ")
     @Transactional(readOnly = true)
     public boolean hasUserBookMarked(Long userId, String desertionNo){
         return likeRepository.existsByUserIdAndAnimal_DesertionNo(userId, desertionNo);
@@ -63,6 +67,8 @@ public class LikeService {
      * @param boardId: 게시글 ID
      * @return
      */
+
+    @LogMessage(value = "게시글 좋아요 추가", operation = "CREATE")
     @Transactional
     public LikeDto createLike(Long userId, Long boardId) {
         User user = userRepository.findById(userId).orElseThrow(()
@@ -96,6 +102,8 @@ public class LikeService {
      * @param desertionNo: 공고 번호
      * @return
      */
+
+    @LogMessage(value = "입양 공고 좋아요 추가", operation = "CREATE")
     @Transactional
     public LikeDto createBookmark(Long userId, String desertionNo) {
         User user = userRepository.findById(userId).orElseThrow(()
@@ -128,6 +136,8 @@ public class LikeService {
      * @param boardId: 게시글 ID
      * @return
      */
+
+    @LogMessage(value = "게시글 좋아요 삭제", operation = "DELETE")
     @Transactional
     public LikeDto deleteLike(Long userId, Long boardId) {
         userRepository.findById(userId).orElseThrow(()
@@ -150,6 +160,8 @@ public class LikeService {
      * @param desertionNo: 공고 번호
      * @return
      */
+
+    @LogMessage(value = "공고 좋아요 삭제", operation = "DELETE")
     @Transactional
     public LikeDto deleteBookmark(Long userId, String desertionNo) {
         userRepository.findById(userId).orElseThrow(()

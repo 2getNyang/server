@@ -2,6 +2,7 @@ package com.project.nyang.modules.adoption.service;
 
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
+import com.project.nyang.global.logging.LogMessage;
 import com.project.nyang.modules.adoption.dto.AdoptionDTO;
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
 import com.project.nyang.modules.adoption.mail.service.MailService;
@@ -44,11 +45,14 @@ public class AdoptionService {
     private final MailService mailService;
     private final NotificationService notificationService;
 
+
+    @LogMessage(value = "입양 신청 중복 확인", operation = "READ")
     @Operation(summary = "입양신청중복확인", description = "입양신청시 중복 신청인지 확인하는 메서드 입니다")
     public boolean hasAlreadyApplied(Long userId, String desertionNo) {
         return adoptionRepository.existsByUserIdAndAnimal_DesertionNo(userId, desertionNo);
     }
 
+    @LogMessage(value = "입양 신청서 처리(신청)", operation = "CREATE")
     @Operation(summary = "입양신청처리", description = "입양신청 데이터 처리 프로세스 메서드 입니다")
     public void processAdoptionApplication(AdoptionDTO dto) {
 
@@ -91,6 +95,7 @@ public class AdoptionService {
         notificationService.mailSentNotification(user);
     }
 
+    @LogMessage(value = "입양 신청서 재요청", operation = "CREATE")
     @Operation(summary = "입양신청 재요청", description = "입양신청 재요청 메서드 입니다")
     public void reprocessAdoptionApplication(Long formId, Long userId) {
 
@@ -140,6 +145,7 @@ public class AdoptionService {
         notificationService.mailSentNotification(user);
     }
 
+    @LogMessage(value = "입양 신청서 저장", operation = "CREATE")
     @Operation(summary = "입양신청서 저장", description = "입양신청서의 작성 답변을 DB에 저장합니다.")
     private AdoptionDTO saveApplication(AdoptionDTO dto) {
         User user = userRepository.findById(dto.getUserId())

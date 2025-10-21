@@ -5,6 +5,7 @@ import com.project.nyang.global.common.S3.S3Service;
 import com.project.nyang.global.elasticsearch.board.dto.BoardEsDocument;
 import com.project.nyang.global.elasticsearch.board.repository.BoardEsRepository;
 import com.project.nyang.global.elasticsearch.board.service.BoardEsService;
+import com.project.nyang.global.logging.LogMessage;
 import com.project.nyang.modules.board.entity.Board;
 import com.project.nyang.modules.board.lost.dto.LostUpdateResponseDTO;
 import com.project.nyang.modules.board.sns.dto.SNSBoardDTO;
@@ -62,6 +63,7 @@ public class SNSBoardService {
     private final BoardEsService boardEsService;
 
     /* SNS 게시판 글 등록 */
+    @LogMessage(value = "SNS 게시글 작성", operation = "CREATE")
     @Transactional
     public SNSBoardDTO createSNSBoard(SNSBoardDTO boardDTO, List<MultipartFile> images, Long userId) {
         // 카테고리 확인
@@ -137,6 +139,7 @@ public class SNSBoardService {
 
 
     /* SNS 게시글 수정폼 호출*/
+    @LogMessage(value = "SNS 게시글 수정폼 호출", operation = "READ")
     public SNSBoardUpdateFormDTO getSNSBoardUpdateForm(Long boardId, Long userId){
 
         // 1. 사용자 인증 및 게시글 조회
@@ -180,6 +183,7 @@ public class SNSBoardService {
 
 
     /* SNS 게시글 수정 */
+    @LogMessage(value = "SNS 게시글 수정", operation = "UPDATE")
     @Transactional
     public void updateSNSBoard(Long boardId, SNSBoardUpdateDTO dto, Long userId, List<MultipartFile> newImages) {
 
@@ -278,6 +282,7 @@ public class SNSBoardService {
 
 
     /* SNS 게시판 글 삭제 */
+    @LogMessage(value = "SNS 게시글 삭제", operation = "DELETE")
     @Transactional
     public void deleteSNSBoard(Long boardId,Long userId) {
         //board id 찾기
@@ -302,6 +307,7 @@ public class SNSBoardService {
 
 
     /* SNS 게시판 글 상세조회 */
+    @LogMessage(value = "SNS 게시글 상세 조회", operation = "READ")
     @Transactional
     public SNSBoardDTO getBoardDetail(Long boardId) {
         Board board = snsBoardRepository.findById(boardId)
@@ -353,6 +359,7 @@ public class SNSBoardService {
 
 
     /** SNS 게시판 페이징 **/
+    @LogMessage(value = "SNS 게시판 목록 조회", operation = "READ")
     @Transactional(readOnly = true)
     public Page<SNSBoardDTO> getBoardsPaged(Pageable pageable) {
         // category 가 SNS 친구만 페이징 조회

@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @Schema(description = "공통 에러 응답 포맷")
 public class ApiErrorResponse {
+    @Schema(description = "요청 추적 ID", example = "a3f8b2c1")
+    private String requestId;
 
     @Schema(description = "에러 코드", example = "401")
     private int code;
@@ -22,8 +24,9 @@ public class ApiErrorResponse {
     @Schema(description = "에러 상세 메시지", example = "CustomException: 비밀번호가 맞지 않습니다")
     private String detail;
 
-    public static ApiErrorResponse of(int code, String message, String detail) {
+    public static ApiErrorResponse of(String requestId, int code, String message, String detail) {
         return ApiErrorResponse.builder()
+                .requestId(requestId)
                 .code(code)
                 .message(message)
                 .detail(detail)

@@ -1,5 +1,6 @@
 package com.project.nyang.modules.chat.service;
 
+import com.project.nyang.global.logging.LogMessage;
 import com.project.nyang.modules.chat.dto.ChatRoomSummaryDTO;
 import com.project.nyang.modules.chat.entity.ChatMessage;
 import com.project.nyang.modules.chat.entity.ChatRoom;
@@ -35,6 +36,7 @@ public class ChatRoomService {
     /**
      * 두 사용자 간의 채팅방이 이미 존재하면 반환, 없으면 새로 생성
      */
+    @LogMessage(value = "채팅방 조회/생성", operation = "READ/CREATE")
     @Transactional
     public Long getOrCreateChatRoom(Long user1Id, Long user2Id) {
         // 정렬된 순서로 저장해야 유일한 키로 인식 가능

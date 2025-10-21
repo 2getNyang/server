@@ -1,5 +1,6 @@
 package com.project.nyang.modules.comment.service;
 
+import com.project.nyang.global.logging.LogMessage;
 import com.project.nyang.modules.animal.entity.Animal;
 import com.project.nyang.modules.animal.repository.AnimalRepository;
 import com.project.nyang.modules.board.entity.Board;
@@ -36,6 +37,7 @@ public class CommentService {
      * @param boardId: 게시글 ID
      * @param dto :
      */
+    @LogMessage(value = "게시글 댓글 조회", operation = "READ")
     @Transactional
     public void createBoardComment(Long userId, Long boardId, CreateCommentDTO dto) {
         User user = userRepository.findById(userId)
@@ -67,6 +69,7 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
+    @LogMessage(value = "게시글 댓글 생성", operation = "CREATE")
     @Transactional
     public void createAdoptionComment(Long userId, String desertionNo, CreateCommentDTO dto) {
         User user = userRepository.findById(userId)
@@ -98,6 +101,7 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
+    @LogMessage(value = "게시글 댓글 수정", operation = "UPDATE")
     @Transactional
     public UpdateCommentDTO updateComment(Long userId, Long commentId, UpdateCommentDTO dto) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
@@ -118,6 +122,7 @@ public class CommentService {
 
     }
 
+    @LogMessage(value = "게시글 댓글 삭제", operation = "DELETE")
     @Transactional
     public void deleteComment(Long userId, Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
