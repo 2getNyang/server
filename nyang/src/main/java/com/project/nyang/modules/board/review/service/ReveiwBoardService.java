@@ -4,6 +4,7 @@ import com.project.nyang.global.common.S3.S3Service;
 import com.project.nyang.global.common.entity.BaseTime;
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
+import com.project.nyang.global.logging.LogMessage;
 import com.project.nyang.global.logging.RequestContext;
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
 import com.project.nyang.global.elasticsearch.board.dto.BoardEsDocument;
@@ -58,6 +59,7 @@ public class ReveiwBoardService {
     /**
     * 입양 후기 게시글 생성 폼
     * */
+    @LogMessage(value = "입양 후기 게시글 등록폼 조회", operation = "READ")
     @Transactional(readOnly = true)
     public ReviewBoardCreateFromDTO getReviewCreateForms(Long userId) {
             List<PetApplicationForm> forms = Optional.ofNullable(
@@ -89,6 +91,7 @@ public class ReveiwBoardService {
      * @param boardDTO
      * @param userId:  사용자 ID
      */
+    @LogMessage(value = "입양 후기 게시글 등록", operation = "CREATE")
     @Transactional
     public Long createReviewBoard(Long userId, ReviewBoardCreateDTO boardDTO, List<MultipartFile> images) {
         User user = userRepository.findById(userId)
@@ -161,6 +164,7 @@ public class ReveiwBoardService {
      * @param size: 한 페이지에 보여줄 게시물 개수
      * @return
      */
+    @LogMessage(value = "입양 후기 게시판 목록 조회", operation = "READ")
     @Transactional(readOnly = true)
     public Page<ReveiwBoardListDTO> getReviewBoards(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC,"createdAt"));
@@ -194,6 +198,8 @@ public class ReveiwBoardService {
      * @param id: 게시글 ID
      * @return
      */
+
+    @LogMessage(value = "입양 후기 게시글 상세 조회", operation = "READ")
     @Transactional
     public ReveiwBoardDetailDTO getReviewBoardDetail(Long id) {
         Board board = reviewBoardRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
@@ -246,6 +252,8 @@ public class ReveiwBoardService {
      * @param id: 게시글 ID
      * @param userId: 사용자 ID
      */
+
+    @LogMessage(value = "입양 후기 게시글 삭제", operation = "DELETE")
     @Transactional
     public void deleteReviewBoard(Long id, Long userId) {
         Board board = reviewBoardRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
@@ -268,6 +276,7 @@ public class ReveiwBoardService {
     /*
     * 입양 후기 게시글 수정폼
     * */
+    @LogMessage(value = "입양 후기 게시글 수정폼 조회", operation = "READ")
     @Transactional(readOnly = true)
     public ReviewBoardUpdateFormDTO getReviewBoardUpdateForm(Long boardId, Long userId) {
         // 1. 게시글 + 유저 검증
@@ -324,6 +333,7 @@ public class ReveiwBoardService {
      * @param boardDTO
      * @param userId:  사용자 ID
      */
+    @LogMessage(value = "입양 후기 게시글 수정", operation = "UPDATE")
     @Transactional
     public void updateReviewBoard(Long userId, Long id, ReviewBoardUpdateDTO boardDTO, List<MultipartFile> newImages) {
 

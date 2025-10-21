@@ -2,6 +2,7 @@ package com.project.nyang.modules.shelter.service;
 
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
+import com.project.nyang.global.logging.LogMessage;
 import com.project.nyang.modules.shelter.dto.ShelterDetailDTO;
 import com.project.nyang.modules.shelter.dto.ShelterListDTO;
 import com.project.nyang.modules.shelter.repository.ShelterRepository;
@@ -25,12 +26,14 @@ public class ShelterService {
 
 
     //보호소 전체 목록을 페이징하여 조회하는 메서드
+    @LogMessage(value = "보호소 목록 조회", operation = "READ")
     public Page<ShelterListDTO> getAllShelters(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return shelterRepository.findAllShelters(pageable); // 이미 DTO로 매핑되어 반환됨
     }
 
     //필터 조건(regionName, subRegionName)에 따라 보호소를 조회하는 메서드
+    @LogMessage(value = "필터 조건 보호소 목록 조회", operation = "READ")
     public Page<ShelterListDTO> filterShelters(
             int page, int size, String regionName, String subRegionName,String careName) {
 
@@ -61,6 +64,7 @@ public class ShelterService {
     }
 
     // 보호소 상세 정보 조회 로직
+    @LogMessage(value = "보호소 상세 조회", operation = "READ")
     public ShelterDetailDTO getShelterDetail(String careRegNumber) {
         // repository 호출 후 결과 없으면 예외 발생
         return shelterRepository.findDetailByCareRegNumber(careRegNumber)

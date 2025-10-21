@@ -4,6 +4,7 @@ import com.project.nyang.global.common.publicapi.PublicAnimalApiClient;
 import com.project.nyang.global.elasticsearch.animal.dto.AnimalEsDocument;
 import com.project.nyang.global.elasticsearch.animal.repository.AnimalEsRepository;
 import com.project.nyang.global.elasticsearch.board.dto.BoardEsDocument;
+import com.project.nyang.global.logging.LogMessage;
 import com.project.nyang.modules.animal.dto.AnimalApiResponse;
 import com.project.nyang.modules.animal.entity.Animal;
 import com.project.nyang.modules.animal.repository.AnimalRepository;
@@ -70,6 +71,7 @@ public class AnimalApiService {
     }
 
     //API 불러와서 animal에 저장
+    @LogMessage(value = "유기동물 API 호출 및 저장", operation = "CREATE")
     @Transactional
     public void fetchAndSaveAnimals(String startDate, String endDate) {
         int pageNo = 1;
@@ -143,6 +145,7 @@ public class AnimalApiService {
     }
 
     //동물 정보 업데이트
+    @LogMessage(value = "유기동물 정보 업데이트", operation = "UPDATE")
     @Transactional
     public void updateAnimals(String startDate, String endDate) {
         int pageNo = 1;

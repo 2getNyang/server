@@ -2,6 +2,7 @@ package com.project.nyang.modules.mypage.service;
 
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
+import com.project.nyang.global.logging.LogMessage;
 import com.project.nyang.modules.adoption.entity.PetApplicationForm;
 import com.project.nyang.modules.adoption.repository.AdoptionRepository;
 import com.project.nyang.modules.board.entity.Board;
@@ -30,6 +31,7 @@ public class MyPageService {
     private final BoardRepository boardRepository;
     private final AdoptionRepository adoptionRepository;
 
+    @LogMessage(value = "찜한 공고 조회", operation = "READ")
     @Transactional(readOnly = true)
     public Page<MyAnimalDTO> getMyAnimals(Long userId, int page, int size) {
         Page<LikeIt> likeIts = likeRepository.findByUser_IdAndAnimalIsNotNull(userId, PageRequest.of(page, size));
@@ -39,6 +41,7 @@ public class MyPageService {
         });
     }
 
+    @LogMessage(value = "좋아요 누른 게시글 조회", operation = "READ")
     @Transactional(readOnly = true)
     public Page<MyLikedBoardDTO> getLikedBoards(Long userId, int page, int size) {
         Page<LikeIt> likeIts = likeRepository.findByUser_IdAndBoardIsNotNull(userId, PageRequest.of(page, size));
@@ -48,6 +51,7 @@ public class MyPageService {
         });
     }
 
+    @LogMessage(value = "작성한 게시글 조회", operation = "READ")
     @Transactional(readOnly = true)
     public Page<MyBoardDTO> getMyBoards(Long userId, Long categoryId, int page, int size) {
         Page<Board> boards = boardRepository.findWithUserAndImagesByUser_IdAndDeletedAtIsNullAndCategory_CategoryId(userId, categoryId, PageRequest.of(page, size));
@@ -55,6 +59,7 @@ public class MyPageService {
         return boards.map(MyBoardDTO::of);
     }
 
+    @LogMessage(value = "작성한 게시글 조회", operation = "READ")
     @Transactional(readOnly = true)
     public Page<MyLostBoardDTO> getMyLostBoards(Long userId, Long categoryId, int page, int size) {
         Page<Board> boards = boardRepository.findWithUserImagesAndKindByUser_IdAndDeletedAtIsNullAndCategory_CategoryId(userId, categoryId, PageRequest.of(page, size));
@@ -62,6 +67,7 @@ public class MyPageService {
         return boards.map(MyLostBoardDTO::of);
     }
 
+    @LogMessage(value = "작성한 입양 신청서 목록 조회", operation = "READ")
     @Transactional(readOnly = true)
     public Page<MyPetApplicationFormDTO> getPetApplicationForms(Long userId, int page, int size) {
         Page<PetApplicationForm> forms = adoptionRepository.findByUser_Id(userId, PageRequest.of(page, size));
@@ -69,6 +75,7 @@ public class MyPageService {
         return forms.map(MyPetApplicationFormDTO::of);
     }
 
+    @LogMessage(value = "입양신청서 상세 조회", operation = "READ")
     @Transactional(readOnly = true)
     public MyPetApplicationDetailDTO getPetApplicationDetail(Long userId, Long formId) {
         PetApplicationForm form = adoptionRepository.findById(formId).orElseThrow(() -> new CustomException(ErrorCode.APPLICATION_NOT_FOUND));

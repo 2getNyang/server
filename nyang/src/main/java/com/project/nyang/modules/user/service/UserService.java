@@ -2,6 +2,7 @@ package com.project.nyang.modules.user.service;
 
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
+import com.project.nyang.global.logging.LogMessage;
 import com.project.nyang.modules.user.dto.ChatUserInfoDTO;
 import com.project.nyang.modules.user.dto.AuthInfoDTO;
 import com.project.nyang.modules.user.dto.UpdateUserInfoDTO;
@@ -26,6 +27,7 @@ public class UserService {
 
     private final UserRepository  userRepository;
 
+    @LogMessage(value = "채팅방 - 상대방 정보 조회", operation = "READ")
     //채팅방에서 상대방 정보 가져오는 메서드
     @Transactional(readOnly = true)
     public ChatUserInfoDTO getChatUserInfo(Long userId) {
@@ -38,6 +40,7 @@ public class UserService {
         );
     }
 
+    @LogMessage(value = "로그인한 유저 권한 획득", operation = "READ")
     @Transactional(readOnly = true)
     public AuthInfoDTO getAuthInfo(Long userId) {
         User user = userRepository.findById(userId)
@@ -51,6 +54,7 @@ public class UserService {
                 .build();
     }
 
+    @LogMessage(value = "내 정보 조회", operation = "READ")
     @Transactional(readOnly = true)
     public UserInfoDTO getUserInfo(Long userId) {
         User user = userRepository.findById(userId)
@@ -59,6 +63,7 @@ public class UserService {
         return new UserInfoDTO(user.getNickname(), user.getEmail(), user.getLoginType());
     }
 
+    @LogMessage(value = "내 정보 수정", operation = "UPDATE")
     @Transactional
     public UserInfoDTO updateUserInfo(Long userId, UpdateUserInfoDTO updateUserInfoDTO) {
         //아이디 검사

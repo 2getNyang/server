@@ -2,6 +2,7 @@ package com.project.nyang.modules.auth.service;
 
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
+import com.project.nyang.global.logging.LogMessage;
 import com.project.nyang.global.security.core.CustomUserDetails;
 import com.project.nyang.global.security.jwt.JwtTokenProvider;
 import com.project.nyang.modules.auth.entity.Auth;
@@ -31,6 +32,7 @@ public class AuthService {
 
 
     //리프레시 토큰을 받아서 새로운 엑세스 토큰을 발급해주는 서비스
+    @LogMessage(value = "엑세스 토큰 발급", operation = "UPDATE")
     @Transactional
     public String refreshToken(String refreshtoken) {
         //리프레시 토큰 유효성 검사

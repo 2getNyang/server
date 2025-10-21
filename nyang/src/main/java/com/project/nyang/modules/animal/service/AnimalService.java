@@ -2,6 +2,7 @@ package com.project.nyang.modules.animal.service;
 
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
+import com.project.nyang.global.logging.LogMessage;
 import com.project.nyang.modules.animal.dto.AnimalDTO;
 import com.project.nyang.modules.animal.dto.AnimalDashboardDTO;
 import com.project.nyang.modules.animal.dto.AnimalListDTO;
@@ -54,6 +55,7 @@ public class AnimalService {
     }
 
     //페이징 동물 필터 검색
+    @LogMessage(value = "페이징 동물 필터 검색", operation = "READ")
     @Transactional
     public Page<AnimalListDTO> getFilterAnimals(LocalDate startDate, LocalDate endDate,
                                                 String upKindCd, String kindCd,
@@ -85,6 +87,7 @@ public class AnimalService {
     }
 
     //Animal 상세 조회
+    @LogMessage(value = "유기동물 정보 상세 조회", operation = "READ")
     public AnimalDTO getAnimalDetail(String desertionNo,  Long userId) {
 
         Animal animal = animalRepository.findByDesertionNoWithShelter(desertionNo)

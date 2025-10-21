@@ -3,6 +3,7 @@ package com.project.nyang.modules.board.lost.service;
 import com.project.nyang.global.common.S3.S3Service;
 import com.project.nyang.global.exception.CustomException;
 import com.project.nyang.global.exception.ErrorCode;
+import com.project.nyang.global.logging.LogMessage;
 import com.project.nyang.global.security.core.CustomUserDetails;
 import com.project.nyang.global.elasticsearch.board.dto.BoardEsDocument;
 import com.project.nyang.global.elasticsearch.board.repository.BoardEsRepository;
@@ -56,19 +57,22 @@ public class LostService {
     private final UpkindRepository upkindRepository;
     private final KindRepository kindRepository;
     private final LikeRepository likeRepository;
-    private final CommentRepository commentRepository;
 
     private final S3Service s3Service;
     private final Long CATEGORY_ID = 4L;
     private final BoardEsRepository boardEsRepository;
 
+
     //실종/목격 게시판의 모든 글 가져오는 메서드(페이징 처리완료)
+    @LogMessage(value = "실종/목격 게시판 목록 조회", operation = "READ")
     @Transactional
     public Page<LostListResponseDTO> getLostBoard(Long categoryId, Pageable pageable) {
         return lostRepository.findAllLostBoardsWithThumbnail(categoryId, pageable);
     }
 
+
     //실종/목격 게시판의 특정 글 조회 메서드
+    @LogMessage(value = "실종/목격 게시글 상세 조회", operation = "READ")
     @Transactional  //조회수 증가 dirth checking을 위한 @Transactional 어노테이션 추가
     public LostDetailResponseDTO getLostDetail(Long boardId) {
 
@@ -128,6 +132,7 @@ public class LostService {
     }
 
     //실종/목격 게시판 글작성 폼
+    @LogMessage(value = "실종/목격 게시판 글 작성폼 조회", operation = "READ")
     @Transactional
     public LostCreateFormDTO getLostFormInfo() {
         return LostCreateFormDTO.builder()
@@ -144,16 +149,12 @@ public class LostService {
     }
 
     //실종/목격게시판 글작성 + 이미지 db저장 + s3 이미지 업로드
+    @LogMessage(value = "실종/목격 게시글 작성", operation = "CREATE")
     @Transactional
     public Long createLostBoard(LostCreateRequestDTO dto, List<MultipartFile> images) {
 
         // 인증된 사용자 가져오기
         Long userId = SecurityUtil.getCurrentUserId();
-
-//        // 프론트에서 넘어온 축종 코드 확인
-//        log.info("프론트에서 받은 축종 코드: {}", dto.getKindCd());
-//
-//        //upkindRepository.findByUpKindCd(dto.getKindCd());
 
         //1. 연관 엔티티 유효성 검사
         User user = userRepository.findById(userId)
@@ -230,28 +231,8 @@ public class LostService {
         return board.getId();
     }
 
-    //물리적 삭제 : 게시글 삭제 + 관련 이미지 삭제 + s3 이미지 삭제
-//    @Transactional
-//    public void deleteLostBoard(Long boardId){
-//        Board board = lostRepository.findById(boardId)
-//                .orElseThrow(()-> new CustomException(ErrorCode.BOARD_NOT_FOUND));
-//
-//        if (board.getDeletedAt() != null) {
-//            throw new CustomException(ErrorCode.BOARD_ALLREDAY_DELETE);
-//        }
-//
-//        //1. S3 이미지 삭제
-//        for(Image image : board.getImages()){
-//            String s3Url = image.getS3Url(); //이미지의 s3 url 추출
-//            String fileName = extractFileNameFromUrl(s3Url);    //s3 url에서 이미지명+확장자만 추출
-//            s3Service.deleteFile(fileName);
-//        }
-//
-//        //2. DB에서 게시글 + 연관 이미지 삭제
-//        lostRepository.delete(board);   //casecade + orphanRemoval 설정해둬서 함께 삭제가능!
-//    }
-
     //softDelete용 게시글 삭제
+    @LogMessage(value = "실종/목격 게시글 삭제", operation = "DELETE")
     @Transactional
     public LostDeleteResponseDTO softDeleteLostBoard(Long boardId){
         // 인증된 사용자 가져오기
@@ -278,6 +259,7 @@ public class LostService {
     }
 
     //게시글 수정폼 불러오는 메서드
+    @LogMessage(value = "실종/목격 게시글 수정폼 조회", operation = "READ")
     public LostUpdateResponseDTO getBoardUpdateForm(Long boardId) {
 
         // 인증된 사용자 가져오기
@@ -326,6 +308,7 @@ public class LostService {
     }
 
     //게시글 수정 메서드(이미지 삭제, 썸네일 처리도 포함)
+    @LogMessage(value = "실종/목격 게시글 수정", operation = "UPDATE")
     @Transactional
     public void updateBoard(Long boardId, LostUpdateRequestDTO dto, List<MultipartFile> newImages) {
 
@@ -420,18 +403,6 @@ public class LostService {
                 .build();
         boardEsRepository.save(doc);
 
-    }
-
-    //s3 이미지 경로에서 앞의 접두사를 빼고 온전히 이미지의 이름+확장자만 가져오게 하는 메서드
-    private String extractFileNameFromUrl(String s3Url) {
-        // ex) https://backend-nyang.s3.ap-northeast-2.amazonaws.com/images/abc123.jpg
-        // ⇒ return "images/abc123.jpg"
-        int index = s3Url.indexOf(".com/");
-        if (index != -1) {
-            return s3Url.substring(index + 5); // ".com/" 이후부터 끝까지
-        } else {
-            throw new IllegalArgumentException("Invalid S3 URL: " + s3Url);
-        }
     }
 
     //인증된 사용자 정보 가져오는 메서드

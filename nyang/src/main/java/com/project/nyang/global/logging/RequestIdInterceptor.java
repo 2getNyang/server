@@ -20,6 +20,7 @@ public class RequestIdInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response,
                              Object handler) {
+
         // 요청 ID 생성 또는 헤더에서 가져오기
         String requestId = request.getHeader("X-Request-ID");
         if (requestId == null || requestId.isEmpty()) {
@@ -28,22 +29,49 @@ public class RequestIdInterceptor implements HandlerInterceptor {
 
         RequestContext.setRequestId(requestId);
 
-        // 사용자 ID도 설정 (인증 정보에서 가져오기)
-        String userId = request.getHeader("X-User-ID");
-        if (userId != null && !userId.isEmpty()) {
-            RequestContext.setUserId(userId);
-        } else {
-            RequestContext.setUserId("anonymous");  // 비로그인 사용자
-        }
+        // Spring Security에서 인증된 사용자 정보 가져오기
+        String userId = getUserIdFromSecurity();
+        RequestContext.setUserId(userId);
 
-        // 응답 헤더에도 추가
         response.setHeader("X-Request-ID", requestId);
 
-        log.info("[{}] 요청 시작 - {} {} (사용자: {})",
+        log.info("[{}] 요청 시작 - {} {} (사용자 ID: {})",
                 requestId, request.getMethod(), request.getRequestURI(),
                 RequestContext.getUserId());
 
         return true;
+    }
+
+    /**
+     * Spring Security에서 현재 인증된 사용자 ID를 가져옵니다.
+     */
+    private String getUserIdFromSecurity() {
+        try {
+            org.springframework.security.core.Authentication authentication =
+                    org.springframework.security.core.context.SecurityContextHolder
+                            .getContext()
+                            .getAuthentication();
+
+            if (authentication != null && authentication.isAuthenticated()) {
+                Object principal = authentication.getPrincipal();
+
+                // CustomUserDetails인 경우
+                if (principal instanceof com.project.nyang.global.security.core.CustomUserDetails) {
+                    com.project.nyang.global.security.core.CustomUserDetails userDetails =
+                            (com.project.nyang.global.security.core.CustomUserDetails) principal;
+                    return String.valueOf(userDetails.getId());
+                }
+
+                // String (username)인 경우
+                if (principal instanceof String && !"anonymousUser".equals(principal)) {
+                    return (String) principal;
+                }
+            }
+        } catch (Exception e) {
+            log.debug("사용자 인증 정보를 가져오는데 실패했습니다: {}", e.getMessage());
+        }
+
+        return "anonymous";
     }
 
     @Override
@@ -54,7 +82,7 @@ public class RequestIdInterceptor implements HandlerInterceptor {
         String requestId = RequestContext.getRequestId();
         log.info("[{}] 요청 완료 - 상태코드: {}", requestId, response.getStatus());
 
-        // ThreadLocal 정리 (메모리 누수 방지)
         RequestContext.clear();
     }
 }
+

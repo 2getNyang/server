@@ -1,6 +1,7 @@
 package com.project.nyang.modules.chat.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.nyang.global.logging.LogMessage;
 import com.project.nyang.modules.chat.dto.ChatMessageDTO;
 import com.project.nyang.modules.chat.entity.ChatMessage;
 import com.project.nyang.modules.chat.entity.ChatRoom;
@@ -35,6 +36,7 @@ public class ChatMessageService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
 
+    @LogMessage(value = "채팅방 메시지 전송", operation = "CREATE")
     public void saveMessage(ChatMessageDTO dto) {
 
 
@@ -46,6 +48,7 @@ public class ChatMessageService {
     }
 
     //안읽은 메시지 수 조회
+    @LogMessage(value = "채팅방 안읽은 메시지 수 조회", operation = "READ")
     @Transactional(readOnly = true)
     public Long countUnreadMessages(Long roomId, Long userId) {
         return chatMessageRepository.countUnreadMessages(roomId, userId);
