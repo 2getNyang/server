@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 /**
  *
  * 카프카에서 메세지를 꺼내서 엘라스틱서치로 넘기는 클래스
@@ -35,25 +37,16 @@ public class SearchLogConsumer {
 
         //카프카에서 받은 메세지를 엘라스틱 전용 객체로 변환
         SearchLogDocument doc = SearchLogDocument.builder()
+                .id(UUID.randomUUID().toString())
                 .keyword(message.getKeyword())
                 .searchedAt(message.getSearchedAt())
                 .build();
-        //엘라스틱서치에 저장
-        searchLogEsService.save(doc);
+
+        try {
+            searchLogEsService.save(doc);
+            log.info("Elasticsearch 저장 성공: {}", doc);
+        } catch (Exception e) {
+            log.error("Elasticsearch 저장 실패", e);
+        }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
